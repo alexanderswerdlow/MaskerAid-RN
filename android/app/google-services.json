@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "176502677559",
+    "firebase_url": "https://maskeraid-bc3b1.firebaseio.com",
+    "project_id": "maskeraid-bc3b1",
+    "storage_bucket": "maskeraid-bc3b1.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:176502677559:android:aa20e9fa99462cd2a99fb2",
+        "android_client_info": {
+          "package_name": "com.maskeraid"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "176502677559-gi68rhr7f9rbii7gas2o1sj3ftvdeg53.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB-un7qs39H9M_dC-2xKxOc7sSveEnz850"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "176502677559-gi68rhr7f9rbii7gas2o1sj3ftvdeg53.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "176502677559-30enu160h4aviebo60b3g6qkqg913rjs.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "org.reactjs.native.example.MaskerAid"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

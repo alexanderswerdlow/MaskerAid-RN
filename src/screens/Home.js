@@ -5,12 +5,14 @@ import Icon from 'react-native-vector-icons/Fontisto';
 import IconAntDesign from 'react-native-vector-icons/AntDesign';
 
 export default class Home extends Component {
-  constructor(navigation, route) {
-    super(navigation, route);
+  constructor(props) {
+    super(props);
     this.state = {
       screenWidth: 0,
+      userInfo: this.props.route.params.userInfo,
     };
   }
+
   componentDidMount() {
     this.setState({
       screenWidth: Dimensions.get('window').width,
@@ -29,12 +31,11 @@ export default class Home extends Component {
             <Image
               style={styles.userPic}
               source={{
-                uri:
-                  'https://avatars3.githubusercontent.com/u/60021093?s=400&u=2e82de2e9bec77ff75b3435fe20ab22e945b9155&v=4',
+                uri: this.state.userInfo.user.photo,
               }}
             />
 
-            <Text style={styles.username}>Gary Hua</Text>
+            <Text style={styles.username}>{this.state.userInfo.user.name}</Text>
           </View>
 
           <View>

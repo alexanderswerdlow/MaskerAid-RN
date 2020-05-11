@@ -6,22 +6,17 @@
  * @flow strict-local
  */
 
-import React, { Component } from 'react';
-import {
-  SafeAreaView,
-  StyleSheet,
-  ScrollView,
-  View,
-  Text,
-  StatusBar,
-} from 'react-native';
+import 'react-native-gesture-handler';
+import {NavigationContainer} from '@react-navigation/native';
+import React, {Component} from 'react';
+import MaskerAid from './src/MaskerAid.js';
 
-import MaskerAid from "./src/MaskerAid.js";
-
-export default class App extends Component{
+export default class App extends Component {
   render() {
-    return ( 
+    return (
+      <NavigationContainer>
         <MaskerAid />
+      </NavigationContainer>
     );
   }
 }

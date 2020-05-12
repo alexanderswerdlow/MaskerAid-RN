@@ -53,15 +53,13 @@ export default class Login extends Component {
       <View style={[styles.container, styles.pageContainer]}>
         <Button
           onPress={async () => {
-            const isSignedIn = await GoogleSignin.isSignedIn();
-            Alert.alert(String(isSignedIn));
+            Alert.alert(userInfo ? 'True' : 'False');
           }}
           title="is user signed in?"
         />
 
         <Button
           onPress={async () => {
-            const userInfo = await GoogleSignin.getCurrentUser();
             Alert.alert(
               'current user',
               userInfo ? JSON.stringify(userInfo.user) : 'null',
@@ -72,10 +70,8 @@ export default class Login extends Component {
 
         <Button
           onPress={async () => {
-            const isSignedIn = await GoogleSignin.isSignedIn();
-            if (isSignedIn) {
-              const isSignedIn = await GoogleSignin.getTokens();
-              Alert.alert('tokens', JSON.stringify(isSignedIn));
+            if (userInfo) {
+              Alert.alert('tokens', JSON.stringify(userInfo.idToken));
             } else {
               Alert.alert('not signed in');
             }
@@ -85,10 +81,9 @@ export default class Login extends Component {
 
         <Button
           onPress={async () => {
-            const user = await GoogleSignin.getCurrentUser();
-            if (user) {
+            if (userInfo) {
               this.props.navigation.navigate('Home', {
-                userInfo: user,
+                userInfo: userInfo,
               });
             } else {
               Alert.alert('not signed in');

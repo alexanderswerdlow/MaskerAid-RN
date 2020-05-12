@@ -40,6 +40,7 @@ export default class Login extends Component {
       this.setState({
         error: new Error(errorMessage),
       });
+      console.log(error);
     }
   }
 

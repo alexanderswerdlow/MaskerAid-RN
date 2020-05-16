@@ -46,6 +46,7 @@ export default function Home({navigation}) {
       </View>
 
       <Button title="Logout" onPress={() => logout()} />
+      <Button title="Add Things" onPress={() => navigation.navigate('Todos')} />
     </View>
   );
 }

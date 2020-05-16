@@ -1,7 +1,6 @@
 import React, {useState, useEffect} from 'react';
-import {ScrollView, Text, FlatList} from 'react-native';
-import Todo from './Todo'; // we'll create this next
-
+import {FlatList, StyleSheet, SafeAreaView} from 'react-native';
+import Todo from './Todo';
 import firestore from '@react-native-firebase/firestore';
 import {
   Appbar,
@@ -55,19 +54,27 @@ function Todos({navigation}) {
 
   return (
     <>
-      <Appbar>
-        <Appbar.Content title={'TODOs List'} />
-      </Appbar>
-      <FlatList
-        style={{flex: 1}}
-        data={todos}
-        keyExtractor={(item) => item.id}
-        renderItem={({item}) => <Todo {...item} />}
-      />
-      <TextInput label={'New Todo'} value={todo} onChangeText={setTodo} />
-      <Button onPress={() => addTodo()}>Add TODO</Button>
+      <SafeAreaView style={styles.container}>
+        <Appbar>
+          <Appbar.Content title={'TODOs List'} />
+        </Appbar>
+        <FlatList
+          style={{flex: 1}}
+          data={todos}
+          keyExtractor={(item) => item.id}
+          renderItem={({item}) => <Todo {...item} />}
+        />
+        <TextInput label={'New Todo'} value={todo} onChangeText={setTodo} />
+        <Button onPress={() => addTodo()}>Add TODO</Button>
+      </SafeAreaView>
     </>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+});
 
 export default Todos;

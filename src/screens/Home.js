@@ -1,64 +1,53 @@
-import React, {Component} from 'react';
-import {View, Text, StyleSheet, Image, Dimensions} from 'react-native';
+import React, {useContext} from 'react';
+import {View, Text, StyleSheet, Image, Dimensions, Button} from 'react-native';
 import config from '../config';
 import Icon from 'react-native-vector-icons/Fontisto';
 import IconAntDesign from 'react-native-vector-icons/AntDesign';
+import {AuthContext} from '../navigation/AuthProvider';
 
-export default class Home extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      screenWidth: 0,
-      userInfo: this.props.route.params.userInfo,
-    };
-  }
+export default function Home({navigation}) {
+  const screenWidth = Dimensions.get('window').width;
+  const {user, logout} = useContext(AuthContext);
+  return (
+    <View>
+      <View style={styles.nav}>
+        <Text style={{fontSize: 20}}>MaskerAid</Text>
+      </View>
 
-  componentDidMount() {
-    this.setState({
-      screenWidth: Dimensions.get('window').width,
-    });
-  }
+      <View style={styles.userBar}>
+        <View style={{flexDirection: 'row', alignItems: 'center'}}>
+          <Image
+            style={styles.userPic}
+            source={{
+              uri: user.photoURL,
+            }}
+          />
 
-  render() {
-    return (
-      <View>
-        <View style={styles.nav}>
-          <Text style={{fontSize: 20}}>MaskerAid</Text>
+          <Text style={styles.username}>{user.displayName}</Text>
         </View>
 
-        <View style={styles.userBar}>
-          <View style={{flexDirection: 'row', alignItems: 'center'}}>
-            <Image
-              style={styles.userPic}
-              source={{
-                uri: this.state.userInfo.user.photo,
-              }}
-            />
-
-            <Text style={styles.username}>{this.state.userInfo.user.name}</Text>
-          </View>
-
-          <View>
-            <Text style={styles.dotmenu}>...</Text>
-          </View>
-        </View>
-
-        <Image
-          style={{width: this.state.screenWidth, height: 405}}
-          source={{
-            uri:
-              'https://en.bcdn.biz/Images/2018/6/6/ae2e9240-c42a-4a81-b6d8-ac65af25b827.jpg',
-          }}
-        />
-
-        <View style={styles.iconBar}>
-          <IconAntDesign name={'hearto'} size={30} style={{padding: 5}} />
-
-          <Icon name={'comment'} size={27} style={{padding: 5}} />
+        <View>
+          <Text style={styles.dotmenu}>...</Text>
         </View>
       </View>
-    );
-  }
+
+      <Image
+        style={{width: screenWidth, height: 405}}
+        source={{
+          uri:
+            'https://en.bcdn.biz/Images/2018/6/6/ae2e9240-c42a-4a81-b6d8-ac65af25b827.jpg',
+        }}
+      />
+
+      <View style={styles.iconBar}>
+        <IconAntDesign name={'hearto'} size={30} style={{padding: 5}} />
+
+        <Icon name={'comment'} size={27} style={{padding: 5}} />
+      </View>
+
+      <Button title="Logout" onPress={() => logout()} />
+    </View>
+  );
 }
 
 const styles = StyleSheet.create({

@@ -7,16 +7,16 @@
  */
 
 import 'react-native-gesture-handler';
-import {NavigationContainer} from '@react-navigation/native';
 import React, {Component} from 'react';
 import MaskerAid from './src/MaskerAid.js';
+import {AuthProvider} from './src/navigation/AuthProvider';
 
 export default class App extends Component {
   render() {
     return (
-      <NavigationContainer>
+      <AuthProvider>
         <MaskerAid />
-      </NavigationContainer>
+      </AuthProvider>
     );
   }
 }

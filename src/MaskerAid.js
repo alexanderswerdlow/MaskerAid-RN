@@ -1,24 +1,41 @@
 import 'react-native-gesture-handler';
-import {createStackNavigator} from '@react-navigation/stack';
-import HomeScreen from './screens/Home';
-import LoginScreen from './screens/Login';
-import React from 'react';
-
-const Stack = createStackNavigator();
+import AuthStack from './navigation/AuthStack';
+import HomeStack from './navigation/HomeStack';
+import {AuthContext} from './navigation/AuthProvider';
+import React, {useState, useContext, useEffect} from 'react';
+import {ActivityIndicator, Colors} from 'react-native-paper';
+import auth from '@react-native-firebase/auth';
+import {NavigationContainer} from '@react-navigation/native';
 
 export default function MaskerAid() {
+  const [initializing, setInitializing] = useState(true);
+  const {user, setUser} = useContext(AuthContext);
+
+  // Handle user state changes
+  function onAuthStateChanged(user) {
+    console.log('Set User');
+    setUser(user);
+    if (initializing) {
+      setInitializing(false);
+    }
+  }
+
+  useEffect(() => {
+    const subscriber = auth().onAuthStateChanged(onAuthStateChanged);
+    return subscriber; // unsubscribe on unmount
+  }, []);
+
+  if (initializing) {
+    return (
+      <>
+        <ActivityIndicator animating={true} color={Colors.red800} />
+      </>
+    );
+  }
+
   return (
-    <Stack.Navigator>
-      <Stack.Screen
-        name="Login"
-        component={LoginScreen}
-        options={{headerShown: false}}
-      />
-      <Stack.Screen
-        name="Home"
-        component={HomeScreen}
-        options={{headerShown: false}}
-      />
-    </Stack.Navigator>
+    <NavigationContainer>
+      {user ? <HomeStack /> : <AuthStack />}
+    </NavigationContainer>
   );
 }

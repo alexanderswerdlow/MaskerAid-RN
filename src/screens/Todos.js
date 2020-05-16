@@ -1,7 +1,8 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useContext, useEffect} from 'react';
 import {FlatList, StyleSheet, SafeAreaView} from 'react-native';
 import Todo from './Todo';
 import firestore from '@react-native-firebase/firestore';
+import {AuthContext} from '../navigation/AuthProvider';
 import {
   Appbar,
   TextInput,
@@ -11,6 +12,7 @@ import {
 } from 'react-native-paper';
 
 function Todos({navigation}) {
+  const {user} = useContext(AuthContext);
   const [todo, setTodo] = useState('');
   const [loading, setLoading] = useState(true);
   const [todos, setTodos] = useState([]);

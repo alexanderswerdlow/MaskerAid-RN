@@ -56,19 +56,17 @@ function Todos({navigation}) {
 
   return (
     <>
-      <SafeAreaView style={styles.container}>
-        <Appbar>
-          <Appbar.Content title={'TODOs List'} />
-        </Appbar>
-        <FlatList
-          style={{flex: 1}}
-          data={todos}
-          keyExtractor={(item) => item.id}
-          renderItem={({item}) => <Todo {...item} />}
-        />
-        <TextInput label={'New Todo'} value={todo} onChangeText={setTodo} />
-        <Button onPress={() => addTodo()}>Add TODO</Button>
-      </SafeAreaView>
+      <Appbar>
+        <Appbar.Content title={'TODOs List'} />
+      </Appbar>
+      <FlatList
+        style={{flex: 1}}
+        data={todos}
+        keyExtractor={(item) => item.id}
+        renderItem={({item}) => <Todo {...item} />}
+      />
+      <TextInput label={'New Todo'} value={todo} onChangeText={setTodo} />
+      <Button onPress={() => addTodo()}>Add TODO</Button>
     </>
   );
 }

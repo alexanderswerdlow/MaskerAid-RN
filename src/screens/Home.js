@@ -5,14 +5,12 @@ import Icon from 'react-native-vector-icons/Fontisto';
 import IconAntDesign from 'react-native-vector-icons/AntDesign';
 import {AuthContext} from '../navigation/AuthProvider';
 
-
 export default function Home({navigation}) {
   const screenWidth = Dimensions.get('window').width;
   const {user, logout} = useContext(AuthContext);
   return (
     <View>
       <View style={styles.nav}>
-      <Button title="Logout" onPress={() => logout()} />
         <Text style={{fontSize: 20}}>MaskerAid</Text>
       </View>
 

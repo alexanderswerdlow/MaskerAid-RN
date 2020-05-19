@@ -1,94 +1,33 @@
-import React from 'react';
-import {StyleSheet, Text, View} from 'react-native';
-import { createBottomTabNavigator} from 'react-navigation-tabs';
-import {createStackNavigator} from 'react-navigation-stack';
-import {createAppContainer} from 'react-navigation';
+import * as React from 'react';
+import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import HomeScreen from '../screens/Home';
 import ProfileScreen from '../screens/Profile';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 
-/*class HomeScreen extends React.Component {
-  render() {
-    return (
-      <View style={styles.contatiner}>
-        <Text>Home Screen</Text>
-      </View>
-    );
-  }
-}
+const Tab = createBottomTabNavigator();
 
-class ProfileScreen extends React.Component {
-  render() {
-    return (
-      <View style={styles.contatiner}>
-        <Text>Profile Screen</Text>
-    </View>
-    );
-  }
-}
-
-const TabNavigator = createBottomTabNavigator(
-  {
-    Home:{
-      screen: HomeScreen,
-        navigationOptions: {
-        tabBarLabel: 'Home',
-        tabBarIcon: ({tintColor})=>(
-          <Icon name="ios-home" color={tintColor} size={25}/>
-        )
-      }
-    },
-
-    Profile: {
-      screen: ProfileScreen,
-      navigationOptions: {
-        tabBarLabel: 'Profile',
-        tabBarIcon: ({tintColor})=>(
-          <Icon name="ios-person" color={tintColor} size={25}/>
-        )
-      }
-    },
-  },
-  {
-  initialRouteName: "Home"
-  },
-);
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center'
-  },
-});
-
-export default function HomeStack() {
+export default function App() {
   return (
-    <Stack.Navigator>
-      <Stack.Screen name="Home" component={HomeScreen} />
-      <Stack.Screen name="Todos" component={TodoScreen} />
-      <Stack.Screen name="Profile" component={ProfileScreen} />
-    </Stack.Navigator>
-    );
+    <Tab.Navigator
+      screenOptions={({route}) => ({
+        tabBarIcon: ({focused, color, size}) => {
+          let iconName;
 
-  return (
-    createAppContainer(TabNavigator)
+          if (route.name === 'Home') {
+            iconName = 'ios-home';
+          } else if (route.name === 'Settings') {
+            iconName = 'ios-person';
+          }
+
+          return <Ionicons name={iconName} size={size} color={color} />;
+        },
+      })}
+      tabBarOptions={{
+        activeTintColor: 'blue',
+        inactiveTintColor: 'gray',
+      }}>
+      <Tab.Screen name="Home" component={HomeScreen} />
+      <Tab.Screen name="Settings" component={ProfileScreen} />
+    </Tab.Navigator>
   );
-}*/
-
-const HomeStack = createStackNavigator({
-  Home: HomeScreen,
-});
-
-const ProfileStack = createStackNavigator({
-  Profile: ProfileScreen,
-});
-
-const AppContainer = createAppContainer(
-  createBottomTabNavigator(
-  {
-    Home: HomeStack,
-    Profile: ProfileStack,
-  },
-));
-
-export default AppContainer;
+}

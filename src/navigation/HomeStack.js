@@ -15,7 +15,7 @@ export default function App() {
 
           if (route.name === 'Home') {
             iconName = 'ios-home';
-          } else if (route.name === 'Settings') {
+          } else if (route.name === 'Profile') {
             iconName = 'ios-person';
           }
 
@@ -27,7 +27,7 @@ export default function App() {
         inactiveTintColor: 'gray',
       }}>
       <Tab.Screen name="Home" component={HomeScreen} />
-      <Tab.Screen name="Settings" component={ProfileScreen} />
+      <Tab.Screen name="Profile" component={ProfileScreen} />
     </Tab.Navigator>
   );
 }

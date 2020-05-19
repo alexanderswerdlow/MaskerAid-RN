@@ -15,7 +15,6 @@ export default function MaskerAid() {
 
   // Handle user state changes
   function onAuthStateChanged(user) {
-    console.log('Set User');
     setUser(user);
     if (initializing) {
       setInitializing(false);

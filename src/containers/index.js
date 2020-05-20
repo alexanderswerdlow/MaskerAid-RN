@@ -1,5 +1,3 @@
-import PostFeed from './PostFeed'
+import PostFeed from './PostFeed';
 
-export {
-    PostFeed
-}
+export {PostFeed};

@@ -1,8 +1,8 @@
 import React, {useContext} from 'react';
 import {View, Text, StyleSheet, Image, Dimensions, Button} from 'react-native';
-import config from '../config';
 import Icon from 'react-native-vector-icons/Fontisto';
 import IconAntDesign from 'react-native-vector-icons/AntDesign';
+import config from '../config';
 import {AuthContext} from '../navigation/AuthProvider';
 
 export default function Home({navigation}) {
@@ -40,9 +40,9 @@ export default function Home({navigation}) {
       />
 
       <View style={styles.iconBar}>
-        <IconAntDesign name={'hearto'} size={30} style={{padding: 5}} />
+        <IconAntDesign name="hearto" size={30} style={{padding: 5}} />
 
-        <Icon name={'comment'} size={27} style={{padding: 5}} />
+        <Icon name="comment" size={27} style={{padding: 5}} />
       </View>
 
       <Button title="Logout" onPress={() => logout()} />
@@ -53,7 +53,7 @@ export default function Home({navigation}) {
 
 const styles = StyleSheet.create({
   nav: {
-    width: 100 + '%',
+    width: `${100}%`,
     height: 56,
     marginTop: 20,
     backgroundColor: 'rgb(250, 250, 250)',
@@ -64,7 +64,7 @@ const styles = StyleSheet.create({
   },
 
   userBar: {
-    width: 100 + '%',
+    width: `${100}%`,
     height: config.styleConstants.rowHeight,
     backgroundColor: 'rgb(255,255,255)',
     flexDirection: 'row',
@@ -89,7 +89,7 @@ const styles = StyleSheet.create({
 
   iconBar: {
     height: config.styleConstants.rowHeight,
-    width: 100 + '%',
+    width: `${100}%`,
     borderBottomWidth: StyleSheet.hairlineWidth,
     borderTopWidth: StyleSheet.hairlineWidth,
     borderColor: config.styleConstants.borderColor,

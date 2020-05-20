@@ -7,7 +7,7 @@
     "ios": "react-native run-ios",
     "start": "react-native start",
     "test": "jest",
-    "lint": "eslint ."
+    "lint": "eslint . --fix"
   },
   "dependencies": {
     "@react-native-community/google-signin": "^4.0.1",
@@ -32,11 +32,19 @@
     "@react-native-community/eslint-config": "^1.1.0",
     "babel-jest": "^26.0.1",
     "eslint": "^7.0.0",
+    "eslint-plugin-react-hooks": "^4.0.2",
+    "husky": "^4.2.5",
     "jest": "^26.0.1",
     "metro-react-native-babel-preset": "^0.59.0",
     "react-test-renderer": "16.11.0"
   },
   "jest": {
     "preset": "react-native"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "npm run lint",
+      "pre-push": "npm run lint"
+    }
   }
 }

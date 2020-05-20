@@ -44,7 +44,7 @@ function Todos({navigation}) {
         setLoading(false);
       }
     });
-  }, []);
+  }, [loading, ref]);
 
   if (loading) {
     return (
@@ -58,7 +58,7 @@ function Todos({navigation}) {
     <>
       <SafeAreaView style={styles.container}>
         <Appbar>
-          <Appbar.Content title={'TODOs List'} />
+          <Appbar.Content title={'TODO List'} />
         </Appbar>
         <FlatList
           style={{flex: 1}}

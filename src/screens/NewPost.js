@@ -1,10 +1,11 @@
-import React, {useState} from 'react';
-import {StyleSheet, Text, TouchableOpacity, Image} from 'react-native';
+import React, {useState, useContext} from 'react';
+import {StyleSheet, TextInput, Button} from 'react-native';
 import ImagePicker from 'react-native-image-picker';
+import {AuthContext} from '../navigation/AuthProvider';
+import firestore from '@react-native-firebase/firestore';
 
 const options = {
-  title: 'Select Avatar',
-  customButtons: [{name: 'fb', title: 'Choose Photo from Facebook'}],
+  title: 'Select Photo',
   storageOptions: {
     skipBackup: true,
     path: 'images',
@@ -12,7 +13,9 @@ const options = {
 };
 
 function NewPost({navigation}) {
+  const {user} = useContext(AuthContext);
   const [avatarSource, setAvatarSource] = useState('');
+  const [post_text, setPostText] = React.useState('Useless Placeholder');
 
   async function _loadImage() {
     ImagePicker.showImagePicker(options, (response) => {
@@ -28,23 +31,39 @@ function NewPost({navigation}) {
     });
   }
 
+  async function post() {
+    console.log('Post Triggered');
+    var post = {
+      post_date: firestore.Timestamp.fromDate(new Date()),
+      text: `${post_text}`,
+      like_count: 0,
+      user_name: user.displayName,
+      user_photo: user.photoURL,
+    };
+    const batch = firestore().batch();
+    const userPostsRef = firestore()
+      .collection('users')
+      .doc(user.uid)
+      .collection('posts')
+      .doc();
+    batch.set(userPostsRef, post);
+    const postsRef = firestore().collection('posts').doc();
+    batch.set(postsRef, {loc: userPostsRef, post_date: post.post_date});
+    batch.commit().then(function () {
+      console.log('Post Successful');
+    });
+  }
+
   return (
     <>
-      <TouchableOpacity style={styles.container} onPress={() => _loadImage()}>
-        <Text>NEW POST</Text>
-      </TouchableOpacity>
+      <TextInput
+        style={{height: 40, borderColor: 'gray', borderWidth: 1}}
+        onChangeText={(text) => setPostText(text)}
+        value={post_text}
+      />
+      <Button title="Post" onPress={() => post()} />
     </>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    height: 100 + '%',
-    width: 100 + '%',
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-});
 
 export default NewPost;

@@ -1,4 +1,19 @@
 module.exports = {
   root: true,
-  extends: '@react-native-community',
+  extends: [
+    'eslint:recommended',
+    'plugin:react/recommended',
+    'plugin:prettier/recommended',
+  ],
+  plugins: ['react-hooks'],
+  parser: 'babel-eslint',
+  env: {
+    browser: true,
+    node: true,
+  },
+  rules: {
+    'no-unused-vars': 'warn',
+    'react/prop-types': 'warn',
+    'react/display-name': 'warn',
+  },
 };

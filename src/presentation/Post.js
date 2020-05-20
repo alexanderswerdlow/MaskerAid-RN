@@ -5,33 +5,44 @@ import {
   StyleSheet,
   Image,
   Dimensions,
-  Button,
   TouchableOpacity,
 } from 'react-native';
 import config from '../config';
 import Icon from 'react-native-vector-icons/Fontisto';
 import IconAntDesign from 'react-native-vector-icons/AntDesign';
 import {AuthContext} from '../navigation/AuthProvider';
+import firestore from '@react-native-firebase/firestore';
 
-export default function Home({navigation}) {
+export default function Post(props) {
   const screenWidth = Dimensions.get('window').width;
-  const {user, logout} = useContext(AuthContext);
+  const {user} = useContext(AuthContext);
   const [liked, _addLike] = useState(false);
   const heartIconColor = liked ? 'rgb(252,61,57)' : null;
   const heartIconID = liked ? 'heart' : 'hearto';
+
+  const likePhoto = () => {
+    _addLike(!liked);
+    props.loc
+      .update({
+        like_count: props.post.like_count + 1,
+      })
+      .then(() => {
+        console.log('Liked!');
+      });
+  };
 
   return (
     <View style={{flex: 1, width: 100 + '%'}}>
       <View style={styles.userBar}>
         <View style={{flexDirection: 'row', alignItems: 'center'}}>
-          <Image style={styles.userPic} source={{uri: user.photoURL}} />
-          <Text style={styles.username}>{user.displayName}</Text>
+          <Image style={styles.userPic} source={{uri: props.post.user_photo}} />
+          <Text style={styles.username}>{props.post.user_name}</Text>
         </View>
         <View>
           <Text style={styles.dotmenu}>...</Text>
         </View>
       </View>
-      <TouchableOpacity onPress={() => _addLike(!liked)} activeOpacity={0.7}>
+      <TouchableOpacity onPress={() => likePhoto()} activeOpacity={0.7}>
         <Image
           style={{width: screenWidth, height: 405}}
           source={{
@@ -51,7 +62,7 @@ export default function Home({navigation}) {
       </View>
       <View style={styles.commentBar}>
         <IconAntDesign name={'heart'} size={10} style={{padding: 5}} />
-        <Text>128 Likes</Text>
+        <Text>{props.post.like_count} Likes</Text>
       </View>
     </View>
   );

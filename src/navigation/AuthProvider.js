@@ -2,6 +2,7 @@ import React, {createContext, useState} from 'react';
 import auth from '@react-native-firebase/auth';
 import {GoogleSignin, statusCodes} from '@react-native-community/google-signin';
 import config from '../config';
+import {Platform} from 'react-native';
 
 export const AuthContext = createContext({});
 
@@ -9,7 +10,8 @@ export const AuthProvider = ({children}) => {
   const [user, setUser] = useState(null);
 
   GoogleSignin.configure({
-    webClientId: config.webClientId,
+    webClientId:
+      Platform.OS === 'ios' ? config.webClientIdIos : config.webClientIdAndroid,
     offlineAccess: false,
   });
 

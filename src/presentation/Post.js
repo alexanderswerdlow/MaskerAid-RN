@@ -24,13 +24,7 @@ export default function Home({navigation}) {
     <View style={{flex: 1, width: 100 + '%'}}>
       <View style={styles.userBar}>
         <View style={{flexDirection: 'row', alignItems: 'center'}}>
-          <Image
-            style={styles.userPic}
-            source={{
-              uri:
-                'https://en.bcdn.biz/Images/2018/6/6/ae2e9240-c42a-4a81-b6d8-ac65af25b827.jpg',
-            }}
-          />
+          <Image style={styles.userPic} source={{uri: user.photoURL}} />
           <Text style={styles.username}>{user.displayName}</Text>
         </View>
         <View>

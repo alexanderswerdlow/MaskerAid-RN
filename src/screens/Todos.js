@@ -44,7 +44,7 @@ function Todos({navigation}) {
         setLoading(false);
       }
     });
-  }, []);
+  }, [loading, ref]);
 
   if (loading) {
     return (

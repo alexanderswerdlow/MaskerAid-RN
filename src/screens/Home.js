@@ -16,7 +16,7 @@ export default function Home({navigation}) {
 
 const styles = StyleSheet.create({
   nav: {
-    width: 100 + '%',
+    width: `${100}%`,
     height: 56,
     marginTop: 20,
     backgroundColor: 'rgb(250, 250, 250)',

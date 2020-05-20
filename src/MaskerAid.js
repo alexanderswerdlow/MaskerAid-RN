@@ -4,6 +4,7 @@ import HomeStack from './navigation/HomeStack';
 import {AuthContext} from './navigation/AuthProvider';
 import React, {useState, useContext, useEffect} from 'react';
 import {ActivityIndicator, Colors} from 'react-native-paper';
+
 import auth from '@react-native-firebase/auth';
 import {NavigationContainer} from '@react-navigation/native';
 import {StyleSheet, SafeAreaView} from 'react-native';
@@ -24,6 +25,7 @@ export default function MaskerAid() {
   useEffect(() => {
     const subscriber = auth().onAuthStateChanged(onAuthStateChanged);
     return subscriber; // unsubscribe on unmount
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   if (initializing) {

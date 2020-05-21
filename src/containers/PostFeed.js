@@ -19,7 +19,6 @@ function PostFeed(props) {
       .onSnapshot((querySnapshot) => {
         const posts = [];
         querySnapshot.forEach((postSnapshot) => {
-          //Need to fix this to order posts
           posts.push({
             key: postSnapshot.data().post_date,
             post: postSnapshot.data(),

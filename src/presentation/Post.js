@@ -1,12 +1,5 @@
 import React, {useContext, useState, useEffect} from 'react';
-import {
-  View,
-  Text,
-  Image,
-  StyleSheet,
-  Dimensions,
-  TouchableOpacity,
-} from 'react-native';
+import {View, Text, Image, StyleSheet, Dimensions} from 'react-native';
 import config from '../config';
 import Icon from 'react-native-vector-icons/Fontisto';
 import IconAntDesign from 'react-native-vector-icons/AntDesign';
@@ -14,9 +7,9 @@ import {AuthContext} from '../navigation/AuthProvider';
 import storage from '@react-native-firebase/storage';
 import ProgressiveImage from './ProgressiveImage';
 import DoubleTap from './DoubleTap';
+import Fire from '../util/Fire';
 
 export default function Post(props) {
-  const screenWidth = Dimensions.get('window').width;
   const w = Dimensions.get('window');
   const {user} = useContext(AuthContext);
   const [liked, _addLike] = useState(false);
@@ -24,39 +17,33 @@ export default function Post(props) {
   const [image, setImage] = useState('');
   const heartIconColor = liked ? 'rgb(252,61,57)' : null;
   const heartIconID = liked ? 'heart' : 'hearto';
+  const [like_count, set_like_count] = useState(0);
 
-  const likePhoto = () => {
+  /* Slows down like updating but ensures consistency */
+  function likePhoto() {
     _addLike(!liked);
-    props.loc
-      .update({
-        like_count: liked
-          ? props.post.like_count - 1
-          : props.post.like_count + 1,
-      })
-      .then(() => {
-        console.log('Liked!');
-      });
-  };
+    Fire.likePost(props.post, props.loc, liked);
+  }
 
   useEffect(() => {
-    const linked = storage()
+    set_like_count(props.post.like_count);
+    storage()
       .ref(`posts/thumbnails/${props.loc.id}_50x50`)
       .getDownloadURL()
       .then(function (url) {
         setThumbnail(url);
+        storage()
+          .ref(`posts/${props.loc.id}`)
+          .getDownloadURL()
+          .then(function (url) {
+            setImage(url);
+          })
+          .catch(function (error) {
+            console.log(error);
+          });
       })
       .catch(function (error) {
-        console.log(props.loc.id);
-      });
-
-    const linked1 = storage()
-      .ref(`posts/${props.loc.id}`)
-      .getDownloadURL()
-      .then(function (url) {
-        setImage(url);
-      })
-      .catch(function (error) {
-        console.log(props.loc.id);
+        console.log(error);
       });
   });
 
@@ -88,10 +75,18 @@ export default function Post(props) {
           onPress={() => likePhoto()}
         />
         <Icon name={'comment'} size={27} style={{padding: 5}} />
+        {user.uid == props.post.user_id && (
+          <IconAntDesign
+            name={'delete'}
+            size={30}
+            style={{padding: 5}}
+            onPress={() => Fire.deletePost(props.loc.id, user)}
+          />
+        )}
       </View>
       <View style={styles.commentBar}>
         <IconAntDesign name={'heart'} size={10} style={{padding: 5}} />
-        <Text>{props.post.like_count} Likes</Text>
+        <Text>{like_count} Likes</Text>
       </View>
     </View>
   );

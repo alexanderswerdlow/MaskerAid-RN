@@ -13,6 +13,7 @@ import IconAntDesign from 'react-native-vector-icons/AntDesign';
 import {AuthContext} from '../navigation/AuthProvider';
 import storage from '@react-native-firebase/storage';
 import ProgressiveImage from './ProgressiveImage';
+import DoubleTap from './DoubleTap';
 
 export default function Post(props) {
   const screenWidth = Dimensions.get('window').width;
@@ -71,14 +72,14 @@ export default function Post(props) {
           <Text style={styles.dotmenu}>...</Text>
         </View>
       </View>
-      <TouchableOpacity onPress={() => likePhoto()} activeOpacity={0.7}>
+      <DoubleTap onDoubleTap={() => likePhoto()} activeOpacity={0.7}>
         <ProgressiveImage
           thumbnailSource={thumbnail ? {uri: thumbnail} : null}
           source={image ? {uri: image} : null}
           style={{width: w.width, height: w.width}}
           resizeMode="cover"
         />
-      </TouchableOpacity>
+      </DoubleTap>
       <View style={styles.iconBar}>
         <IconAntDesign
           name={heartIconID}

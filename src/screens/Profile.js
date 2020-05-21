@@ -1,39 +1,47 @@
 import React, {Component} from 'react';
-import {View, Text, StyleSheet, Image, Dimensions, TouchableOpacity} from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  Image,
+  Dimensions,
+  TouchableOpacity,
+} from 'react-native';
 import {AuthContext} from '../navigation/AuthProvider';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import { withNavigation } from 'react-navigation';
+import {withNavigation} from 'react-navigation';
 import {PostFeed} from '../containers';
-import { ScrollView } from 'react-native-gesture-handler';
+import {ScrollView} from 'react-native-gesture-handler';
 
-var {width, height} = Dimensions.get('window')
+var {width, height} = Dimensions.get('window');
 
 class Profile extends Component {
-  static contextType = AuthContext
-  static data = PostFeed
+  static contextType = AuthContext;
+  static data = PostFeed;
 
   constructor(props) {
-    super(props)
+    super(props);
     this.state = {
-      activeIndex: 0
-    }
+      activeIndex: 0,
+    };
   }
 
   segmentClicked = (index) => {
     this.setState({
-      activeIndex: index
-    })
-  }
+      activeIndex: index,
+    });
+  };
 
   renderSectionOne = () => {
     return (
       <TouchableOpacity>
-          <View style={[ {width: (width) / 3}, {height: (width) / 3}, {marginBottom: 2}]}>
-            <PostFeed />
-          </View>
+        <View
+          style={[{width: width / 3}, {height: width / 3}, {marginBottom: 2}]}>
+          <PostFeed /> {/*  Actual data goes here */}
+        </View>
       </TouchableOpacity>
-  )
-  }
+    );
+  };
 
   renderSection = () => {
     if (this.state.activeIndex == 0) {
@@ -41,32 +49,30 @@ class Profile extends Component {
         <View style={{flexDirection: 'row', flexWrap: 'wrap'}}>
           {this.renderSectionOne()}
         </View>
-      )
-    }
-    else if (this.state.activeIndex == 1) {
+      );
+    } else if (this.state.activeIndex == 1) {
       return (
         <View>
-            <View>
-              <PostFeed />
-            </View>
+          <View>
+            <PostFeed /> {/*  Actual data goes here */}
+          </View>
         </View>
-      )
+      );
     }
-  }
+  };
 
   render() {
-    const {user, logout} = this.context
-    return(
+    const {user, logout} = this.context;
+    return (
       <View>
         <View>
           <View>
-            <Image style={styles.userPic}
+            <Image
+              style={styles.userPic}
               source={{uri: user.photoURL}}
               resizeMode="stretch"
             />
-            <Text style={styles.userName}>
-              {user.displayName}
-            </Text>
+            <Text style={styles.userName}>{user.displayName}</Text>
           </View>
           <View style={{flexDirection: 'row', justifyContent: 'space-evenly'}}>
             <View style={{alignItems: 'center'}}>
@@ -84,18 +90,31 @@ class Profile extends Component {
           </View>
         </View>
         <View>
-          <View style={{flexDirection: 'row', justifyContent: 'space-around', marginTop: 20, borderTopWidth: 0.75, borderTopColor: 'black'}}>
+          <View
+            style={{
+              flexDirection: 'row',
+              justifyContent: 'space-around',
+              marginTop: 20,
+              borderTopWidth: 0.75,
+              borderTopColor: 'black',
+            }}>
             <TouchableOpacity
-              onPress={()=>this.segmentClicked(0)}
-              active={this.state.activeIndex == 0}
-            >
-              <Ionicons name={'md-apps'} size={30} style={[this.state.activeIndex == 0 ? {} : {color: 'grey'}]} />
+              onPress={() => this.segmentClicked(0)}
+              active={this.state.activeIndex == 0}>
+              <Ionicons
+                name={'md-apps'}
+                size={30}
+                style={[this.state.activeIndex == 0 ? {} : {color: 'grey'}]}
+              />
             </TouchableOpacity>
             <TouchableOpacity
-              onPress={()=>this.segmentClicked(1)}
-              active={this.state.activeIndex == 1}
-            >
-              <Ionicons name={'ios-list'} size={30} style={[this.state.activeIndex == 1 ? {} : {color: 'grey'}]} />
+              onPress={() => this.segmentClicked(1)}
+              active={this.state.activeIndex == 1}>
+              <Ionicons
+                name={'ios-list'}
+                size={30}
+                style={[this.state.activeIndex == 1 ? {} : {color: 'grey'}]}
+              />
             </TouchableOpacity>
           </View>
         </View>

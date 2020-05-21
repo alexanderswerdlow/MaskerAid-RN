@@ -11,8 +11,9 @@ import {AuthContext} from '../navigation/AuthProvider';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {withNavigation} from 'react-navigation';
 import {PostFeed} from '../containers';
+import {ProgressBar, Colors, Button} from 'react-native-paper';
 
-var {width, height} = Dimensions.get('window');
+var width = Dimensions.get('window').width;
 
 class Profile extends Component {
   static contextType = AuthContext;
@@ -21,7 +22,7 @@ class Profile extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      activeIndex: 0,
+      activeIndex: 1,
     };
   }
 
@@ -36,13 +37,14 @@ class Profile extends Component {
       <TouchableOpacity>
         <View
           style={[{width: width / 3}, {height: width / 3}, {marginBottom: 2}]}>
-          <PostFeed />
+          <PostFeed userData={this.state.user} />
         </View>
       </TouchableOpacity>
     );
   };
 
   renderSection = () => {
+    const {user, logout} = this.context;
     if (this.state.activeIndex == 0) {
       return (
         <View style={{flexDirection: 'row', flexWrap: 'wrap'}}>
@@ -53,7 +55,7 @@ class Profile extends Component {
       return (
         <View>
           <View>
-            <PostFeed />
+            <PostFeed userData={user} />
           </View>
         </View>
       );
@@ -72,6 +74,7 @@ class Profile extends Component {
               resizeMode="stretch"
             />
             <Text style={styles.userName}>{user.displayName}</Text>
+            <Button onPress={() => logout()}>Logout</Button>
           </View>
           <View style={{flexDirection: 'row', justifyContent: 'space-evenly'}}>
             <View style={{alignItems: 'center'}}>

@@ -5,30 +5,53 @@ import {Post} from '../presentation';
 import {ActivityIndicator, StyleSheet} from 'react-native';
 import firestore from '@react-native-firebase/firestore';
 
-function PostFeed() {
+function PostFeed(props) {
   const [loading, setLoading] = useState(true);
   const [posts, setPosts] = useState([]);
 
   useEffect(() => {
-    const subscriber = firestore()
-      .collection('posts')
-      .orderBy('post_date', 'desc')
-      .limit(20)
-      .onSnapshot((querySnapshot) => {
-        const posts = [];
-        querySnapshot.forEach((postSnapshot) => {
-          //Need to fix this to order posts
-          posts.push({
-            key: postSnapshot.data().post_date,
-            post: postSnapshot.data(),
-            ref: postSnapshot.ref,
+    if (props.userData) {
+      console.log(props.userData);
+      const subscriber = firestore()
+        .collection('users')
+        .doc(props.userData.uid)
+        .collection('posts')
+        .orderBy('post_date', 'desc')
+        .limit(20)
+        .onSnapshot((querySnapshot) => {
+          const posts = [];
+          querySnapshot.forEach((postSnapshot) => {
+            //Need to fix this to order posts
+            posts.push({
+              key: postSnapshot.data().post_date,
+              post: postSnapshot.data(),
+              ref: postSnapshot.ref,
+            });
           });
+          setPosts(posts);
+          setLoading(false);
         });
-        setPosts(posts);
-        setLoading(false);
-      });
-
-    return () => subscriber();
+      return () => subscriber();
+    } else {
+      const subscriber = firestore()
+        .collection('posts')
+        .orderBy('post_date', 'desc')
+        .limit(20)
+        .onSnapshot((querySnapshot) => {
+          const posts = [];
+          querySnapshot.forEach((postSnapshot) => {
+            //Need to fix this to order posts
+            posts.push({
+              key: postSnapshot.data().post_date,
+              post: postSnapshot.data(),
+              ref: postSnapshot.ref,
+            });
+          });
+          setPosts(posts);
+          setLoading(false);
+        });
+      return () => subscriber();
+    }
   }, []);
 
   const renderItem = ({item}) => {

@@ -1,7 +1,7 @@
-import {Image, View, Text, Alert, TextInput, Button} from 'react-native';
+import {Image, View, Text, TextInput, Alert} from 'react-native';
 import React, {useState, useEffect} from 'react';
 import ImagePicker from 'react-native-image-crop-picker';
-import {ProgressBar, Colors} from 'react-native-paper';
+import {ProgressBar, Colors, Button} from 'react-native-paper';
 import {useUpload} from '../util';
 
 function NewPost({navigation}) {
@@ -16,11 +16,21 @@ function NewPost({navigation}) {
     }
   };
 
-  const selectImage = () => {
-    const options = {
-      noData: true,
-    };
+  const takeImage = () => {
+    ImagePicker.openCamera({
+      width: 1000,
+      height: 1000,
+      cropping: true,
+      forceJpg: true,
+      mediaType: 'photo',
+      maxFiles: 1,
+    }).then((image) => {
+      setResponse(image);
+      setImage({uri: image.path});
+    });
+  };
 
+  const selectImage = () => {
     ImagePicker.openPicker({
       width: 1000,
       height: 1000,
@@ -55,26 +65,51 @@ function NewPost({navigation}) {
         {image ? (
           <Image source={image} style={{width: '100%', height: 300}} />
         ) : (
-          <Button
-            title="Add Image"
-            onPress={() => selectImage()}
-            style={{
-              alignItems: 'center',
-              padding: 10,
-              margin: 30,
-            }}
-          />
+          <>
+            <Button
+              icon="camera"
+              mode="contained"
+              onPress={() => takeImage()}
+              style={{
+                alignItems: 'center',
+                padding: 10,
+                margin: 30,
+              }}>
+              Take Photo
+            </Button>
+            <Button
+              icon="camera"
+              mode="contained"
+              onPress={() => selectImage()}
+              style={{
+                alignItems: 'center',
+                padding: 10,
+                margin: 30,
+              }}>
+              Open from Camera Roll
+            </Button>
+          </>
         )}
       </View>
-      <View style={{marginTop: 80, alignItems: 'center'}}>
+      <View style={{marginTop: 20, alignItems: 'center'}}>
         <Text>Post Details</Text>
         <TextInput
-          placeholder="Enter title of the post"
+          placeholder="Enter a caption (Required)"
           style={{margin: 20}}
           value={title}
           onChangeText={(text) => setTitle(text)}
         />
-        <Button title={'Add Post'} onPress={alertUser} />
+        <Button
+          mode="contained"
+          disabled={image == null || title == null}
+          onPress={alertUser}
+          style={{
+            alignItems: 'center',
+            padding: 10,
+            margin: 30,
+          }}>
+          Add Post
+        </Button>
       </View>
     </View>
   );

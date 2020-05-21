@@ -65,6 +65,7 @@ export default function Post(props) {
         <View style={{flexDirection: 'row', alignItems: 'center'}}>
           <Image style={styles.userPic} source={{uri: props.post.user_photo}} />
           <Text style={styles.username}>{props.post.user_name}</Text>
+          <Text style={styles.username}>{props.post.text}</Text>
         </View>
         <View>
           <Text style={styles.dotmenu}>...</Text>

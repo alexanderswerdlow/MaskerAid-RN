@@ -50,7 +50,14 @@ export const useUpload = () => {
         Firebase.post(title, user, userPostsRef);
       })
       .then(() => {
-        Alert.alert('Posted!');
+        Alert.alert(
+          'Posted!',
+          'Go to your home feed to see it!',
+          [{text: 'OK', onPress: () => console.log('OK Pressed')}],
+          {
+            cancelable: true,
+          },
+        );
       })
       .catch((error) => {
         console.error(error.message);

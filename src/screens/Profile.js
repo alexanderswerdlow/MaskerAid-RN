@@ -68,13 +68,15 @@ class Profile extends Component {
       <View>
         <View>
           <View>
+            <Button icon="logout" mode="contained" onPress={() => logout()}>
+              Logout
+            </Button>
             <Image
               style={styles.userPic}
               source={{uri: user.photoURL}}
               resizeMode="stretch"
             />
             <Text style={styles.userName}>{user.displayName}</Text>
-            <Button onPress={() => logout()}>Logout</Button>
           </View>
           <View style={{flexDirection: 'row', justifyContent: 'space-evenly'}}>
             <View style={{alignItems: 'center'}}>

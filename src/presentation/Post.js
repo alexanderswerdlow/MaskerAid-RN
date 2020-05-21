@@ -85,7 +85,7 @@ export default function Post(props) {
           name={heartIconID}
           size={30}
           style={{padding: 5, color: heartIconColor}}
-          onPress={() => _addLike(!liked)}
+          onPress={() => likePhoto()}
         />
         <Icon name={'comment'} size={27} style={{padding: 5}} />
       </View>

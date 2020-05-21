@@ -13,10 +13,10 @@ export const Firebase = {
     }
   },
   uploadFileToFireBase: (response, user, loc) => {
-    const {path, uri} = response;
-    const fileSource = Platform.OS === 'android' ? path : uri;
+    //const {path, uri} = response;
+    //const fileSource = Platform.OS === 'android' ? path : uri;
     const storageRef = storage().ref(`posts/${loc}`);
-    return storageRef.putFile(fileSource);
+    return storageRef.putFile(response.path);
   },
   post: (post_data, user, loc) => {
     console.log('Post Triggered');

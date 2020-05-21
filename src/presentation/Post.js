@@ -2,8 +2,8 @@ import React, {useContext, useState, useEffect} from 'react';
 import {
   View,
   Text,
-  StyleSheet,
   Image,
+  StyleSheet,
   Dimensions,
   TouchableOpacity,
 } from 'react-native';
@@ -12,14 +12,15 @@ import Icon from 'react-native-vector-icons/Fontisto';
 import IconAntDesign from 'react-native-vector-icons/AntDesign';
 import {AuthContext} from '../navigation/AuthProvider';
 import storage from '@react-native-firebase/storage';
+import ProgressiveImage from './ProgressiveImage';
 
 export default function Post(props) {
   const screenWidth = Dimensions.get('window').width;
+  const w = Dimensions.get('window');
   const {user} = useContext(AuthContext);
   const [liked, _addLike] = useState(false);
-  const [image, setImage] = useState(
-    'https://en.bcdn.biz/Images/2018/6/6/ae2e9240-c42a-4a81-b6d8-ac65af25b827.jpg',
-  );
+  const [thumbnail, setThumbnail] = useState('');
+  const [image, setImage] = useState('');
   const heartIconColor = liked ? 'rgb(252,61,57)' : null;
   const heartIconID = liked ? 'heart' : 'hearto';
 
@@ -38,13 +39,23 @@ export default function Post(props) {
 
   useEffect(() => {
     const linked = storage()
+      .ref(`posts/thumbnails/${props.loc.id}_50x50`)
+      .getDownloadURL()
+      .then(function (url) {
+        setThumbnail(url);
+      })
+      .catch(function (error) {
+        console.log(props.loc.id);
+      });
+
+    const linked1 = storage()
       .ref(`posts/${props.loc.id}`)
       .getDownloadURL()
       .then(function (url) {
         setImage(url);
       })
       .catch(function (error) {
-        console.log(error);
+        console.log(props.loc.id);
       });
   });
 
@@ -60,11 +71,11 @@ export default function Post(props) {
         </View>
       </View>
       <TouchableOpacity onPress={() => likePhoto()} activeOpacity={0.7}>
-        <Image
-          style={{width: screenWidth, height: 405}}
-          source={{
-            uri: image,
-          }}
+        <ProgressiveImage
+          thumbnailSource={thumbnail ? {uri: thumbnail} : null}
+          source={image ? {uri: image} : null}
+          style={{width: w.width, height: w.width}}
+          resizeMode="cover"
         />
       </TouchableOpacity>
       <View style={styles.iconBar}>

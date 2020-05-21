@@ -12,7 +12,7 @@ export const AuthProvider = ({children}) => {
   GoogleSignin.configure({
     webClientId:
       Platform.OS === 'ios' ? config.webClientIdIos : config.webClientIdAndroid,
-    offlineAccess: false,
+    offlineAccess: true,
   });
 
   return (

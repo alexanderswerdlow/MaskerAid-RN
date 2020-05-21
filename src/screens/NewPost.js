@@ -1,6 +1,6 @@
 import {Image, View, Text, StyleSheet, TextInput, Button} from 'react-native';
 import React, {useState} from 'react';
-import ImagePicker from 'react-native-image-picker';
+import ImagePicker from 'react-native-image-crop-picker';
 import {ProgressBar, Colors} from 'react-native-paper';
 import {useUpload} from '../util';
 
@@ -20,17 +20,15 @@ function NewPost({navigation}) {
     const options = {
       noData: true,
     };
-    ImagePicker.launchImageLibrary(options, (res) => {
-      if (res.didCancel) {
-        console.log('User cancelled image picker');
-      } else if (res.error) {
-        console.log('ImagePicker Error: ', res.error);
-      } else if (res.customButton) {
-        console.log('User tapped custom button: ', res.customButton);
-      } else {
-        setResponse(res);
-        setImage({uri: res.uri});
-      }
+
+    ImagePicker.openPicker({
+      width: 1000,
+      height: 1000,
+      cropping: true,
+      forceJpg: true,
+    }).then((image) => {
+      setResponse(image);
+      setImage({uri: image.path});
     });
   };
 

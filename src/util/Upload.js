@@ -13,7 +13,7 @@ export const useUpload = () => {
   const {user} = useContext(AuthContext);
 
   const monitorUpload = useCallback((response, title) => {
-    console.log('Hook');
+    console.log('Post Triggered');
     setUploading(true);
     setSuccess(false);
     setProgress(0);
@@ -33,35 +33,22 @@ export const useUpload = () => {
     uploadTask.on(
       storage.TaskEvent.STATE_CHANGED,
       async (snapshot) => {
-        setProgress(
-          Math.round((snapshot.bytesTransferred / snapshot.totalBytes) * 100),
-        );
-        if (snapshot.state === storage.TaskState.SUCCESS) {
-          setSuccess(true);
-        }
+        var percent = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+        console.log('Image Upload: ' + percent + '% done');
+        setProgress(percent);
       },
       (error) => {
         setError(error);
       },
+      function () {
+        console.log('Image Upload complete!');
+        Firebase.post(title, user, userPostsRef).then(() => {
+          setSuccess(true);
+          setUploading(false);
+          console.log('Post Complete!');
+        });
+      },
     );
-
-    uploadTask
-      .then(() => {
-        Firebase.post(title, user, userPostsRef);
-      })
-      .then(() => {
-        Alert.alert(
-          'Posted!',
-          'Go to your home feed to see it!',
-          [{text: 'OK', onPress: () => console.log('OK Pressed')}],
-          {
-            cancelable: true,
-          },
-        );
-      })
-      .catch((error) => {
-        console.error(error.message);
-      });
   }, []);
 
   const state = {

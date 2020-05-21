@@ -1,20 +1,44 @@
-import {Image, View, Text, TextInput, Alert} from 'react-native';
+import {Image, View, Text, TextInput} from 'react-native';
 import React, {useState, useEffect} from 'react';
 import ImagePicker from 'react-native-image-crop-picker';
-import {ProgressBar, Colors, Button} from 'react-native-paper';
+import {
+  Dialog,
+  Portal,
+  Button,
+  Paragraph,
+  ProgressBar,
+  ActivityIndicator,
+  Colors,
+  Snackbar,
+} from 'react-native-paper';
 import {useUpload} from '../util';
 
 function NewPost({navigation}) {
   const [image, setImage] = useState(null);
   const [title, setTitle] = useState('');
   const [response, setResponse] = useState(null);
-  const [{uploading, progress}, monitorUpload] = useUpload();
+  const [visible, setVisible] = useState(false);
+  const [postDialogVisible, setPostDialogVisible] = useState(false);
+  const [capWarnVisible, setCapWarnVisible] = useState(false);
+  const [prompt, setPrompt] = useState(true);
+  const [{success, uploading, progress}, monitorUpload] = useUpload();
 
   const uploadFile = () => {
     if (response) {
       monitorUpload(response, title);
     }
   };
+
+  useEffect(() => {
+    if (uploading) {
+      console.log(progress);
+    } else if (success && prompt) {
+      setVisible(true);
+      setPrompt(false);
+      setImage(null);
+      setTitle('');
+    }
+  });
 
   const takeImage = () => {
     ImagePicker.openCamera({
@@ -43,21 +67,6 @@ function NewPost({navigation}) {
       setImage({uri: image.path});
     });
   };
-
-  const alertUser = () =>
-    Alert.alert(
-      'Are you sure you want to post?',
-      'Is this a photo of a mask?',
-      [
-        {
-          text: 'Cancel',
-          onPress: () => console.log('Cancel Pressed'),
-          style: 'cancel',
-        },
-        {text: 'OK', onPress: () => uploadFile()},
-      ],
-      {cancelable: false},
-    );
 
   return (
     <View style={{flex: 1, marginTop: 60}}>
@@ -99,18 +108,84 @@ function NewPost({navigation}) {
           value={title}
           onChangeText={(text) => setTitle(text)}
         />
-        <Button
-          mode="contained"
-          disabled={image == null || title == null}
-          onPress={alertUser}
-          style={{
-            alignItems: 'center',
-            padding: 10,
-            margin: 30,
-          }}>
-          Add Post
-        </Button>
+        {uploading ? (
+          <ProgressBar progress={0.5} color={Colors.red800} />
+        ) : (
+          <Button
+            mode="contained"
+            disabled={image == null}
+            onPress={() => {
+              if (title != '') {
+                setPostDialogVisible(true);
+              } else {
+                setCapWarnVisible(true);
+              }
+            }}
+            style={{
+              alignItems: 'center',
+              padding: 10,
+              margin: 30,
+            }}>
+            Add Post
+          </Button>
+        )}
       </View>
+      <Snackbar
+        duration={2000}
+        visible={visible}
+        onDismiss={() => {
+          setVisible(false);
+        }}
+        action={{
+          label: 'Go Home',
+          onPress: () => {
+            setVisible(false);
+            navigation.navigate('Home');
+          },
+        }}>
+        Posted!
+      </Snackbar>
+      <Snackbar
+        duration={4000}
+        visible={capWarnVisible}
+        onDismiss={() => {
+          setCapWarnVisible(false);
+        }}
+        action={{
+          label: 'Dismiss',
+          onPress: () => {
+            setCapWarnVisible(false);
+          },
+        }}>
+        You must enter a caption!
+      </Snackbar>
+      <Portal>
+        <Dialog
+          visible={postDialogVisible}
+          onDismiss={() => {
+            setPostDialogVisible(false);
+          }}>
+          <Dialog.Title>Are you sure you want to post?</Dialog.Title>
+          <Dialog.Content>
+            <Paragraph>Is this a photo of a mask?</Paragraph>
+          </Dialog.Content>
+          <Dialog.Actions>
+            <Button onPress={() => setPostDialogVisible(false)}>Cancel</Button>
+            <Button
+              onPress={() => {
+                uploadFile();
+                setPostDialogVisible(false);
+              }}>
+              Yes!
+            </Button>
+          </Dialog.Actions>
+        </Dialog>
+      </Portal>
+      <ActivityIndicator
+        size="large"
+        animating={uploading}
+        color={Colors.red800}
+      />
     </View>
   );
 }

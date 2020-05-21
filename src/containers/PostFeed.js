@@ -10,48 +10,26 @@ function PostFeed(props) {
   const [posts, setPosts] = useState([]);
 
   useEffect(() => {
-    if (props.userData) {
-      console.log(props.userData);
-      const subscriber = firestore()
-        .collection('users')
-        .doc(props.userData.uid)
-        .collection('posts')
-        .orderBy('post_date', 'desc')
-        .limit(20)
-        .onSnapshot((querySnapshot) => {
-          const posts = [];
-          querySnapshot.forEach((postSnapshot) => {
-            //Need to fix this to order posts
-            posts.push({
-              key: postSnapshot.data().post_date,
-              post: postSnapshot.data(),
-              ref: postSnapshot.ref,
-            });
+    const subscriber = firestore()
+      .collection(
+        props.userData ? `users/${props.userData.uid}/posts` : 'posts',
+      )
+      .orderBy('post_date', 'desc')
+      .limit(20)
+      .onSnapshot((querySnapshot) => {
+        const posts = [];
+        querySnapshot.forEach((postSnapshot) => {
+          //Need to fix this to order posts
+          posts.push({
+            key: postSnapshot.data().post_date,
+            post: postSnapshot.data(),
+            ref: postSnapshot.ref,
           });
-          setPosts(posts);
-          setLoading(false);
         });
-      return () => subscriber();
-    } else {
-      const subscriber = firestore()
-        .collection('posts')
-        .orderBy('post_date', 'desc')
-        .limit(20)
-        .onSnapshot((querySnapshot) => {
-          const posts = [];
-          querySnapshot.forEach((postSnapshot) => {
-            //Need to fix this to order posts
-            posts.push({
-              key: postSnapshot.data().post_date,
-              post: postSnapshot.data(),
-              ref: postSnapshot.ref,
-            });
-          });
-          setPosts(posts);
-          setLoading(false);
-        });
-      return () => subscriber();
-    }
+        setPosts(posts);
+        setLoading(false);
+      });
+    return () => subscriber();
   }, []);
 
   const renderItem = ({item}) => {

@@ -4,6 +4,7 @@ import HomeStack from './navigation/HomeStack';
 import {AuthContext} from './navigation/AuthProvider';
 import React, {useState, useContext, useEffect} from 'react';
 import {ActivityIndicator, Colors} from 'react-native-paper';
+import {Provider as PaperProvider} from 'react-native-paper';
 
 import auth from '@react-native-firebase/auth';
 import {NavigationContainer} from '@react-navigation/native';
@@ -37,9 +38,11 @@ export default function MaskerAid() {
 
   return (
     <SafeAreaView style={styles.container}>
-      <NavigationContainer>
-        {user ? <HomeStack /> : <AuthStack />}
-      </NavigationContainer>
+      <PaperProvider>
+        <NavigationContainer>
+          {user ? <HomeStack /> : <AuthStack />}
+        </NavigationContainer>
+      </PaperProvider>
     </SafeAreaView>
   );
 }

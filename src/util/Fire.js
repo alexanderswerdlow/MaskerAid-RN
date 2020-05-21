@@ -32,9 +32,7 @@ export const Firebase = {
     batch.set(loc, post);
     const postsRef = firestore().collection('posts').doc(loc.id);
     batch.set(postsRef, post);
-    batch.commit().then(() => {
-      console.log('Posted!');
-    });
+    return batch.commit();
   },
 };
 

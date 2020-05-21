@@ -11,7 +11,6 @@ import {AuthContext} from '../navigation/AuthProvider';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {withNavigation} from 'react-navigation';
 import {PostFeed} from '../containers';
-import {ScrollView} from 'react-native-gesture-handler';
 
 var {width, height} = Dimensions.get('window');
 
@@ -37,7 +36,7 @@ class Profile extends Component {
       <TouchableOpacity>
         <View
           style={[{width: width / 3}, {height: width / 3}, {marginBottom: 2}]}>
-          <PostFeed /> {/*  Actual data goes here */}
+          <PostFeed /> {/*  TODO actual data goes here */}
         </View>
       </TouchableOpacity>
     );
@@ -54,7 +53,7 @@ class Profile extends Component {
       return (
         <View>
           <View>
-            <PostFeed /> {/*  Actual data goes here */}
+            <PostFeed /> {/*  TODO actual data goes here */}
           </View>
         </View>
       );
@@ -147,10 +146,5 @@ const styles = StyleSheet.create({
   userStatus: {
     alignSelf: 'center',
     fontSize: 20,
-  },
-
-  feed: {
-    alignSelf: 'center',
-    fontSize: 40,
   },
 });

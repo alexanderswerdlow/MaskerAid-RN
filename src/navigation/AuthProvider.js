@@ -21,7 +21,7 @@ export const AuthProvider = ({children}) => {
         user,
         setUser,
         login: async () => {
-          console.log('Sign In');
+          console.log('Signing In');
           const {idToken} = await GoogleSignin.signIn();
           const googleCredential = auth.GoogleAuthProvider.credential(idToken);
           auth().signInWithCredential(googleCredential);
@@ -29,8 +29,6 @@ export const AuthProvider = ({children}) => {
         logout: async () => {
           try {
             await auth().signOut();
-            //await GoogleSignin.revokeAccess();
-            //await GoogleSignin.signOut();
           } catch (e) {
             console.error(e);
           }

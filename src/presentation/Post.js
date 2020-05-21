@@ -8,6 +8,7 @@ import storage from '@react-native-firebase/storage';
 import ProgressiveImage from './ProgressiveImage';
 import DoubleTap from './DoubleTap';
 import Fire from '../util/Fire';
+import {Dialog, Portal, Button, Paragraph} from 'react-native-paper';
 
 export default function Post(props) {
   const w = Dimensions.get('window');
@@ -18,6 +19,7 @@ export default function Post(props) {
   const heartIconColor = liked ? 'rgb(252,61,57)' : null;
   const heartIconID = liked ? 'heart' : 'hearto';
   const [like_count, set_like_count] = useState(0);
+  const [dialogVisible, setDialogVisible] = useState(false);
 
   /* Slows down like updating but ensures consistency */
   function likePhoto() {
@@ -32,18 +34,18 @@ export default function Post(props) {
       .getDownloadURL()
       .then(function (url) {
         setThumbnail(url);
-        storage()
-          .ref(`posts/${props.loc.id}`)
-          .getDownloadURL()
-          .then(function (url) {
-            setImage(url);
-          })
-          .catch(function (error) {
-            console.log(error);
-          });
       })
       .catch(function (error) {
-        console.log(error);
+        console.log('Could not retrieve thumbnail: ' + error);
+      });
+    storage()
+      .ref(`posts/${props.loc.id}`)
+      .getDownloadURL()
+      .then(function (url) {
+        setImage(url);
+      })
+      .catch(function (error) {
+        console.log('Could not retrieve image: ' + error);
       });
   });
 
@@ -80,7 +82,7 @@ export default function Post(props) {
             name={'delete'}
             size={30}
             style={{padding: 5}}
-            onPress={() => Fire.deletePost(props.loc.id, user)}
+            onPress={() => setDialogVisible(true)}
           />
         )}
       </View>
@@ -88,6 +90,32 @@ export default function Post(props) {
         <IconAntDesign name={'heart'} size={10} style={{padding: 5}} />
         <Text>{like_count} Likes</Text>
       </View>
+      <Portal>
+        <Dialog
+          visible={dialogVisible}
+          onDismiss={() => {
+            setDialogVisible(false);
+          }}>
+          <Dialog.Title>
+            Are you sure you want to delete your post?
+          </Dialog.Title>
+          <Dialog.Content>
+            <Paragraph>
+              There&apos;s no way to retrieve it once deleted
+            </Paragraph>
+          </Dialog.Content>
+          <Dialog.Actions>
+            <Button onPress={() => setDialogVisible(false)}>Cancel</Button>
+            <Button
+              onPress={() => {
+                Fire.deletePost(props.loc.id, user);
+                setDialogVisible(false);
+              }}>
+              Delete
+            </Button>
+          </Dialog.Actions>
+        </Dialog>
+      </Portal>
     </View>
   );
 }

@@ -30,9 +30,7 @@ function NewPost({navigation}) {
   };
 
   useEffect(() => {
-    if (uploading) {
-      console.log(progress);
-    } else if (success && prompt) {
+    if (success && prompt) {
       setVisible(true);
       setPrompt(false);
       setImage(null);

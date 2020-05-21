@@ -1,5 +1,5 @@
-import {Image, View, Text, StyleSheet, TextInput, Button} from 'react-native';
-import React, {useState} from 'react';
+import {Image, View, Text, Alert, TextInput, Button} from 'react-native';
+import React, {useState, useEffect} from 'react';
 import ImagePicker from 'react-native-image-crop-picker';
 import {ProgressBar, Colors} from 'react-native-paper';
 import {useUpload} from '../util';
@@ -26,11 +26,28 @@ function NewPost({navigation}) {
       height: 1000,
       cropping: true,
       forceJpg: true,
+      mediaType: 'photo',
+      maxFiles: 1,
     }).then((image) => {
       setResponse(image);
       setImage({uri: image.path});
     });
   };
+
+  const alertUser = () =>
+    Alert.alert(
+      'Are you sure you want to post?',
+      'Is this a photo of a mask?',
+      [
+        {
+          text: 'Cancel',
+          onPress: () => console.log('Cancel Pressed'),
+          style: 'cancel',
+        },
+        {text: 'OK', onPress: () => uploadFile()},
+      ],
+      {cancelable: false},
+    );
 
   return (
     <View style={{flex: 1, marginTop: 60}}>
@@ -57,7 +74,7 @@ function NewPost({navigation}) {
           value={title}
           onChangeText={(text) => setTitle(text)}
         />
-        <Button title="Add post" onPress={() => uploadFile()} />
+        <Button title={'Add Post'} onPress={alertUser} />
       </View>
     </View>
   );

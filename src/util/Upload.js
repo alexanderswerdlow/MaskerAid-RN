@@ -3,7 +3,7 @@ import storage from '@react-native-firebase/storage';
 import {Firebase} from './Fire.js';
 import {AuthContext} from '../navigation/AuthProvider';
 import firestore from '@react-native-firebase/firestore';
-import {View, StyleSheet, Button, Alert} from 'react-native';
+import {Alert} from 'react-native';
 
 export const useUpload = () => {
   const [progress, setProgress] = useState(0);

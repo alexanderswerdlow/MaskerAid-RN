@@ -16,7 +16,9 @@ export const Firebase = {
     //const {path, uri} = response;
     //const fileSource = Platform.OS === 'android' ? path : uri;
     const storageRef = storage().ref(`posts/${loc}`);
-    return storageRef.putFile(response.path);
+    return storageRef.putFile(response.path, {
+      cacheControl: 'max-age=7200', // cache photos for two hours
+    });
   },
   post: (post_data, user, loc) => {
     console.log('Post Triggered');

@@ -1,63 +1,111 @@
-import React, {useContext, useState} from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  Image,
-  Dimensions,
-  TouchableOpacity,
-} from 'react-native';
+import React, {Component} from 'react';
+import {View, Text, StyleSheet, Image, Dimensions, TouchableOpacity} from 'react-native';
 import {AuthContext} from '../navigation/AuthProvider';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import { withNavigation } from 'react-navigation';
+import {PostFeed} from '../containers';
+import { ScrollView } from 'react-native-gesture-handler';
 
-export function handlePress() {
-  return (
-    <View>
-      <Text>Hello</Text>
-    </View>
-  );
-}
+var {width, height} = Dimensions.get('window')
 
-export default function Profile({navigation}) {
-  const screenWidth = Dimensions.get('window').width;
-  const {user, logout} = useContext(AuthContext);
-  return (
-    <View>
+class Profile extends Component {
+  static contextType = AuthContext
+  static data = PostFeed
+
+  constructor(props) {
+    super(props)
+    this.state = {
+      activeIndex: 0
+    }
+  }
+
+  segmentClicked = (index) => {
+    this.setState({
+      activeIndex: index
+    })
+  }
+
+  renderSectionOne = () => {
+    return (
+      <TouchableOpacity>
+          <View style={[ {width: (width) / 3}, {height: (width) / 3}, {marginBottom: 2}]}>
+            <PostFeed />
+          </View>
+      </TouchableOpacity>
+  )
+  }
+
+  renderSection = () => {
+    if (this.state.activeIndex == 0) {
+      return (
+        <View style={{flexDirection: 'row', flexWrap: 'wrap'}}>
+          {this.renderSectionOne()}
+        </View>
+      )
+    }
+    else if (this.state.activeIndex == 1) {
+      return (
+        <View>
+            <View>
+              <PostFeed />
+            </View>
+        </View>
+      )
+    }
+  }
+
+  render() {
+    const {user, logout} = this.context
+    return(
       <View>
         <View>
-          <Image
-            style={styles.userPic}
-            source={{uri: user.photoURL}}
-            resizeMode="stretch"
-          />
-          <Text style={styles.userName}>{user.displayName}</Text>
+          <View>
+            <Image style={styles.userPic}
+              source={{uri: user.photoURL}}
+              resizeMode="stretch"
+            />
+            <Text style={styles.userName}>
+              {user.displayName}
+            </Text>
+          </View>
+          <View style={{flexDirection: 'row', justifyContent: 'space-evenly'}}>
+            <View style={{alignItems: 'center'}}>
+              <Text style={styles.userStatus}>20</Text>
+              <Text>Posts</Text>
+            </View>
+            <View style={{alignItems: 'center'}}>
+              <Text style={styles.userStatus}>20</Text>
+              <Text>Following</Text>
+            </View>
+            <View style={{alignItems: 'center'}}>
+              <Text style={styles.userStatus}>20</Text>
+              <Text>Followers</Text>
+            </View>
+          </View>
         </View>
-        <View style={{flexDirection: 'row', justifyContent: 'space-evenly'}}>
-          <View style={{alignItems: 'center'}}>
-            <Text style={styles.userStatus}>20</Text>
-            <Text>Posts</Text>
-          </View>
-          <View style={{alignItems: 'center'}}>
-            <Text style={styles.userStatus}>20</Text>
-            <Text>Following</Text>
-          </View>
-          <View style={{alignItems: 'center'}}>
-            <Text style={styles.userStatus}>20</Text>
-            <Text>Followers</Text>
+        <View>
+          <View style={{flexDirection: 'row', justifyContent: 'space-around', marginTop: 20, borderTopWidth: 0.75, borderTopColor: 'black'}}>
+            <TouchableOpacity
+              onPress={()=>this.segmentClicked(0)}
+              active={this.state.activeIndex == 0}
+            >
+              <Ionicons name={'md-apps'} size={30} style={[this.state.activeIndex == 0 ? {} : {color: 'grey'}]} />
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={()=>this.segmentClicked(1)}
+              active={this.state.activeIndex == 1}
+            >
+              <Ionicons name={'ios-list'} size={30} style={[this.state.activeIndex == 1 ? {} : {color: 'grey'}]} />
+            </TouchableOpacity>
           </View>
         </View>
+        {this.renderSection()}
       </View>
-
-      <View>
-        <View style={{flexDirection: 'row'}}>
-          <TouchableOpacity onPress={() => handlePress()}>
-            <Ionicons name={'apps-outline'} size={27} style={{padding: 5}} />
-          </TouchableOpacity>
-        </View>
-      </View>
-    </View>
-  );
+    );
+  }
 }
+
+export default withNavigation(Profile);
 
 const styles = StyleSheet.create({
   userPic: {

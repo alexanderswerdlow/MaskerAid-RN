@@ -1,5 +1,12 @@
 import React, {useContext, useState} from 'react';
-import {View, Text, StyleSheet, Image, Dimensions, TouchableOpacity} from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  Image,
+  Dimensions,
+  TouchableOpacity,
+} from 'react-native';
 import {AuthContext} from '../navigation/AuthProvider';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
@@ -18,13 +25,12 @@ export default function Profile({navigation}) {
     <View>
       <View>
         <View>
-          <Image style={styles.userPic}
+          <Image
+            style={styles.userPic}
             source={{uri: user.photoURL}}
             resizeMode="stretch"
           />
-          <Text style={styles.userName}>
-            {user.displayName}
-          </Text>
+          <Text style={styles.userName}>{user.displayName}</Text>
         </View>
         <View style={{flexDirection: 'row', justifyContent: 'space-evenly'}}>
           <View style={{alignItems: 'center'}}>
@@ -42,11 +48,10 @@ export default function Profile({navigation}) {
         </View>
       </View>
 
-
       <View>
         <View style={{flexDirection: 'row'}}>
           <TouchableOpacity onPress={() => handlePress()}>
-            <Ionicons name={'apps-outline'} size={27} style={{padding: 5}}/>
+            <Ionicons name={'apps-outline'} size={27} style={{padding: 5}} />
           </TouchableOpacity>
         </View>
       </View>
@@ -80,5 +85,5 @@ const styles = StyleSheet.create({
   feed: {
     alignSelf: 'center',
     fontSize: 40,
-  }
+  },
 });

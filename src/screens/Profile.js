@@ -36,7 +36,7 @@ class Profile extends Component {
       <TouchableOpacity>
         <View
           style={[{width: width / 3}, {height: width / 3}, {marginBottom: 2}]}>
-          <PostFeed /> {/*  TODO actual data goes here */}
+            <PostFeed />
         </View>
       </TouchableOpacity>
     );
@@ -53,7 +53,7 @@ class Profile extends Component {
       return (
         <View>
           <View>
-            <PostFeed /> {/*  TODO actual data goes here */}
+            <PostFeed />
           </View>
         </View>
       );

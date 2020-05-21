@@ -1,68 +1,67 @@
-import React, {useState, useContext} from 'react';
-import {StyleSheet, TextInput, Button} from 'react-native';
+import {Image, View, Text, StyleSheet, TextInput, Button} from 'react-native';
+import React, {useState} from 'react';
 import ImagePicker from 'react-native-image-picker';
-import {AuthContext} from '../navigation/AuthProvider';
-import firestore from '@react-native-firebase/firestore';
-
-const options = {
-  title: 'Select Photo',
-  storageOptions: {
-    skipBackup: true,
-    path: 'images',
-  },
-};
+import {ProgressBar, Colors} from 'react-native-paper';
+import {useUpload} from '../util';
 
 function NewPost({navigation}) {
-  const {user} = useContext(AuthContext);
-  const [avatarSource, setAvatarSource] = useState('');
-  const [post_text, setPostText] = React.useState('Useless Placeholder');
+  const [image, setImage] = useState(null);
+  const [title, setTitle] = useState('');
+  const [response, setResponse] = useState(null);
+  const [{uploading, progress}, monitorUpload] = useUpload();
 
-  async function _loadImage() {
-    ImagePicker.showImagePicker(options, (response) => {
-      if (response.didCancel) {
+  const uploadFile = () => {
+    if (response) {
+      monitorUpload(response, title);
+    }
+  };
+
+  const selectImage = () => {
+    const options = {
+      noData: true,
+    };
+    ImagePicker.launchImageLibrary(options, (res) => {
+      if (res.didCancel) {
         console.log('User cancelled image picker');
-      } else if (response.error) {
-        console.log('ImagePicker Error: ', response.error);
-      } else if (response.customButton) {
-        console.log('User tapped custom button: ', response.customButton);
+      } else if (res.error) {
+        console.log('ImagePicker Error: ', res.error);
+      } else if (res.customButton) {
+        console.log('User tapped custom button: ', res.customButton);
       } else {
-        setAvatarSource(response.uri);
+        setResponse(res);
+        setImage({uri: res.uri});
       }
     });
-  }
-
-  async function post() {
-    console.log('Post Triggered');
-    var post = {
-      post_date: firestore.Timestamp.fromDate(new Date()),
-      text: `${post_text}`,
-      like_count: 0,
-      user_name: user.displayName,
-      user_photo: user.photoURL,
-    };
-    const batch = firestore().batch();
-    const userPostsRef = firestore()
-      .collection('users')
-      .doc(user.uid)
-      .collection('posts')
-      .doc();
-    batch.set(userPostsRef, post);
-    const postsRef = firestore().collection('posts').doc();
-    batch.set(postsRef, {loc: userPostsRef, post_date: post.post_date});
-    batch.commit().then(function () {
-      console.log('Post Successful');
-    });
-  }
+  };
 
   return (
-    <>
-      <TextInput
-        style={{height: 40, borderColor: 'gray', borderWidth: 1}}
-        onChangeText={(text) => setPostText(text)}
-        value={post_text}
-      />
-      <Button title="Post" onPress={() => post()} />
-    </>
+    <View style={{flex: 1, marginTop: 60}}>
+      <View>
+        {image ? (
+          <Image source={image} style={{width: '100%', height: 300}} />
+        ) : (
+          <Button
+            title="Add Image"
+            onPress={() => selectImage()}
+            style={{
+              alignItems: 'center',
+              padding: 10,
+              margin: 30,
+            }}
+          />
+        )}
+      </View>
+      <View style={{marginTop: 80, alignItems: 'center'}}>
+        <Text>Post Details</Text>
+        <TextInput
+          placeholder="Enter title of the post"
+          style={{margin: 20}}
+          value={title}
+          onChangeText={(text) => setTitle(text)}
+        />
+        <Button title="Add post" onPress={() => uploadFile()} />
+      </View>
+    </View>
   );
 }
 

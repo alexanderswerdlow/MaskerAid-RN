@@ -1,4 +1,4 @@
-import React, {useContext, useState} from 'react';
+import React, {useContext, useState, useEffect} from 'react';
 import {
   View,
   Text,
@@ -11,12 +11,15 @@ import config from '../config';
 import Icon from 'react-native-vector-icons/Fontisto';
 import IconAntDesign from 'react-native-vector-icons/AntDesign';
 import {AuthContext} from '../navigation/AuthProvider';
-import firestore from '@react-native-firebase/firestore';
+import storage from '@react-native-firebase/storage';
 
 export default function Post(props) {
   const screenWidth = Dimensions.get('window').width;
   const {user} = useContext(AuthContext);
   const [liked, _addLike] = useState(false);
+  const [image, setImage] = useState(
+    'https://en.bcdn.biz/Images/2018/6/6/ae2e9240-c42a-4a81-b6d8-ac65af25b827.jpg',
+  );
   const heartIconColor = liked ? 'rgb(252,61,57)' : null;
   const heartIconID = liked ? 'heart' : 'hearto';
 
@@ -24,12 +27,26 @@ export default function Post(props) {
     _addLike(!liked);
     props.loc
       .update({
-        like_count: props.post.like_count + 1,
+        like_count: liked
+          ? props.post.like_count - 1
+          : props.post.like_count + 1,
       })
       .then(() => {
         console.log('Liked!');
       });
   };
+
+  useEffect(() => {
+    const linked = storage()
+      .ref(`posts/${props.loc.id}`)
+      .getDownloadURL()
+      .then(function (url) {
+        setImage(url);
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+  });
 
   return (
     <View style={{flex: 1, width: 100 + '%'}}>
@@ -46,8 +63,7 @@ export default function Post(props) {
         <Image
           style={{width: screenWidth, height: 405}}
           source={{
-            uri:
-              'https://en.bcdn.biz/Images/2018/6/6/ae2e9240-c42a-4a81-b6d8-ac65af25b827.jpg',
+            uri: image,
           }}
         />
       </TouchableOpacity>

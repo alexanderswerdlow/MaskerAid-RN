@@ -6,8 +6,8 @@ import {ActivityIndicator, StyleSheet} from 'react-native';
 import firestore from '@react-native-firebase/firestore';
 
 function PostFeed() {
-  const [loading, setLoading] = useState(true); // Set loading to true on component mount
-  const [posts, setPosts] = useState([]); // Initial empty array of users
+  const [loading, setLoading] = useState(true);
+  const [posts, setPosts] = useState([]);
 
   useEffect(() => {
     const subscriber = firestore()
@@ -16,34 +16,23 @@ function PostFeed() {
       .limit(20)
       .onSnapshot((querySnapshot) => {
         const posts = [];
-        querySnapshot.forEach((documentSnapshot) => {
+        querySnapshot.forEach((postSnapshot) => {
           //Need to fix this to order posts
-          documentSnapshot
-            .data()
-            .loc.get()
-            .then((postSnapshot) => {
-              posts.push({
-                key: postSnapshot.data().post_date,
-                post: postSnapshot.data(),
-                loc: documentSnapshot.data().loc,
-              });
-              console.log(postSnapshot.data().post_date);
-            });
+          posts.push({
+            key: postSnapshot.data().post_date,
+            post: postSnapshot.data(),
+            ref: postSnapshot.ref,
+          });
         });
         setPosts(posts);
         setLoading(false);
-        console.log('Loaded Posts');
       });
 
     return () => subscriber();
   }, []);
 
   const renderItem = ({item}) => {
-    var i;
-    for (i = 0; i < posts.length; i++) {
-      //console.log(posts[i].post.post_date);
-    }
-    return <Post post={item.post} loc={item.loc} />;
+    return <Post post={item.post} loc={item.ref} />;
   };
 
   if (loading) {

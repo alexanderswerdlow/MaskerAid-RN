@@ -1,58 +1,121 @@
-import React, {useContext, useState} from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  Image,
-  Dimensions,
-  Button,
-  TouchableOpacity,
-} from 'react-native';
+import React, {useContext, useState, useEffect} from 'react';
+import {View, Text, Image, StyleSheet, Dimensions} from 'react-native';
 import config from '../config';
 import Icon from 'react-native-vector-icons/Fontisto';
 import IconAntDesign from 'react-native-vector-icons/AntDesign';
 import {AuthContext} from '../navigation/AuthProvider';
+import storage from '@react-native-firebase/storage';
+import ProgressiveImage from './ProgressiveImage';
+import DoubleTap from './DoubleTap';
+import Fire from '../util/Fire';
+import {Dialog, Portal, Button, Paragraph} from 'react-native-paper';
 
-export default function Home({navigation}) {
-  const screenWidth = Dimensions.get('window').width;
-  const {user, logout} = useContext(AuthContext);
+export default function Post(props) {
+  const w = Dimensions.get('window');
+  const {user} = useContext(AuthContext);
   const [liked, _addLike] = useState(false);
+  const [thumbnail, setThumbnail] = useState('');
+  const [image, setImage] = useState('');
   const heartIconColor = liked ? 'rgb(252,61,57)' : null;
   const heartIconID = liked ? 'heart' : 'hearto';
+  const [like_count, set_like_count] = useState(0);
+  const [dialogVisible, setDialogVisible] = useState(false);
+
+  /* Slows down like updating but ensures consistency */
+  function likePhoto() {
+    _addLike(!liked);
+    Fire.likePost(props.post, props.loc, liked);
+  }
+
+  useEffect(() => {
+    set_like_count(props.post.like_count);
+    storage()
+      .ref(`posts/thumbnails/${props.loc.id}_50x50`)
+      .getDownloadURL()
+      .then(function (url) {
+        setThumbnail(url);
+      })
+      .catch(function (error) {
+        console.log('Could not retrieve thumbnail: ' + error);
+      });
+    storage()
+      .ref(`posts/${props.loc.id}`)
+      .getDownloadURL()
+      .then(function (url) {
+        setImage(url);
+      })
+      .catch(function (error) {
+        console.log('Could not retrieve image: ' + error);
+      });
+  });
 
   return (
     <View style={{flex: 1, width: 100 + '%'}}>
       <View style={styles.userBar}>
         <View style={{flexDirection: 'row', alignItems: 'center'}}>
-          <Image style={styles.userPic} source={{uri: user.photoURL}} />
-          <Text style={styles.username}>{user.displayName}</Text>
+          <Image style={styles.userPic} source={{uri: props.post.user_photo}} />
+          <Text style={styles.username}>{props.post.user_name}</Text>
+          <Text style={styles.username}>{props.post.text}</Text>
         </View>
         <View>
           <Text style={styles.dotmenu}>...</Text>
         </View>
       </View>
-      <TouchableOpacity onPress={() => _addLike(!liked)} activeOpacity={0.7}>
-        <Image
-          style={{width: screenWidth, height: 405}}
-          source={{
-            uri:
-              'https://en.bcdn.biz/Images/2018/6/6/ae2e9240-c42a-4a81-b6d8-ac65af25b827.jpg',
-          }}
+      <DoubleTap onDoubleTap={() => likePhoto()} activeOpacity={0.7}>
+        <ProgressiveImage
+          thumbnailSource={thumbnail ? {uri: thumbnail} : null}
+          source={image ? {uri: image} : null}
+          style={{width: w.width, height: w.width}}
+          resizeMode="cover"
         />
-      </TouchableOpacity>
+      </DoubleTap>
       <View style={styles.iconBar}>
         <IconAntDesign
           name={heartIconID}
           size={30}
           style={{padding: 5, color: heartIconColor}}
-          onPress={() => _addLike(!liked)}
+          onPress={() => likePhoto()}
         />
         <Icon name={'comment'} size={27} style={{padding: 5}} />
+        {user.uid == props.post.user_id && (
+          <IconAntDesign
+            name={'delete'}
+            size={30}
+            style={{padding: 5}}
+            onPress={() => setDialogVisible(true)}
+          />
+        )}
       </View>
       <View style={styles.commentBar}>
         <IconAntDesign name={'heart'} size={10} style={{padding: 5}} />
-        <Text>128 Likes</Text>
+        <Text>{like_count} Likes</Text>
       </View>
+      <Portal>
+        <Dialog
+          visible={dialogVisible}
+          onDismiss={() => {
+            setDialogVisible(false);
+          }}>
+          <Dialog.Title>
+            Are you sure you want to delete your post?
+          </Dialog.Title>
+          <Dialog.Content>
+            <Paragraph>
+              There&apos;s no way to retrieve it once deleted
+            </Paragraph>
+          </Dialog.Content>
+          <Dialog.Actions>
+            <Button onPress={() => setDialogVisible(false)}>Cancel</Button>
+            <Button
+              onPress={() => {
+                Fire.deletePost(props.loc.id, user);
+                setDialogVisible(false);
+              }}>
+              Delete
+            </Button>
+          </Dialog.Actions>
+        </Dialog>
+      </Portal>
     </View>
   );
 }

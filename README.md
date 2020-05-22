@@ -21,6 +21,10 @@ open `ios/MaskerAid.xcworkspace` (not .xcodeproj) and config the [licenses](http
 
 nan error: `npm i -g nan`
 
+need to install firebase cli: `npm install -g firebase-tools`
+
+run `firebase login` to login to your firebase account
+
 # Common Commands
 
 - `cd ios && pod install`

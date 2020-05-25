@@ -4,6 +4,7 @@ import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import HomeScreen from '../screens/Home';
 import ProfileScreen from '../screens/Profile';
 import NewPostScreen from '../screens/NewPost';
+import SearchScreen from '../screens/Search';
 import {AuthContext} from '../navigation/AuthProvider';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
@@ -24,6 +25,8 @@ export default function App() {
             iconName = 'ios-person';
           } else if (route.name === 'Post') {
             iconName = 'ios-clipboard';
+          } else if (route.name === 'Search') {
+            iconName = 'ios-search';
           }
 
           return <Ionicons name={iconName} size={size} color={color} />;
@@ -35,6 +38,7 @@ export default function App() {
       }}>
       <Tab.Screen name="Home" component={HomeScreen} />
       <Tab.Screen name="Post" component={NewPostScreen} />
+      <Tab.Screen name="Search" component={SearchScreen} />
       <Tab.Screen name="Profile" component={ProfileScreen} userData={user} />
     </Tab.Navigator>
   );

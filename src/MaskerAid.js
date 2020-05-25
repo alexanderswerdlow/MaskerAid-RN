@@ -5,11 +5,9 @@ import {AuthContext} from './navigation/AuthProvider';
 import React, {useState, useContext, useEffect} from 'react';
 import {ActivityIndicator, Colors} from 'react-native-paper';
 import {Provider as PaperProvider} from 'react-native-paper';
-
 import auth from '@react-native-firebase/auth';
 import {NavigationContainer} from '@react-navigation/native';
 import {StyleSheet, SafeAreaView} from 'react-native';
-import HomePage from './screens/Home';
 
 export default function MaskerAid() {
   const [initializing, setInitializing] = useState(true);

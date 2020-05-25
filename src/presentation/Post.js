@@ -1,5 +1,5 @@
 import React, {useContext, useState, useEffect} from 'react';
-import {View, Text, Image, StyleSheet, Dimensions} from 'react-native';
+import {TouchableOpacity, View, Text, Image, StyleSheet, Dimensions} from 'react-native';
 import config from '../config';
 import Icon from 'react-native-vector-icons/Fontisto';
 import IconAntDesign from 'react-native-vector-icons/AntDesign';
@@ -67,7 +67,9 @@ export default function Post(props) {
       <View style={styles.userBar}>
         <View style={{flexDirection: 'row', alignItems: 'center'}}>
           <Image style={styles.userPic} source={{uri: props.post.user_photo}} />
-          <Text style={styles.username}>{props.post.user_name}</Text>
+          <TouchableOpacity
+          onPress={ () => this.props.navigation.navigate('Home', {screen: 'User Profile'})}>
+            <Text style={styles.username}>{props.post.user_name}</Text></TouchableOpacity>
         </View>
         <View>
           <Text style={styles.dotmenu}>...</Text>

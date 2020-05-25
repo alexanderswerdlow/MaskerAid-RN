@@ -8,6 +8,7 @@ import {Provider as PaperProvider} from 'react-native-paper';
 import auth from '@react-native-firebase/auth';
 import {NavigationContainer} from '@react-navigation/native';
 import {StyleSheet, SafeAreaView} from 'react-native';
+import {navigationRef} from './navigation/RootNavigation';
 
 export default function MaskerAid() {
   const [initializing, setInitializing] = useState(true);
@@ -37,7 +38,7 @@ export default function MaskerAid() {
   return (
     <SafeAreaView style={styles.container}>
       <PaperProvider>
-        <NavigationContainer>
+        <NavigationContainer ref={navigationRef}>
           {user ? <HomeStack /> : <AuthStack />}
         </NavigationContainer>
       </PaperProvider>

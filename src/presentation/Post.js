@@ -1,5 +1,12 @@
 import React, {useContext, useState, useEffect} from 'react';
-import {View, Text, Image, StyleSheet, Dimensions} from 'react-native';
+import {
+  TouchableOpacity,
+  View,
+  Text,
+  Image,
+  StyleSheet,
+  Dimensions,
+} from 'react-native';
 import config from '../config';
 import Icon from 'react-native-vector-icons/Fontisto';
 import IconAntDesign from 'react-native-vector-icons/AntDesign';
@@ -9,6 +16,7 @@ import ProgressiveImage from './ProgressiveImage';
 import DoubleTap from './DoubleTap';
 import Fire from '../util/Fire';
 import {Dialog, Portal, Button, Paragraph} from 'react-native-paper';
+import * as RootNavigation from '../navigation/RootNavigation.js';
 
 export default function Post(props) {
   const w = Dimensions.get('window');
@@ -66,7 +74,18 @@ export default function Post(props) {
       <View style={styles.userBar}>
         <View style={{flexDirection: 'row', alignItems: 'center'}}>
           <Image style={styles.userPic} source={{uri: props.post.user_photo}} />
-          <Text style={styles.username}>{props.post.user_name}</Text>
+          <TouchableOpacity
+            onPress={() =>
+              RootNavigation.navigate('User', {
+                user: {
+                  photoURL: props.post.user_photo,
+                  displayName: props.post.user_name,
+                  uid: props.post.user_id,
+                },
+              })
+            }>
+            <Text style={styles.username}>{props.post.user_name}</Text>
+          </TouchableOpacity>
         </View>
         <View>
           <Text style={styles.dotmenu}>...</Text>

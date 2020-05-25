@@ -7,9 +7,7 @@ export default function Login({navigation}) {
   const {user, login} = useContext(AuthContext);
   return (
     <View style={[styles.container, styles.pageContainer]}>
-      <Image
-        source= {require('../images/180.png')}
-      />  
+      <Image source={require('../images/180.png')} />
 
       <GoogleSigninButton
         style={{width: 192, height: 48}}

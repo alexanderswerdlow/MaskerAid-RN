@@ -1,1 +1,1 @@
-export const signInImage = require('./180.png'); 
+export const signInImage = require('./180.png');

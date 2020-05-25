@@ -7,7 +7,6 @@ import {
   Dimensions,
   TouchableOpacity,
 } from 'react-native';
-import {AuthContext} from '../navigation/AuthProvider';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {withNavigation} from 'react-navigation';
 import {PostFeed} from '../containers';
@@ -16,13 +15,13 @@ import {ProgressBar, Colors, Button} from 'react-native-paper';
 var width = Dimensions.get('window').width;
 
 class Profile extends Component {
-  static contextType = AuthContext;
   static data = PostFeed;
 
   constructor(props) {
     super(props);
     this.state = {
       activeIndex: 1,
+      user: this.props.route.params.user,
     };
   }
 
@@ -44,7 +43,6 @@ class Profile extends Component {
   };
 
   renderSection = () => {
-    const {user, logout} = this.context;
     if (this.state.activeIndex == 0) {
       return (
         <View style={{flexDirection: 'row', flexWrap: 'wrap'}}>
@@ -55,7 +53,7 @@ class Profile extends Component {
       return (
         <View>
           <View>
-            <PostFeed userData={user} />
+            <PostFeed userData={this.state.user.uid} />
           </View>
         </View>
       );
@@ -63,20 +61,16 @@ class Profile extends Component {
   };
 
   render() {
-    const {user, logout} = this.context;
     return (
       <View>
         <View>
           <View>
-            <Button icon="logout" mode="contained" onPress={() => logout()}>
-              Logout
-            </Button>
             <Image
               style={styles.userPic}
-              source={{uri: user.photoURL}}
+              source={{uri: this.state.user.photoURL}}
               resizeMode="stretch"
             />
-            <Text style={styles.userName}>{user.displayName}</Text>
+            <Text style={styles.userName}>{this.state.user.displayName}</Text>
           </View>
           <View style={{flexDirection: 'row', justifyContent: 'space-evenly'}}>
             <View style={{alignItems: 'center'}}>

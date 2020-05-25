@@ -37,7 +37,7 @@ class Profile extends Component {
       <TouchableOpacity>
         <View
           style={[{width: width / 3}, {height: width / 3}, {marginBottom: 2}]}>
-          <PostFeed userData={this.state.user} />
+          <PostFeed userData={this.state.user.uid} />
         </View>
       </TouchableOpacity>
     );

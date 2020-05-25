@@ -9,6 +9,7 @@ import ProgressiveImage from './ProgressiveImage';
 import DoubleTap from './DoubleTap';
 import Fire from '../util/Fire';
 import {Dialog, Portal, Button, Paragraph} from 'react-native-paper';
+import * as RootNavigation from '../navigation/RootNavigation.js';
 
 export default function Post(props) {
   const w = Dimensions.get('window');
@@ -16,19 +17,31 @@ export default function Post(props) {
   const [liked, _addLike] = useState(false);
   const [thumbnail, setThumbnail] = useState('');
   const [image, setImage] = useState('');
-  const heartIconColor = liked ? 'rgb(252,61,57)' : null;
-  const heartIconID = liked ? 'heart' : 'hearto';
   const [like_count, set_like_count] = useState(0);
   const [dialogVisible, setDialogVisible] = useState(false);
-
-  /* Slows down like updating but ensures consistency */
+  const heartIconColor = liked ? 'rgb(252,61,57)' : null;
+  const heartIconID = liked ? 'heart' : 'hearto';
+  /* Slows down like updating but ensures consistency
   function likePhoto() {
     _addLike(!liked);
     Fire.likePost(props.post, props.loc, liked);
-  }
+  } */
+
+  const likePhoto = () => {
+    _addLike(!liked);
+    props.loc
+      .update({
+        like_count: liked
+          ? props.post.like_count - 1
+          : props.post.like_count + 1,
+      })
+      .then(() => {
+        console.log('Liked!');
+      });
+  };
 
   useEffect(() => {
-    set_like_count(props.post.like_count);
+    //set_like_count(props.post.like_count);
     storage()
       .ref(`posts/thumbnails/${props.loc.id}_50x50`)
       .getDownloadURL()
@@ -55,7 +68,6 @@ export default function Post(props) {
         <View style={{flexDirection: 'row', alignItems: 'center'}}>
           <Image style={styles.userPic} source={{uri: props.post.user_photo}} />
           <Text style={styles.username}>{props.post.user_name}</Text>
-          <Text style={styles.username}>{props.post.text}</Text>
         </View>
         <View>
           <Text style={styles.dotmenu}>...</Text>
@@ -85,10 +97,31 @@ export default function Post(props) {
             onPress={() => setDialogVisible(true)}
           />
         )}
+        <IconAntDesign
+          name={'mail'}
+          size={30}
+          style={{padding: 5}}
+          onPress={() =>
+            RootNavigation.navigate('User', {
+              test: 'potat',
+              user: {
+                photoURL: props.post.user_photo,
+                displayName: props.post.user_name,
+                uid: props.post.user_id,
+              },
+            })
+          }
+        />
       </View>
       <View style={styles.commentBar}>
-        <IconAntDesign name={'heart'} size={10} style={{padding: 5}} />
-        <Text>{like_count} Likes</Text>
+        <View style={{flexDirection: 'row'}}>
+          <IconAntDesign name={'heart'} size={10} style={{padding: 5}} />
+          <Text>{props.post.like_count} Likes</Text>
+        </View>
+        <View style={styles.caption}>
+          <Text style={styles.username}>{props.post.user_name}</Text>
+          <Text style={styles.username}>{props.post.text}</Text>
+        </View>
       </View>
       <Portal>
         <Dialog
@@ -173,7 +206,14 @@ const styles = StyleSheet.create({
     borderBottomWidth: StyleSheet.hairlineWidth,
     borderTopWidth: StyleSheet.hairlineWidth,
     borderColor: config.styleConstants.borderColor,
-    flexDirection: 'row',
+    flexDirection: 'column',
     paddingHorizontal: 10,
+  },
+
+  caption: {
+    flexDirection: 'row',
+    position: 'absolute',
+    marginTop: 17,
+    marginLeft: 4,
   },
 });

@@ -6,7 +6,7 @@ import ProfileScreen from '../screens/Profile';
 import NewPostScreen from '../screens/NewPost';
 import {AuthContext} from '../navigation/AuthProvider';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import { createStackNavigator } from '@react-navigation/stack';
+import {createStackNavigator} from '@react-navigation/stack';
 import UserProfile from '../screens/UserProfile';
 
 const Tab = createBottomTabNavigator();
@@ -19,7 +19,7 @@ function MainStackScreen() {
       <MainStack.Screen name="Home" component={HomeScreen} />
       <MainStack.Screen name="User Profile" component={UserProfile} />
     </MainStack.Navigator>
-  )
+  );
 }
 
 export default function App() {

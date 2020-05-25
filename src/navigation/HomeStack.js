@@ -1,9 +1,12 @@
 /* eslint-disable react/display-name */
 import * as React from 'react';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
+import {createStackNavigator} from '@react-navigation/stack';
+import {NavigationContainer} from '@react-navigation/native';
 import HomeScreen from '../screens/Home';
 import ProfileScreen from '../screens/Profile';
 import NewPostScreen from '../screens/NewPost';
+import userProfile from '../screens/ViewProfile';
 import {AuthContext} from '../navigation/AuthProvider';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {createStackNavigator} from '@react-navigation/stack';
@@ -17,7 +20,7 @@ function MainStackScreen() {
   return (
     <MainStack.Navigator>
       <MainStack.Screen name="Home" component={HomeScreen} />
-      <MainStack.Screen name="User Profile" component={UserProfile} />
+      <MainStack.Screen name="User" component={userProfile} />
     </MainStack.Navigator>
   );
 }

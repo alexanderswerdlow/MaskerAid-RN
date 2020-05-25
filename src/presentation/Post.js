@@ -16,6 +16,7 @@ import ProgressiveImage from './ProgressiveImage';
 import DoubleTap from './DoubleTap';
 import Fire from '../util/Fire';
 import {Dialog, Portal, Button, Paragraph} from 'react-native-paper';
+import * as RootNavigation from '../navigation/RootNavigation.js';
 
 export default function Post(props) {
   const w = Dimensions.get('window');
@@ -108,6 +109,21 @@ export default function Post(props) {
             onPress={() => setDialogVisible(true)}
           />
         )}
+        <IconAntDesign
+          name={'mail'}
+          size={30}
+          style={{padding: 5}}
+          onPress={() =>
+            RootNavigation.navigate('User', {
+              test: 'potat',
+              user: {
+                photoURL: props.post.user_photo,
+                displayName: props.post.user_name,
+                uid: props.post.user_id,
+              },
+            })
+          }
+        />
       </View>
       <View style={styles.commentBar}>
         <View style={{flexDirection: 'row'}}>

@@ -76,7 +76,13 @@ export default function Post(props) {
           <Image style={styles.userPic} source={{uri: props.post.user_photo}} />
           <TouchableOpacity
             onPress={() =>
-              this.props.navigation.navigate('Home', {screen: 'User Profile'})
+              RootNavigation.navigate('User', {
+                user: {
+                  photoURL: props.post.user_photo,
+                  displayName: props.post.user_name,
+                  uid: props.post.user_id,
+                },
+              })
             }>
             <Text style={styles.username}>{props.post.user_name}</Text>
           </TouchableOpacity>
@@ -109,21 +115,6 @@ export default function Post(props) {
             onPress={() => setDialogVisible(true)}
           />
         )}
-        <IconAntDesign
-          name={'mail'}
-          size={30}
-          style={{padding: 5}}
-          onPress={() =>
-            RootNavigation.navigate('User', {
-              test: 'potat',
-              user: {
-                photoURL: props.post.user_photo,
-                displayName: props.post.user_name,
-                uid: props.post.user_id,
-              },
-            })
-          }
-        />
       </View>
       <View style={styles.commentBar}>
         <View style={{flexDirection: 'row'}}>

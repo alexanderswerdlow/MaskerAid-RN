@@ -9,7 +9,6 @@ import NewPostScreen from '../screens/NewPost';
 import userProfile from '../screens/ViewProfile';
 import {AuthContext} from '../navigation/AuthProvider';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import {createStackNavigator} from '@react-navigation/stack';
 import UserProfile from '../screens/UserProfile';
 
 const Tab = createBottomTabNavigator();

@@ -2,6 +2,8 @@ import React from 'react';
 import {StyleSheet, Text, View, FlatList} from 'react-native';
 import PropTypes from 'prop-types';
 import {connectInfiniteHits} from 'react-instantsearch-native';
+import {Post} from '../presentation';
+import firestore from '@react-native-firebase/firestore';
 
 const styles = StyleSheet.create({
   separator: {
@@ -17,17 +19,31 @@ const styles = StyleSheet.create({
   },
 });
 
-const InfiniteHits = ({hits, hasMore, refine}) => (
+const InfiniteHits = ({hits, hasMore, refine, searchType}) => (
   <FlatList
     data={hits}
     keyExtractor={(item) => item.objectID}
     ItemSeparatorComponent={() => <View style={styles.separator} />}
     onEndReached={() => hasMore && refine()}
-    renderItem={({item}) => (
-      <View style={styles.item}>
-        <Text>{JSON.stringify(item.text).slice(0, 100)}</Text>
-      </View>
-    )}
+    renderItem={({item}) => {
+      console.log(searchType);
+      if (searchType == 'users') {
+        return (
+          <View style={styles.item}>
+            <Text>
+              {JSON.parse(JSON.stringify(item.displayName).slice(0, 100))}
+            </Text>
+          </View>
+        );
+      } else {
+        return (
+          <Post
+            post={item}
+            loc={firestore().collection('posts').doc(item.objectID)}
+          />
+        );
+      }
+    }}
   />
 );
 

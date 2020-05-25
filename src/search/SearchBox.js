@@ -1,7 +1,17 @@
 import React from 'react';
-import {StyleSheet, View, TextInput} from 'react-native';
+import {
+  StyleSheet,
+  View,
+  TextInput,
+  Text,
+  Animated,
+  Dimensions,
+  TouchableOpacity,
+  ScrollView,
+} from 'react-native';
 import PropTypes from 'prop-types';
 import {connectSearchBox} from 'react-instantsearch-native';
+import {Searchbar} from 'react-native-paper';
 
 const styles = StyleSheet.create({
   container: {
@@ -24,11 +34,10 @@ const styles = StyleSheet.create({
 
 const SearchBox = ({currentRefinement, refine}) => (
   <View style={styles.container}>
-    <TextInput
-      style={styles.input}
+    <Searchbar
+      placeholder="Search"
       onChangeText={(value) => refine(value)}
       value={currentRefinement}
-      placeholder=""
     />
   </View>
 );

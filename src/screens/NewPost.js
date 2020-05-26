@@ -21,11 +21,12 @@ function NewPost({navigation}) {
   const [postDialogVisible, setPostDialogVisible] = useState(false);
   const [capWarnVisible, setCapWarnVisible] = useState(false);
   const [prompt, setPrompt] = useState(true);
-  const [{success, uploading, progress}, monitorUpload] = useUpload();
+  const [{success, uploading}, monitorUpload] = useUpload();
 
   const uploadFile = () => {
     if (response) {
       monitorUpload(response, title);
+      setPrompt(true);
     }
   };
 
@@ -46,10 +47,14 @@ function NewPost({navigation}) {
       forceJpg: true,
       mediaType: 'photo',
       maxFiles: 1,
-    }).then((image) => {
-      setResponse(image);
-      setImage({uri: image.path});
-    });
+    })
+      .then((image) => {
+        setResponse(image);
+        setImage({uri: image.path});
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   };
 
   const selectImage = () => {
@@ -60,10 +65,14 @@ function NewPost({navigation}) {
       forceJpg: true,
       mediaType: 'photo',
       maxFiles: 1,
-    }).then((image) => {
-      setResponse(image);
-      setImage({uri: image.path});
-    });
+    })
+      .then((image) => {
+        setResponse(image);
+        setImage({uri: image.path});
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   };
 
   return (

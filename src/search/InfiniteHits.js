@@ -26,23 +26,30 @@ const InfiniteHits = ({hits, hasMore, refine, searchType}) => (
     ItemSeparatorComponent={() => <View style={styles.separator} />}
     onEndReached={() => hasMore && refine()}
     renderItem={({item}) => {
-      console.log(item.user);
       if (searchType == 'users') {
-        return (
-          <View style={styles.item}>
-            <Text>
-              {JSON.parse(JSON.stringify(item.displayName).slice(0, 100))}
-            </Text>
-          </View>
-        );
+        //Hack to ensure we don't get into an undefined state
+        if (!item.user) {
+          return (
+            <View style={styles.item}>
+              <Text>
+                {JSON.parse(JSON.stringify(item.displayName).slice(0, 100))}
+              </Text>
+            </View>
+          );
+        }
       } else {
-        return (
-          <Post
-            post={item.post}
-            user={item.user}
-            loc={firestore().collection('posts').doc(item.objectID)}
-          />
-        );
+        //Hack to ensure we don't get into an undefined state
+        //If the toggle switches instantly but the data persists
+        //we don't want to try render with that invalid data
+        if (item.user) {
+          return (
+            <Post
+              post={item}
+              user={item.user}
+              loc={firestore().collection('posts').doc(item.objectID)}
+            />
+          );
+        }
       }
     }}
   />

@@ -1,28 +1,11 @@
 import React from 'react';
-import {
-  StyleSheet,
-  View,
-  SafeAreaView,
-  StatusBar,
-  Text,
-  TouchableHighlight,
-} from 'react-native';
+import {StyleSheet, View, SafeAreaView, StatusBar} from 'react-native';
 import algoliasearch from 'algoliasearch';
 import {InstantSearch} from 'react-instantsearch-native';
 import SearchBox from '../search/SearchBox';
 import InfiniteHits from '../search/InfiniteHits';
-import {ToggleButton} from 'react-native-paper';
+import {ToggleButton, Title} from 'react-native-paper';
 import {connectStateResults} from 'react-instantsearch-native';
-import {
-  Dialog,
-  Portal,
-  Button,
-  Paragraph,
-  ProgressBar,
-  ActivityIndicator,
-  Colors,
-  Snackbar,
-} from 'react-native-paper';
 
 const searchClient = algoliasearch(
   'V6KRQS64EW',
@@ -40,11 +23,11 @@ const styles = StyleSheet.create({
   },
 });
 
-const Things = (props) => {
+const SearchNotice = (props) => {
   if (props.query) {
-    return <Text>No results have been found for: {props.query}</Text>;
+    return <Title>No results have been found for: {props.query}</Title>;
   } else {
-    return <Text>Empty</Text>;
+    return <Title>No query was entered</Title>;
   }
 };
 
@@ -52,7 +35,7 @@ const Results = connectStateResults(({searchState, searchResults, children}) =>
   searchResults && searchState.query && searchResults.nbHits !== 0 ? (
     children
   ) : (
-    <Things query={searchState.query} />
+    <SearchNotice query={searchState.query} />
   ),
 );
 
@@ -77,11 +60,15 @@ class Search extends React.Component {
         <View style={styles.container}>
           <InstantSearch
             searchClient={searchClient}
-            indexName={this.state.value == 'users' ? 'users' : 'posts'}
+            indexName={this.state.value}
             root={this.root}>
             <SearchBox />
             <ToggleButton.Row
-              onValueChange={(value) => this.setState({value})}
+              onValueChange={(value) => {
+                if (value) {
+                  this.setState({value});
+                }
+              }}
               value={this.state.value}>
               <ToggleButton icon="account-circle" value="users" />
               <ToggleButton icon="note" value="posts" />

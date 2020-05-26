@@ -5,6 +5,7 @@ import {
   Text,
   Image,
   StyleSheet,
+  TouchableHighlight,
   Dimensions,
 } from 'react-native';
 import config from '../config';
@@ -22,34 +23,37 @@ import PropTypes from 'prop-types';
 export default function Post(props) {
   const w = Dimensions.get('window');
   const {user} = useContext(AuthContext);
-  const [liked, _addLike] = useState(false);
+  const [liked, setLiked] = useState(false);
   const [thumbnail, setThumbnail] = useState('');
   const [image, setImage] = useState('');
-  const [like_count, set_like_count] = useState(0);
   const [dialogVisible, setDialogVisible] = useState(false);
   const heartIconColor = liked ? 'rgb(252,61,57)' : null;
   const heartIconID = liked ? 'heart' : 'hearto';
-  /* Slows down like updating but ensures consistency
-  function likePhoto() {
-    _addLike(!liked);
-    Fire.likePost(props.post, props.loc, liked);
-  } */
 
   const likePhoto = () => {
-    _addLike(!liked);
-    props.loc
-      .update({
-        like_count: liked
-          ? props.post.like_count - 1
-          : props.post.like_count + 1,
-      })
-      .then(() => {
-        console.log('Liked!');
-      });
+    if (props.post.like_count == 0 && liked) {
+      props.loc
+        .update({
+          like_count: 1,
+        })
+        .then(() => {
+          console.log('Fixed Like');
+        });
+    } else {
+      setLiked(!liked);
+      props.loc
+        .update({
+          like_count: liked
+            ? props.post.like_count - 1
+            : props.post.like_count + 1,
+        })
+        .then(() => {
+          console.log('Liked!');
+        });
+    }
   };
 
   useEffect(() => {
-    //set_like_count(props.post.like_count);
     storage()
       .ref(`posts/thumbnails/${props.loc.id}_50x50`)
       .getDownloadURL()
@@ -74,7 +78,22 @@ export default function Post(props) {
     <View style={{flex: 1, width: 100 + '%'}}>
       <View style={styles.userBar}>
         <View style={{flexDirection: 'row', alignItems: 'center'}}>
-          <Image style={styles.userPic} source={{uri: props.user.photoURL}} />
+          <TouchableOpacity
+            onPress={() => {
+              RootNavigation.navigate('ViewProfile', {
+                user: props.user,
+              });
+            }}>
+            <Image
+              style={styles.userPic}
+              source={{uri: props.user.photoURL}}
+              onPress={() => {
+                RootNavigation.navigate('ViewProfile', {
+                  user: props.user,
+                });
+              }}
+            />
+          </TouchableOpacity>
           <TouchableOpacity
             onPress={() => {
               RootNavigation.navigate('ViewProfile', {

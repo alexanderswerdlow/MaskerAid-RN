@@ -56,12 +56,12 @@ export const AuthProvider = ({children}) => {
           user
             .delete()
             .then(function () {
-              // User deleted.
               console.log('User Deleted');
+              auth().signOut();
             })
             .catch(function (error) {
-              // An error happened.
-              console.log('Error Deleting User');
+              console.log('Error Deleting User' + error);
+              auth().signOut();
             });
         },
       }}>

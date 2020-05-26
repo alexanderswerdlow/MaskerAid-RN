@@ -34,18 +34,19 @@ class Profile extends Component {
   };
 
   renderSectionOne = () => {
+    const {user} = this.context;
     return (
       <TouchableOpacity>
         <View
           style={[{width: width / 3}, {height: width / 3}, {marginBottom: 2}]}>
-          <PostFeed userData={this.state.user.uid} />
+          <PostFeed user={user} />
         </View>
       </TouchableOpacity>
     );
   };
 
   renderSection = () => {
-    const {user, logout} = this.context;
+    const {user} = this.context;
     if (this.state.activeIndex == 0) {
       return (
         <View style={{flexDirection: 'row', flexWrap: 'wrap'}}>
@@ -56,7 +57,7 @@ class Profile extends Component {
       return (
         <View>
           <View>
-            <PostFeed userData={user} />
+            <PostFeed user={user} />
           </View>
         </View>
       );
@@ -78,7 +79,7 @@ class Profile extends Component {
                   'All your posts will be saved',
                   [
                     {text: 'Cancel', style: 'cancel'},
-                    {text: 'OK', onPress: () => deleteAccount()},
+                    {text: 'OK', onPress: () => logout()},
                   ],
                   {cancelable: false},
                 );

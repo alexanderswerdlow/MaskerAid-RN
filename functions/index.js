@@ -46,12 +46,12 @@ exports.createUserData = functions.auth.user().onCreate((user) => {
 
 exports.onPostUpdate = functions.firestore
   .document('posts/{postId}')
-  .onWrite((snap, context) => {
-    const post = snap.data();
+  .onWrite((change, context) => {
+    const post = change.after.data();
     post.objectID = context.params.postId;
     const index = client.initIndex('posts');
 
-    if (!snap.data()) {
+    if (!change.after.data()) {
       return index.deleteObject(postId, (err) => {
         if (err) throw err;
         console.log('Post Removed from Algolia Index', postId);

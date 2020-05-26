@@ -10,7 +10,6 @@ import {
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {withNavigation} from 'react-navigation';
 import {PostFeed} from '../containers';
-import {ProgressBar, Colors, Button} from 'react-native-paper';
 
 var width = Dimensions.get('window').width;
 
@@ -36,7 +35,7 @@ class Profile extends Component {
       <TouchableOpacity>
         <View
           style={[{width: width / 3}, {height: width / 3}, {marginBottom: 2}]}>
-          <PostFeed userData={this.state.user} />
+          <PostFeed user={this.state.user} />
         </View>
       </TouchableOpacity>
     );
@@ -53,7 +52,7 @@ class Profile extends Component {
       return (
         <View>
           <View>
-            <PostFeed userData={this.state.user.uid} />
+            <PostFeed user={this.state.user} />
           </View>
         </View>
       );

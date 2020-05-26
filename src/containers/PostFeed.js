@@ -11,7 +11,7 @@ function PostFeed(props) {
 
   useEffect(() => {
     const subscriber = firestore()
-      .collection(props.userData ? `users/${props.userData}/posts` : 'posts')
+      .collection(props.user ? `users/${props.user.uid}/posts` : 'posts')
       .orderBy('post_date', 'desc')
       .limit(20)
       .onSnapshot((querySnapshot) => {
@@ -20,6 +20,7 @@ function PostFeed(props) {
           posts.push({
             key: postSnapshot.data().post_date,
             post: postSnapshot.data(),
+            user: postSnapshot.data().user,
             ref: postSnapshot.ref,
           });
         });
@@ -30,7 +31,7 @@ function PostFeed(props) {
   }, []);
 
   const renderItem = ({item}) => {
-    return <Post post={item.post} loc={item.ref} />;
+    return <Post post={item.post} user={item.user} loc={item.ref} />;
   };
 
   if (loading) {

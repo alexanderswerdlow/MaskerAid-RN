@@ -26,7 +26,7 @@ const InfiniteHits = ({hits, hasMore, refine, searchType}) => (
     ItemSeparatorComponent={() => <View style={styles.separator} />}
     onEndReached={() => hasMore && refine()}
     renderItem={({item}) => {
-      console.log(searchType);
+      console.log(item.user);
       if (searchType == 'users') {
         return (
           <View style={styles.item}>
@@ -38,7 +38,8 @@ const InfiniteHits = ({hits, hasMore, refine, searchType}) => (
       } else {
         return (
           <Post
-            post={item}
+            post={item.post}
+            user={item.user}
             loc={firestore().collection('posts').doc(item.objectID)}
           />
         );

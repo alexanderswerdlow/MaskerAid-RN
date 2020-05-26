@@ -51,6 +51,19 @@ export const AuthProvider = ({children}) => {
             console.error(e);
           }
         },
+        deleteAccount: async () => {
+          var user = auth().currentUser;
+          user
+            .delete()
+            .then(function () {
+              // User deleted.
+              console.log('User Deleted');
+            })
+            .catch(function (error) {
+              // An error happened.
+              console.log('Error Deleting User');
+            });
+        },
       }}>
       {children}
     </AuthContext.Provider>

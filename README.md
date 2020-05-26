@@ -30,3 +30,6 @@ run `firebase login` to login to your firebase account
 - `cd ios && pod install`
 
 - `npx pod-install ios`
+
+- `firebase firestore:delete --all-collections -y`
+    - Delete's every firestore collection. Use with caution.

@@ -17,6 +17,7 @@ import DoubleTap from './DoubleTap';
 import Fire from '../util/Fire';
 import {Dialog, Portal, Button, Paragraph} from 'react-native-paper';
 import * as RootNavigation from '../navigation/RootNavigation.js';
+import PropTypes from 'prop-types';
 
 export default function Post(props) {
   const w = Dimensions.get('window');
@@ -73,18 +74,14 @@ export default function Post(props) {
     <View style={{flex: 1, width: 100 + '%'}}>
       <View style={styles.userBar}>
         <View style={{flexDirection: 'row', alignItems: 'center'}}>
-          <Image style={styles.userPic} source={{uri: props.post.user_photo}} />
+          <Image style={styles.userPic} source={{uri: props.user.photoURL}} />
           <TouchableOpacity
-            onPress={() =>
-              RootNavigation.navigate('User', {
-                user: {
-                  photoURL: props.post.user_photo,
-                  displayName: props.post.user_name,
-                  uid: props.post.user_id,
-                },
-              })
-            }>
-            <Text style={styles.username}>{props.post.user_name}</Text>
+            onPress={() => {
+              RootNavigation.navigate('ViewProfile', {
+                user: props.user,
+              });
+            }}>
+            <Text style={styles.username}>{props.user.displayName}</Text>
           </TouchableOpacity>
         </View>
         <View>
@@ -107,7 +104,7 @@ export default function Post(props) {
           onPress={() => likePhoto()}
         />
         <Icon name={'comment'} size={27} style={{padding: 5}} />
-        {user.uid == props.post.user_id && (
+        {user.uid == props.user.uid && (
           <IconAntDesign
             name={'delete'}
             size={30}
@@ -122,8 +119,8 @@ export default function Post(props) {
           <Text>{props.post.like_count} Likes</Text>
         </View>
         <View style={styles.caption}>
-          <Text style={styles.username}>{props.post.user_name}</Text>
-          <Text style={styles.username}>{props.post.text}</Text>
+          <Text style={styles.username}>{props.user.displayName}</Text>
+          <Text style={styles.username}>{props.text}</Text>
         </View>
       </View>
       <Portal>
@@ -220,3 +217,8 @@ const styles = StyleSheet.create({
     marginLeft: 4,
   },
 });
+
+Post.propTypes = {
+  user: PropTypes.objectOf(PropTypes.string),
+  loc: PropTypes.any.isRequired,
+};

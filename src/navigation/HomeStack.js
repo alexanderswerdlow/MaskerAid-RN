@@ -7,10 +7,9 @@ import HomeScreen from '../screens/Home';
 import ProfileScreen from '../screens/Profile';
 import NewPostScreen from '../screens/NewPost';
 import SearchScreen from '../screens/Search';
-import userProfile from '../screens/ViewProfile';
+import ViewProfile from '../screens/ViewProfile';
 import {AuthContext} from '../navigation/AuthProvider';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import UserProfile from '../screens/UserProfile';
 
 const Tab = createBottomTabNavigator();
 
@@ -20,7 +19,7 @@ function MainStackScreen() {
   return (
     <MainStack.Navigator>
       <MainStack.Screen name="Home" component={HomeScreen} />
-      <MainStack.Screen name="User" component={userProfile} />
+      <MainStack.Screen name="ViewProfile" component={ViewProfile} />
     </MainStack.Navigator>
   );
 }

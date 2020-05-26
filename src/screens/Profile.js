@@ -6,12 +6,13 @@ import {
   Image,
   Dimensions,
   TouchableOpacity,
+  Alert,
 } from 'react-native';
 import {AuthContext} from '../navigation/AuthProvider';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {withNavigation} from 'react-navigation';
 import {PostFeed} from '../containers';
-import {ProgressBar, Colors, Button} from 'react-native-paper';
+import {Button} from 'react-native-paper';
 
 var width = Dimensions.get('window').width;
 
@@ -63,13 +64,42 @@ class Profile extends Component {
   };
 
   render() {
-    const {user, logout} = this.context;
+    const {user, logout, deleteAccount} = this.context;
     return (
       <View>
         <View>
           <View>
-            <Button icon="logout" mode="contained" onPress={() => logout()}>
+            <Button
+              icon="logout"
+              mode="contained"
+              onPress={() => {
+                Alert.alert(
+                  'Are you sure you want to logout?',
+                  'All your posts will be saved',
+                  [
+                    {text: 'Cancel', style: 'cancel'},
+                    {text: 'OK', onPress: () => deleteAccount()},
+                  ],
+                  {cancelable: false},
+                );
+              }}>
               Logout
+            </Button>
+            <Button
+              icon="trash-can-outline"
+              mode="contained"
+              onPress={() => {
+                Alert.alert(
+                  'Are you sure you want to delete your account?',
+                  "There's no turning back",
+                  [
+                    {text: 'Cancel', style: 'cancel'},
+                    {text: 'OK', onPress: () => deleteAccount()},
+                  ],
+                  {cancelable: false},
+                );
+              }}>
+              Delete Account
             </Button>
             <Image
               style={styles.userPic}

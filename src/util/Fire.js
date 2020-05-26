@@ -1,6 +1,5 @@
 import firestore from '@react-native-firebase/firestore';
 import storage from '@react-native-firebase/storage';
-
 export const Firebase = {
   getPosts: async () => {
     try {
@@ -19,16 +18,23 @@ export const Firebase = {
       cacheControl: 'max-age=7200', // cache photos for two hours
     });
   },
-  post: (post_data, user, loc) => {
+  post: (post_data, p_user, loc) => {
     console.log('Post Triggered');
+
+    var s_user = {
+      photoURL: p_user.photoURL,
+      displayName: p_user.displayName,
+      email: p_user.email,
+      uid: p_user.uid,
+    };
+
     var post = {
-      post_date: firestore.Timestamp.fromDate(new Date()),
+      post_date: firestore.FieldValue.serverTimestamp(),
       text: `${post_data}`,
       like_count: 0,
-      user_name: user.displayName,
-      user_photo: user.photoURL,
-      user_id: user.uid,
+      user: s_user,
     };
+
     const batch = firestore().batch();
 
     batch.set(loc, post);

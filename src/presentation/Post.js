@@ -80,23 +80,15 @@ export default function Post(props) {
         <View style={{flexDirection: 'row', alignItems: 'center'}}>
           <TouchableOpacity
             onPress={() => {
-              RootNavigation.navigate('ViewProfile', {
+              RootNavigation.navigate('User Profile', {
                 user: props.user,
               });
             }}>
-            <Image
-              style={styles.userPic}
-              source={{uri: props.user.photoURL}}
-              onPress={() => {
-                RootNavigation.navigate('ViewProfile', {
-                  user: props.user,
-                });
-              }}
-            />
+            <Image style={styles.userPic} source={{uri: props.user.photoURL}} />
           </TouchableOpacity>
           <TouchableOpacity
             onPress={() => {
-              RootNavigation.navigate('ViewProfile', {
+              RootNavigation.navigate('User Profile', {
                 user: props.user,
               });
             }}>
@@ -139,7 +131,7 @@ export default function Post(props) {
         </View>
         <View style={styles.caption}>
           <Text style={styles.username}>{props.user.displayName}</Text>
-          <Text style={styles.username}>{props.text}</Text>
+          <Text style={styles.username}>{props.post.text}</Text>
         </View>
       </View>
       <Portal>

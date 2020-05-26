@@ -1,3 +1,4 @@
+/* eslint-disable promise/no-nesting */
 /* eslint-disable promise/always-return */
 const functions = require('firebase-functions');
 const algoliasearch = require('algoliasearch');
@@ -16,12 +17,39 @@ exports.deleteUserData = functions.auth.user().onDelete((user) => {
     .firestore()
     .collection('users')
     .doc(user.uid)
-    .delete()
+    .collection(posts)
+    .get()
+    .then((querySnapshot) => {
+      console.log('Total posts: ', querySnapshot.size);
+      querySnapshot.forEach((documentSnapshot) => {
+        admin
+          .firestore()
+          .collection('posts')
+          .doc(documentSnapshot.id)
+          .delete()
+          .then(() => {
+            console.log('Post successfully deleted!');
+          })
+          .catch((error) => {
+            console.error('Error removing Post: ', error);
+          });
+      });
+    })
     .then(() => {
-      console.log('User successfully deleted!');
+      admin
+        .firestore()
+        .collection('users')
+        .doc(user.uid)
+        .delete()
+        .then(() => {
+          console.log('User successfully deleted!');
+        })
+        .catch((error) => {
+          console.error('Error removing User: ', error);
+        });
     })
     .catch((error) => {
-      console.error('Error removing User: ', error);
+      console.error('Error removing User Data: ', error);
     });
 
   const index = client.initIndex('users');
@@ -38,6 +66,9 @@ exports.createUserData = functions.auth.user().onCreate((user) => {
     photoURL: user.photoURL,
     uid: user.uid,
     objectID: user.uid,
+    follower_count: 0,
+    following_count: 0,
+    post_count: 0,
   };
   const doc = admin.firestore().doc(`/users/${user.uid}`).set(person);
   const index = client.initIndex('users');

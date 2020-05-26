@@ -1,13 +1,23 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useRef} from 'react';
 import {FlatList, Text, View} from 'react-native';
 import {Post} from '../presentation';
 import {ActivityIndicator, StyleSheet} from 'react-native';
 import firestore from '@react-native-firebase/firestore';
 
+function useIsMountedRef() {
+  const isMountedRef = useRef(null);
+  useEffect(() => {
+    isMountedRef.current = true;
+    return () => (isMountedRef.current = false);
+  });
+  return isMountedRef;
+}
+
 function PostFeed(props) {
   const [loading, setLoading] = useState(true);
   const [posts, setPosts] = useState([]);
+  const isMountedRef = useIsMountedRef();
 
   useEffect(() => {
     const subscriber = firestore()
@@ -15,23 +25,27 @@ function PostFeed(props) {
       .orderBy('post_date', 'desc')
       .limit(20)
       .onSnapshot((querySnapshot) => {
-        const posts = [];
-        querySnapshot.forEach((postSnapshot) => {
-          posts.push({
-            key: postSnapshot.data().post_date,
-            post: postSnapshot.data(),
-            user: postSnapshot.data().user,
-            ref: postSnapshot.ref,
+        if (isMountedRef.current) {
+          const posts = [];
+          querySnapshot.forEach((postSnapshot) => {
+            posts.push({
+              key: postSnapshot.data().post_date,
+              post: postSnapshot.data(),
+              user: postSnapshot.data().user,
+              ref: postSnapshot.ref,
+            });
           });
-        });
-        setPosts(posts);
-        setLoading(false);
+          setPosts(posts);
+          setLoading(false);
+        }
       });
     return () => subscriber();
   }, []);
 
   const renderItem = ({item}) => {
-    return <Post post={item.post} user={item.user} loc={item.ref} />;
+    if (item.post) {
+      return <Post post={item.post} user={item.user} loc={item.ref} />;
+    }
   };
 
   if (loading) {

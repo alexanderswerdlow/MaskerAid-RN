@@ -13,6 +13,7 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import {withNavigation} from 'react-navigation';
 import {PostFeed} from '../containers';
 import {Button} from 'react-native-paper';
+import firestore from '@react-native-firebase/firestore';
 
 var width = Dimensions.get('window').width;
 
@@ -24,7 +25,31 @@ class Profile extends Component {
     super(props);
     this.state = {
       activeIndex: 1,
+      user: {},
+      following: false,
+      followersCount: 0,
+      followingCount: 0,
+      postCount: 0,
     };
+  }
+
+  componentDidMount() {
+    const {user} = this.context;
+    this.setState({user: user});
+    this.unsubscribe = firestore()
+      .collection('users')
+      .doc(user.uid)
+      .onSnapshot((snapshot) => {
+        this.setState({
+          followersCount: snapshot.data().followers_count,
+          followingCount: snapshot.data().following_count,
+          postCount: snapshot.data().post_count,
+        });
+      });
+  }
+
+  componentWillUnmount() {
+    this.unsubscribe && this.unsubscribe();
   }
 
   segmentClicked = (index) => {
@@ -111,15 +136,15 @@ class Profile extends Component {
           </View>
           <View style={{flexDirection: 'row', justifyContent: 'space-evenly'}}>
             <View style={{alignItems: 'center'}}>
-              <Text style={styles.userStatus}>20</Text>
+              <Text style={styles.userStatus}>{this.state.postCount}</Text>
               <Text>Posts</Text>
             </View>
             <View style={{alignItems: 'center'}}>
-              <Text style={styles.userStatus}>20</Text>
+              <Text style={styles.userStatus}>{this.state.followingCount}</Text>
               <Text>Following</Text>
             </View>
             <View style={{alignItems: 'center'}}>
-              <Text style={styles.userStatus}>20</Text>
+              <Text style={styles.userStatus}>{this.state.followersCount}</Text>
               <Text>Followers</Text>
             </View>
           </View>

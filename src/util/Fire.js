@@ -1,14 +1,73 @@
 import firestore from '@react-native-firebase/firestore';
 import storage from '@react-native-firebase/storage';
+
 export const Firebase = {
-  getPosts: async () => {
-    try {
-      const querySnapshot = await firestore().collection('posts').get();
-      let posts = querySnapshot.docs.map((doc) => doc.data());
-      return posts;
-    } catch (error) {
-      console.log('Error getting documents: ', error);
+  isFollowing: (self_user, other_user) => {
+    if (self_user.uid == other_user.uid) {
+      return false;
     }
+    const snapshot = firestore()
+      .collection('users')
+      .where('uid', '==', self_user.uid)
+      .where('following', 'array-contains', other_user.uid)
+      .get()
+      .then(function (querySnapshot) {
+        //console.log('is following: ' + !querySnapshot.empty);
+        return !querySnapshot.empty;
+      })
+      .catch(function (error) {
+        console.log('Error getting documents: ', error);
+      });
+  },
+  setFollowing: async (self_user, other_user, val) => {
+    if (self_user.uid == other_user.uid) {
+      return;
+    }
+    const querySnapshot = await firestore()
+      .collection('users')
+      .doc(self_user.uid);
+
+    const batch = firestore().batch();
+
+    batch.update(querySnapshot, {
+      following: val
+        ? firestore.FieldValue.arrayUnion(other_user.uid)
+        : firestore.FieldValue.arrayRemove(other_user.uid),
+    });
+
+    const otherQuerySnapshot = await firestore()
+      .collection('users')
+      .doc(other_user.uid);
+
+    batch.update(otherQuerySnapshot, {
+      followers: val
+        ? firestore.FieldValue.arrayUnion(self_user.uid)
+        : firestore.FieldValue.arrayRemove(self_user.uid),
+    });
+
+    batch.commit();
+
+    const following_count_ref = firestore().doc(`users/${self_user.uid}`);
+    const followers_count_ref = firestore().doc(`users/${other_user.uid}`);
+
+    return firestore().runTransaction(async (transaction) => {
+      const followingCountData = await transaction.get(following_count_ref);
+      const followersCountData = await transaction.get(followers_count_ref);
+
+      if (!followingCountData.exists || !followersCountData.exists) {
+        throw 'Count does not exist!';
+      }
+
+      await transaction.update(following_count_ref, {
+        following_count:
+          followingCountData.data().following_count + (val ? 1 : -1),
+      });
+
+      await transaction.update(followers_count_ref, {
+        followers_count:
+          followersCountData.data().followers_count + (val ? 1 : -1),
+      });
+    });
   },
   uploadFileToFireBase: (response, user, loc) => {
     //const {path, uri} = response;
@@ -40,7 +99,21 @@ export const Firebase = {
     batch.set(loc, post);
     const postsRef = firestore().collection('posts').doc(loc.id);
     batch.set(postsRef, post);
-    return batch.commit();
+    batch.commit();
+
+    const post_count_ref = firestore().doc(`users/${p_user.uid}`);
+
+    return firestore().runTransaction(async (transaction) => {
+      const postCountData = await transaction.get(post_count_ref);
+
+      if (!postCountData.exists) {
+        throw 'Count does not exist!';
+      }
+
+      await transaction.update(post_count_ref, {
+        post_count: postCountData.data().post_count + 1,
+      });
+    });
   },
   deletePost: async (post_id, user) => {
     //Deletes Photo, Thumbnail, then DB entry
@@ -70,6 +143,20 @@ export const Firebase = {
       .catch(function (error) {
         console.log('Could Not Delete Photo: ' + error);
       });
+
+    const post_count_ref = firestore().doc(`users/${user.uid}`);
+
+    return firestore().runTransaction(async (transaction) => {
+      const postCountData = await transaction.get(post_count_ref);
+
+      if (!postCountData.exists) {
+        throw 'Count does not exist!';
+      }
+
+      await transaction.update(post_count_ref, {
+        post_count: postCountData.data().post_count - 1,
+      });
+    });
   },
   likePost: (post, loc, liked) => {
     const postReference = firestore().doc(`posts/${loc.id}`);

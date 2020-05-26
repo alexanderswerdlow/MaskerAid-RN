@@ -111,8 +111,10 @@ function NewPost({navigation}) {
         <Text>Post Details</Text>
         <TextInput
           placeholder="Enter a caption (Required)"
-          style={{margin: 20}}
+          style={{margin: 20, width: 300}}
           value={title}
+          defaultValue="Default Value"
+          clearButtonMode="while-editing"
           onChangeText={(text) => setTitle(text)}
         />
         {uploading ? (

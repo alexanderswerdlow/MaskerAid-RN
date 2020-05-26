@@ -10,18 +10,61 @@ import {
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {withNavigation} from 'react-navigation';
 import {PostFeed} from '../containers';
+import {Button} from 'react-native-paper';
+import Fire from '../util/Fire';
+import {AuthContext} from '../navigation/AuthProvider';
+import firestore from '@react-native-firebase/firestore';
 
 var width = Dimensions.get('window').width;
 
 class Profile extends Component {
   static data = PostFeed;
+  static contextType = AuthContext;
 
   constructor(props) {
     super(props);
     this.state = {
       activeIndex: 1,
       user: this.props.route.params.user,
+      following: false,
+      followersCount: 0,
+      followingCount: 0,
     };
+  }
+
+  updateFollowState = () => {
+    const {user} = this.context;
+    const snapshot = firestore()
+      .collection('users')
+      .where('uid', '==', user.uid)
+      .where('following', 'array-contains', this.state.user.uid)
+      .get()
+      .then(
+        function (querySnapshot) {
+          this.setState({following: !querySnapshot.empty});
+        }.bind(this),
+      )
+      .catch(function (error) {
+        console.log('Error getting documents: ', error);
+      });
+  };
+
+  componentDidMount() {
+    this.updateFollowState();
+
+    this.unsubscribe = firestore()
+      .collection('users')
+      .doc(this.state.user.uid)
+      .onSnapshot((snapshot) => {
+        this.setState({
+          followersCount: snapshot.data().followers_count,
+          followingCount: snapshot.data().following_count,
+        });
+      });
+  }
+
+  componentWillUnmount() {
+    this.unsubscribe && this.unsubscribe();
   }
 
   segmentClicked = (index) => {
@@ -60,10 +103,26 @@ class Profile extends Component {
   };
 
   render() {
+    const {user} = this.context;
     return (
       <View>
         <View>
           <View>
+            {user.uid != this.state.user.uid && (
+              <Button
+                icon="logout"
+                mode="contained"
+                onPress={() => {
+                  Fire.setFollowing(
+                    user,
+                    this.state.user,
+                    !this.state.following,
+                  );
+                  this.updateFollowState();
+                }}>
+                {this.state.following ? 'Unfollow' : 'Follow'}
+              </Button>
+            )}
             <Image
               style={styles.userPic}
               source={{uri: this.state.user.photoURL}}
@@ -77,11 +136,11 @@ class Profile extends Component {
               <Text>Posts</Text>
             </View>
             <View style={{alignItems: 'center'}}>
-              <Text style={styles.userStatus}>20</Text>
+              <Text style={styles.userStatus}>{this.state.followingCount}</Text>
               <Text>Following</Text>
             </View>
             <View style={{alignItems: 'center'}}>
-              <Text style={styles.userStatus}>20</Text>
+              <Text style={styles.userStatus}>{this.state.followersCount}</Text>
               <Text>Followers</Text>
             </View>
           </View>

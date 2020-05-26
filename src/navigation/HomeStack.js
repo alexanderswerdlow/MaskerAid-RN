@@ -1,5 +1,5 @@
 /* eslint-disable react/display-name */
-import * as React from 'react';
+import React, {useState, useContext, useEffect} from 'react';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {createStackNavigator} from '@react-navigation/stack';
 import {NavigationContainer} from '@react-navigation/native';
@@ -10,6 +10,7 @@ import SearchScreen from '../screens/Search';
 import ViewProfile from '../screens/ViewProfile';
 import {AuthContext} from '../navigation/AuthProvider';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import firestore from '@react-native-firebase/firestore';
 
 const Tab = createBottomTabNavigator();
 
@@ -19,7 +20,7 @@ function MainStackScreen() {
   return (
     <MainStack.Navigator>
       <MainStack.Screen name="Home" component={HomeScreen} />
-      <MainStack.Screen name="ViewProfile" component={ViewProfile} />
+      <MainStack.Screen name="User Profile" component={ViewProfile} />
     </MainStack.Navigator>
   );
 }

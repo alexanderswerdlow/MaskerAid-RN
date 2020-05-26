@@ -59,9 +59,19 @@ export const AuthProvider = ({children}) => {
               console.log('User Deleted');
               auth().signOut();
             })
-            .catch(function (error) {
-              console.log('Error Deleting User' + error);
-              auth().signOut();
+            .catch(async function (error) {
+              const {idToken} = await GoogleSignin.signIn();
+              const googleCredential = auth.GoogleAuthProvider.credential(
+                idToken,
+              );
+              const userCredential = await auth().signInWithCredential(
+                googleCredential,
+              );
+              var user = auth().currentUser;
+              user.delete().then(function () {
+                console.log('User Deleted');
+                auth().signOut();
+              });
             });
         },
       }}>

@@ -17,7 +17,7 @@ exports.deleteUserData = functions.auth.user().onDelete((user) => {
     .firestore()
     .collection('users')
     .doc(user.uid)
-    .collection(posts)
+    .collection('posts')
     .get()
     .then((querySnapshot) => {
       console.log('Total posts: ', querySnapshot.size);

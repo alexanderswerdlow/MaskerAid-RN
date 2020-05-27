@@ -21,30 +21,28 @@ export default class InfinitePostFeed extends React.Component {
     };
   }
 
-  componentDidUpdate = (prevProps, prevState) => {
-    if (this.props.test != prevProps.test) {
-      try {
-        this.setState({
-          documentData: [],
-          lastVisible: null,
-          loading: false,
-          refreshing: false,
-        });
-        this.retrieveData(false);
-      } catch (error) {
-        console.log(error);
-      }
-    }
-  };
-  // Component Did Mount
-  componentDidMount = () => {
-    console.log(this.state.thingy);
+  update = () => {
     try {
       this.retrieveData(false);
     } catch (error) {
       console.log(error);
     }
   };
+
+  componentDidUpdate = (prevProps, prevState) => {
+    if (this.props.refresh != prevProps.refresh) {
+      this.setState({
+        documentData: [],
+      });
+      this.update();
+    }
+  };
+
+  // Component Did Mount
+  componentDidMount = () => {
+    this.update();
+  };
+
   // Retrieve Data
   retrieveData = async (retrieveMore) => {
     try {
@@ -64,23 +62,20 @@ export default class InfinitePostFeed extends React.Component {
       if (!retrieveMore) {
         initialQuery = await firestore()
           .collection(
-            this.state.userData
-              ? `users/${this.state.user.uid}/posts`
-              : 'posts',
+            this.state.user ? `users/${this.state.user.uid}/posts` : 'posts',
           )
           .orderBy('post_date', 'desc')
           .limit(this.state.limit);
       } else {
         initialQuery = await firestore()
           .collection(
-            this.state.userData
-              ? `users/${this.state.user.uid}/posts`
-              : 'posts',
+            this.state.user ? `users/${this.state.user.uid}/posts` : 'posts',
           )
           .orderBy('post_date', 'desc')
           .startAfter(this.state.lastVisible)
           .limit(this.state.limit);
       }
+
       // Cloud Firestore: Query Snapshot
       let documentSnapshots = await initialQuery.get();
       // Cloud Firestore: Document Data
@@ -93,6 +88,13 @@ export default class InfinitePostFeed extends React.Component {
           ref: postSnapshot.ref,
         });
       });
+
+      if (documentData.length == 0) {
+        this.setState({
+          loading: false,
+        });
+        return;
+      }
 
       // Cloud Firestore: Last Visible Document (Document ID To Start From For Proceeding Queries)
       let lastVisible = documentData[documentData.length - 1].key;

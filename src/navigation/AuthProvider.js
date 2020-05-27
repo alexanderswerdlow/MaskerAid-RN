@@ -70,7 +70,11 @@ export const AuthProvider = ({children}) => {
               var user = auth().currentUser;
               user.delete().then(function () {
                 console.log('User Deleted');
-                auth().signOut();
+                auth()
+                  .signOut()
+                  .catch(async function (error) {
+                    console.log(error);
+                  });
               });
             });
         },

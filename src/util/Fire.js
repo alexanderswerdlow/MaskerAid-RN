@@ -48,11 +48,11 @@ export const Firebase = {
     batch.commit();
 
     const following_count_ref = firestore().doc(`users/${self_user.uid}`);
-    const followers_count_ref = firestore().doc(`users/${other_user.uid}`);
+    const follower_count_ref = firestore().doc(`users/${other_user.uid}`);
 
     return firestore().runTransaction(async (transaction) => {
       const followingCountData = await transaction.get(following_count_ref);
-      const followersCountData = await transaction.get(followers_count_ref);
+      const followerCountData = await transaction.get(follower_count_ref);
 
       await transaction.update(following_count_ref, {
         following_count: followingCountData.exists
@@ -60,9 +60,9 @@ export const Firebase = {
           : 1,
       });
 
-      await transaction.update(followers_count_ref, {
-        followers_count: followersCountData.exists
-          ? followersCountData.data().follower_count + (val ? 1 : -1)
+      await transaction.update(follower_count_ref, {
+        follower_count: followerCountData.exists
+          ? followerCountData.data().follower_count + (val ? 1 : -1)
           : 1,
       });
     });

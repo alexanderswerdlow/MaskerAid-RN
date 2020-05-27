@@ -27,9 +27,9 @@ class Profile extends Component {
     this.state = {
       activeIndex: 1,
       user: this.props.user ? this.props.user : this.props.route.params.user,
-      selfProfile: this.props.user,
+      selfProfile: this.props.user ? true : false,
       following: false,
-      followersCount: 0,
+      followerCount: 0,
       followingCount: 0,
       postCount: 0,
     };
@@ -56,12 +56,13 @@ class Profile extends Component {
     if (!this.state.selfProfile) {
       this.updateFollowState();
     }
+
     this.unsubscribe = firestore()
       .collection('users')
       .doc(this.state.user.uid)
       .onSnapshot((snapshot) => {
         this.setState({
-          followersCount: snapshot.data().followers_count,
+          followerCount: snapshot.data().follower_count,
           followingCount: snapshot.data().following_count,
           postCount: snapshot.data().post_count,
         });
@@ -184,7 +185,7 @@ class Profile extends Component {
               <Text>Following</Text>
             </View>
             <View style={{alignItems: 'center'}}>
-              <Text style={styles.userStatus}>{this.state.followersCount}</Text>
+              <Text style={styles.userStatus}>{this.state.followerCount}</Text>
               <Text>Followers</Text>
             </View>
           </View>

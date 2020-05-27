@@ -17,8 +17,19 @@ function MainStackScreen() {
   return (
     <MainStack.Navigator>
       <MainStack.Screen name="Home" component={HomeScreen} />
-      <MainStack.Screen name="Profile" component={ProfileScreen} />
+      <MainStack.Screen name="ViewProfile" component={ProfileScreen} />
     </MainStack.Navigator>
+  );
+}
+
+const SearchStack = createStackNavigator();
+
+function SearchStackScreen() {
+  return (
+    <SearchStack.Navigator>
+      <MainStack.Screen name="Search" component={SearchScreen} />
+      <MainStack.Screen name="ViewSearchProfile" component={ProfileScreen} />
+    </SearchStack.Navigator>
   );
 }
 
@@ -49,7 +60,7 @@ export default function App() {
       }}>
       <Tab.Screen name="Home" component={MainStackScreen} />
       <Tab.Screen name="Post" component={NewPostScreen} />
-      <Tab.Screen name="Search" component={SearchScreen} />
+      <Tab.Screen name="Search" component={SearchStackScreen} />
       <Tab.Screen name="Profile">
         {(props) => <ProfileScreen {...props} user={user} />}
       </Tab.Screen>

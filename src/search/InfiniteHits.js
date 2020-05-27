@@ -1,9 +1,10 @@
 import React from 'react';
-import {StyleSheet, Text, View, FlatList} from 'react-native';
+import {StyleSheet, Text, View, FlatList, TouchableOpacity} from 'react-native';
 import PropTypes from 'prop-types';
 import {connectInfiniteHits} from 'react-instantsearch-native';
 import {Post} from '../presentation';
 import firestore from '@react-native-firebase/firestore';
+import * as RootNavigation from '../navigation/RootNavigation.js';
 
 const styles = StyleSheet.create({
   separator: {
@@ -31,9 +32,16 @@ const InfiniteHits = ({hits, hasMore, refine, searchType}) => (
         if (!item.user) {
           return (
             <View style={styles.item}>
-              <Text>
-                {JSON.parse(JSON.stringify(item.displayName).slice(0, 100))}
-              </Text>
+              <TouchableOpacity
+                onPress={() => {
+                  RootNavigation.navigate('ViewSearchProfile', {
+                    user: item,
+                  });
+                }}>
+                <Text>
+                  {JSON.parse(JSON.stringify(item.displayName).slice(0, 100))}
+                </Text>
+              </TouchableOpacity>
             </View>
           );
         }

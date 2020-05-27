@@ -95,7 +95,7 @@ export default function Post(props) {
           </TouchableOpacity>
           <TouchableOpacity
             onPress={() => {
-              RootNavigation.navigate('Profile', {
+              RootNavigation.navigate('ViewProfile', {
                 user: props.user,
               });
             }}>

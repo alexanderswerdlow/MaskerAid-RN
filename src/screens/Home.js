@@ -1,4 +1,4 @@
-import React, {useContext, useState} from 'react';
+import React from 'react';
 import {View, Text, StyleSheet} from 'react-native';
 import config from '../config';
 import {PostFeed} from '../containers';
@@ -9,7 +9,7 @@ export default function Home({navigation}) {
       <View style={styles.nav}>
         <Text style={{fontSize: 20}}>MaskerAid</Text>
       </View>
-      <PostFeed />
+      <PostFeed thing={navigation.state} />
     </View>
   );
 }

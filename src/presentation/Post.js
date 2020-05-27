@@ -5,7 +5,6 @@ import {
   Text,
   Image,
   StyleSheet,
-  TouchableHighlight,
   Dimensions,
 } from 'react-native';
 import config from '../config';
@@ -29,9 +28,19 @@ export default function Post(props) {
   const [dialogVisible, setDialogVisible] = useState(false);
   const heartIconColor = liked ? 'rgb(252,61,57)' : null;
   const heartIconID = liked ? 'heart' : 'hearto';
+  const [like_count, set_like_count] = useState(0);
+
+  useEffect(() => {
+    const subscriber = props.loc.onSnapshot((postSnapshot) => {
+      if (postSnapshot.data()) {
+        set_like_count(postSnapshot.data().like_count);
+      }
+    });
+    return () => subscriber();
+  }, []);
 
   const likePhoto = () => {
-    if (props.post.like_count == 0 && liked) {
+    if (like_count == 0 && liked) {
       props.loc
         .update({
           like_count: 1,
@@ -43,9 +52,7 @@ export default function Post(props) {
       setLiked(!liked);
       props.loc
         .update({
-          like_count: liked
-            ? props.post.like_count - 1
-            : props.post.like_count + 1,
+          like_count: liked ? like_count - 1 : like_count + 1,
         })
         .then(() => {
           console.log('Liked!');
@@ -80,7 +87,7 @@ export default function Post(props) {
         <View style={{flexDirection: 'row', alignItems: 'center'}}>
           <TouchableOpacity
             onPress={() => {
-              RootNavigation.navigate('User Profile', {
+              RootNavigation.navigate('Profile', {
                 user: props.user,
               });
             }}>
@@ -88,7 +95,7 @@ export default function Post(props) {
           </TouchableOpacity>
           <TouchableOpacity
             onPress={() => {
-              RootNavigation.navigate('User Profile', {
+              RootNavigation.navigate('Profile', {
                 user: props.user,
               });
             }}>
@@ -127,7 +134,7 @@ export default function Post(props) {
       <View style={styles.commentBar}>
         <View style={{flexDirection: 'row'}}>
           <IconAntDesign name={'heart'} size={10} style={{padding: 5}} />
-          <Text>{props.post.like_count} Likes</Text>
+          <Text>{like_count} Likes</Text>
         </View>
         <View style={styles.caption}>
           <Text style={styles.username}>{props.user.displayName}</Text>

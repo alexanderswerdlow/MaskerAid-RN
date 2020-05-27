@@ -5,27 +5,29 @@ import {
   StyleSheet,
   Image,
   Dimensions,
-  TouchableOpacity,
   Alert,
+  TouchableOpacity,
 } from 'react-native';
-import {AuthContext} from '../navigation/AuthProvider';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {withNavigation} from 'react-navigation';
 import {PostFeed} from '../containers';
 import {Button} from 'react-native-paper';
+import Fire from '../util/Fire';
+import {AuthContext} from '../navigation/AuthProvider';
 import firestore from '@react-native-firebase/firestore';
 
 var width = Dimensions.get('window').width;
 
 class Profile extends Component {
-  static contextType = AuthContext;
   static data = PostFeed;
+  static contextType = AuthContext;
 
   constructor(props) {
     super(props);
     this.state = {
       activeIndex: 1,
-      user: {},
+      user: this.props.user ? this.props.user : this.props.route.params.user,
+      selfProfile: this.props.user,
       following: false,
       followersCount: 0,
       followingCount: 0,
@@ -33,12 +35,30 @@ class Profile extends Component {
     };
   }
 
-  componentDidMount() {
+  updateFollowState = () => {
     const {user} = this.context;
-    this.setState({user: user});
+    const snapshot = firestore()
+      .collection('users')
+      .where('uid', '==', user.uid)
+      .where('following', 'array-contains', this.state.user.uid)
+      .get()
+      .then(
+        function (querySnapshot) {
+          this.setState({following: !querySnapshot.empty});
+        }.bind(this),
+      )
+      .catch(function (error) {
+        console.log('Error getting documents: ', error);
+      });
+  };
+
+  componentDidMount() {
+    if (!this.state.selfProfile) {
+      this.updateFollowState();
+    }
     this.unsubscribe = firestore()
       .collection('users')
-      .doc(user.uid)
+      .doc(this.state.user.uid)
       .onSnapshot((snapshot) => {
         this.setState({
           followersCount: snapshot.data().followers_count,
@@ -59,19 +79,17 @@ class Profile extends Component {
   };
 
   renderSectionOne = () => {
-    const {user} = this.context;
     return (
       <TouchableOpacity>
         <View
           style={[{width: width / 3}, {height: width / 3}, {marginBottom: 2}]}>
-          <PostFeed user={user} />
+          <PostFeed user={this.state.user} />
         </View>
       </TouchableOpacity>
     );
   };
 
   renderSection = () => {
-    const {user} = this.context;
     if (this.state.activeIndex == 0) {
       return (
         <View style={{flexDirection: 'row', flexWrap: 'wrap'}}>
@@ -82,57 +100,79 @@ class Profile extends Component {
       return (
         <View>
           <View>
-            <PostFeed user={user} />
+            <PostFeed user={this.state.user} />
           </View>
         </View>
       );
     }
   };
 
-  render() {
+  renderTopBar = () => {
     const {user, logout, deleteAccount} = this.context;
+    if (this.state.selfProfile) {
+      return (
+        <>
+          <Button
+            icon="logout"
+            mode="contained"
+            onPress={() => {
+              Alert.alert(
+                'Are you sure you want to logout?',
+                'All your posts will be saved',
+                [
+                  {text: 'Cancel', style: 'cancel'},
+                  {text: 'OK', onPress: () => logout()},
+                ],
+                {cancelable: false},
+              );
+            }}>
+            Logout
+          </Button>
+          <Button
+            icon="trash-can-outline"
+            mode="contained"
+            onPress={() => {
+              Alert.alert(
+                'Are you sure you want to delete your account?',
+                "There's no turning back",
+                [
+                  {text: 'Cancel', style: 'cancel'},
+                  {text: 'OK', onPress: () => deleteAccount()},
+                ],
+                {cancelable: false},
+              );
+            }}>
+            Delete Account
+          </Button>
+        </>
+      );
+    } else if (user.uid != this.state.user.uid) {
+      return (
+        <Button
+          icon="logout"
+          mode="contained"
+          onPress={() => {
+            Fire.setFollowing(user, this.state.user, !this.state.following);
+            this.updateFollowState();
+          }}>
+          {this.state.following ? 'Unfollow' : 'Follow'}
+        </Button>
+      );
+    }
+  };
+
+  render() {
     return (
       <View>
         <View>
           <View>
-            <Button
-              icon="logout"
-              mode="contained"
-              onPress={() => {
-                Alert.alert(
-                  'Are you sure you want to logout?',
-                  'All your posts will be saved',
-                  [
-                    {text: 'Cancel', style: 'cancel'},
-                    {text: 'OK', onPress: () => logout()},
-                  ],
-                  {cancelable: false},
-                );
-              }}>
-              Logout
-            </Button>
-            <Button
-              icon="trash-can-outline"
-              mode="contained"
-              onPress={() => {
-                Alert.alert(
-                  'Are you sure you want to delete your account?',
-                  "There's no turning back",
-                  [
-                    {text: 'Cancel', style: 'cancel'},
-                    {text: 'OK', onPress: () => deleteAccount()},
-                  ],
-                  {cancelable: false},
-                );
-              }}>
-              Delete Account
-            </Button>
+            {this.renderTopBar()}
             <Image
               style={styles.userPic}
-              source={{uri: user.photoURL}}
+              source={{uri: this.state.user.photoURL}}
               resizeMode="stretch"
             />
-            <Text style={styles.userName}>{user.displayName}</Text>
+            <Text style={styles.userName}>{this.state.user.displayName}</Text>
           </View>
           <View style={{flexDirection: 'row', justifyContent: 'space-evenly'}}>
             <View style={{alignItems: 'center'}}>

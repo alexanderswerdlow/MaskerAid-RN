@@ -1,16 +1,13 @@
 /* eslint-disable react/display-name */
-import React, {useState, useContext, useEffect} from 'react';
+import React from 'react';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {createStackNavigator} from '@react-navigation/stack';
-import {NavigationContainer} from '@react-navigation/native';
 import HomeScreen from '../screens/Home';
 import ProfileScreen from '../screens/Profile';
 import NewPostScreen from '../screens/NewPost';
 import SearchScreen from '../screens/Search';
-import ViewProfile from '../screens/ViewProfile';
 import {AuthContext} from '../navigation/AuthProvider';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import firestore from '@react-native-firebase/firestore';
 
 const Tab = createBottomTabNavigator();
 
@@ -20,14 +17,13 @@ function MainStackScreen() {
   return (
     <MainStack.Navigator>
       <MainStack.Screen name="Home" component={HomeScreen} />
-      <MainStack.Screen name="User Profile" component={ViewProfile} />
+      <MainStack.Screen name="Profile" component={ProfileScreen} />
     </MainStack.Navigator>
   );
 }
 
 export default function App() {
   const {user} = React.useContext(AuthContext);
-
   return (
     <Tab.Navigator
       screenOptions={({route}) => ({
@@ -54,7 +50,9 @@ export default function App() {
       <Tab.Screen name="Home" component={MainStackScreen} />
       <Tab.Screen name="Post" component={NewPostScreen} />
       <Tab.Screen name="Search" component={SearchScreen} />
-      <Tab.Screen name="Profile" component={ProfileScreen} userData={user} />
+      <Tab.Screen name="Profile">
+        {(props) => <ProfileScreen {...props} user={user} />}
+      </Tab.Screen>
     </Tab.Navigator>
   );
 }

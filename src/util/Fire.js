@@ -54,24 +54,20 @@ export const Firebase = {
       const followingCountData = await transaction.get(following_count_ref);
       const followersCountData = await transaction.get(followers_count_ref);
 
-      if (!followingCountData.exists || !followersCountData.exists) {
-        throw 'Count does not exist!';
-      }
-
       await transaction.update(following_count_ref, {
-        following_count:
-          followingCountData.data().following_count + (val ? 1 : -1),
+        following_count: followingCountData.exists
+          ? followingCountData.data().following_count + (val ? 1 : -1)
+          : 1,
       });
 
       await transaction.update(followers_count_ref, {
-        followers_count:
-          followersCountData.data().followers_count + (val ? 1 : -1),
+        followers_count: followersCountData.exists
+          ? followersCountData.data().follower_count + (val ? 1 : -1)
+          : 1,
       });
     });
   },
   uploadFileToFireBase: (response, user, loc) => {
-    //const {path, uri} = response;
-    //const fileSource = Platform.OS === 'android' ? path : uri;
     const storageRef = storage().ref(`posts/${loc}`);
     return storageRef.putFile(response.path, {
       cacheControl: 'max-age=7200', // cache photos for two hours

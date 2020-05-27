@@ -17,19 +17,29 @@ export default class InfinitePostFeed extends React.Component {
       loading: false,
       refreshing: false,
       user: props.user,
-      thingy: props.thing,
+      refresh: props.test,
     };
   }
+
+  componentDidUpdate = (prevProps, prevState) => {
+    if (this.props.test != prevProps.test) {
+      try {
+        this.setState({
+          documentData: [],
+          lastVisible: null,
+          loading: false,
+          refreshing: false,
+        });
+        this.retrieveData(false);
+      } catch (error) {
+        console.log(error);
+      }
+    }
+  };
   // Component Did Mount
   componentDidMount = () => {
+    console.log(this.state.thingy);
     try {
-      // Cloud Firestore: Initial Query
-      this.setState({
-        documentData: [],
-        lastVisible: null,
-        loading: false,
-        refreshing: false,
-      });
       this.retrieveData(false);
     } catch (error) {
       console.log(error);

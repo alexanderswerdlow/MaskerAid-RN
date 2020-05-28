@@ -6,6 +6,7 @@ import ProfileScreen from '../screens/Profile';
 import NewPostScreen from '../screens/NewPost';
 import {AuthContext} from '../navigation/AuthProvider';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import SettingsScreen from '../screens/Settings';
 
 const Tab = createBottomTabNavigator();
 
@@ -24,18 +25,28 @@ export default function App() {
             iconName = 'ios-person';
           } else if (route.name === 'Post') {
             iconName = 'ios-clipboard';
+          } else if (route.name === 'Settings') {
+            iconName = 'ios-settings';
           }
 
           return <Ionicons name={iconName} size={size} color={color} />;
         },
       })}
       tabBarOptions={{
-        activeTintColor: 'blue',
+        activeTintColor:
+          'rgb(' +
+          global.Rvalue +
+          ',' +
+          global.Gvalue +
+          ',' +
+          global.Bvalue +
+          ')',
         inactiveTintColor: 'gray',
       }}>
       <Tab.Screen name="Home" component={HomeScreen} />
       <Tab.Screen name="Post" component={NewPostScreen} />
       <Tab.Screen name="Profile" component={ProfileScreen} userData={user} />
+      <Tab.Screen name="Settings" component={SettingsScreen} />
     </Tab.Navigator>
   );
 }

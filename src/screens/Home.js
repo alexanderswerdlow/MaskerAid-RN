@@ -18,8 +18,8 @@ const styles = StyleSheet.create({
   nav: {
     width: `${100}%`,
     height: 56,
-    marginTop: 20,
-    backgroundColor: 'rgb(250, 250, 250)',
+    backgroundColor:
+      'rgb(' + global.Rvalue + ',' + global.Gvalue + ',' + global.Bvalue + ')',
     borderBottomWidth: StyleSheet.hairlineWidth,
     borderBottomColor: config.styleConstants.borderColor,
     justifyContent: 'center',

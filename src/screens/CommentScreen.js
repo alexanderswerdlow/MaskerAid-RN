@@ -1,29 +1,43 @@
-import React, {useState} from 'react'
-import {View, Text, Image, StyleSheet, Dimensions, TextInput, Button, TouchableOpacity} from 'react-native';
+import React, {useState} from 'react';
+import {
+  View,
+  Text,
+  Image,
+  StyleSheet,
+  Dimensions,
+  TextInput,
+  Button,
+  TouchableOpacity,
+} from 'react-native';
 import config from '../config';
-import IosIcon from 'react-native-vector-icons/Ionicons'
-import CommentFeed from '../containers/CommentFeed'
+import IosIcon from 'react-native-vector-icons/Ionicons';
+import CommentFeed from '../containers/CommentFeed';
 
-export default function Comment(props){
+export default function Comment(props) {
   const w = Dimensions.get('window');
 
-    return (
-        <View style={{flex: 1, width: 100 + '%', height: 100 + '%'}}>
-          <View style={styles.nav}>
-            <IosIcon size={30} style={{marginLeft: 20}} name ="ios-arrow-back" />
-            <Text style={styles.CommentText}>Comments</Text>
-          </View>
-          <CommentFeed/>
-          <View style={{flexDirection: "row", width: w.width, alignItems: 'center', justifyContent: 'center'}}>
-              <TextInput style = {styles.TextInput}/>
-              <TouchableOpacity style={{alignItems: 'center'}}>
-                <Text>Add</Text>
-              </TouchableOpacity>
-          </View>
-        </View>
-      );
+  return (
+    <View style={{flex: 1, width: 100 + '%', height: 100 + '%'}}>
+      <View style={styles.nav}>
+        <IosIcon size={30} style={{marginLeft: 20}} name="ios-arrow-back" />
+        <Text style={styles.CommentText}>Comments</Text>
+      </View>
+      <CommentFeed />
+      <View
+        style={{
+          flexDirection: 'row',
+          width: w.width,
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}>
+        <TextInput style={styles.TextInput} />
+        <TouchableOpacity style={{alignItems: 'center'}}>
+          <Text>Add</Text>
+        </TouchableOpacity>
+      </View>
+    </View>
+  );
 }
-
 
 const styles = StyleSheet.create({
   nav: {
@@ -35,7 +49,7 @@ const styles = StyleSheet.create({
     borderBottomColor: config.styleConstants.borderColor,
     alignItems: 'center',
     justifyContent: 'center',
-    flexDirection: 'row'
+    flexDirection: 'row',
   },
 
   CommentText: {
@@ -52,7 +66,6 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: 'transparent',
     borderRadius: 13,
-    paddingLeft: 10
+    paddingLeft: 10,
   },
-
 });

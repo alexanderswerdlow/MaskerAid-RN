@@ -26,7 +26,6 @@ export default function Post(props) {
     Fire.likePost(props.post, props.loc, liked);
   } */
 
-
   const likePhoto = () => {
     _addLike(!liked);
     props.loc

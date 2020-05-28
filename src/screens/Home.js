@@ -1,4 +1,4 @@
-import React, {useContext, useState} from 'react';
+import React from 'react';
 import {View, Text, StyleSheet} from 'react-native';
 import config from '../config';
 import {PostFeed} from '../containers';
@@ -18,8 +18,7 @@ const styles = StyleSheet.create({
   nav: {
     width: `${100}%`,
     height: 56,
-    backgroundColor:
-      'rgb(' + global.Rvalue + ',' + global.Gvalue + ',' + global.Bvalue + ')',
+    backgroundColor: 'rgb('+global.Rvalue +','+global.Gvalue+','+global.Bvalue+')',
     borderBottomWidth: StyleSheet.hairlineWidth,
     borderBottomColor: config.styleConstants.borderColor,
     justifyContent: 'center',

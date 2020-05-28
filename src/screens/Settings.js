@@ -7,21 +7,19 @@ import {
   Dimensions,
   TouchableOpacity,
   Settings,
-  Slider,
 } from 'react-native';
 import {AuthContext} from '../navigation/AuthProvider';
 import {withNavigation, NavigationEvents} from 'react-navigation';
-
-var width = Dimensions.get('window').width;
+import Slider from '@react-native-community/slider';
 
 class SettingsScreen extends Component {
   static contextType = AuthContext;
 
   constructor(props) {
     super(props);
-    global.Rvalue = 0;
-    global.Gvalue = 0;
-    global.Bvalue = 0;
+    global.Rvalue = 47;
+    global.Gvalue = 141;
+    global.Bvalue = 255;
     this.state = {
       Rvalue: global.Rvalue,
       Gvalue: global.Gvalue,

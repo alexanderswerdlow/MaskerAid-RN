@@ -1,13 +1,18 @@
 import React, {createContext, useState} from 'react';
 import auth from '@react-native-firebase/auth';
+import {Alert} from 'react-native';
 import {GoogleSignin, statusCodes} from '@react-native-community/google-signin';
 import config from '../config';
 import {Platform} from 'react-native';
+import {Provider as PaperProvider} from 'react-native-paper';
 
 export const AuthContext = createContext({});
 
 export const AuthProvider = ({children}) => {
   const [user, setUser] = useState(null);
+  const [theme, changeTheme] = useState({
+    primary: '#34345c',
+  });
 
   GoogleSignin.configure({
     webClientId:
@@ -20,6 +25,8 @@ export const AuthProvider = ({children}) => {
       value={{
         user,
         setUser,
+        theme,
+        changeTheme,
         login: async () => {
           try {
             console.log('Signing In');
@@ -60,26 +67,38 @@ export const AuthProvider = ({children}) => {
               auth().signOut();
             })
             .catch(async function (error) {
-              const {idToken} = await GoogleSignin.signIn();
-              const googleCredential = auth.GoogleAuthProvider.credential(
-                idToken,
+              Alert.alert(
+                'You must re-authenticate before deleting your account',
+                'Your account will be permanately deleted',
+                [
+                  {
+                    text: 'OK',
+                    onPress: async () => {
+                      const {idToken} = await GoogleSignin.signIn();
+                      const googleCredential = auth.GoogleAuthProvider.credential(
+                        idToken,
+                      );
+                      const userCredential = await auth().signInWithCredential(
+                        googleCredential,
+                      );
+                      var user = auth().currentUser;
+                      user.delete().then(function () {
+                        console.log('User Deleted');
+                        auth()
+                          .signOut()
+                          .catch(async function (error) {
+                            console.log(error);
+                          });
+                      });
+                    },
+                  },
+                ],
+                {cancelable: false},
               );
-              const userCredential = await auth().signInWithCredential(
-                googleCredential,
-              );
-              var user = auth().currentUser;
-              user.delete().then(function () {
-                console.log('User Deleted');
-                auth()
-                  .signOut()
-                  .catch(async function (error) {
-                    console.log(error);
-                  });
-              });
             });
         },
       }}>
-      {children}
+      <PaperProvider>{children}</PaperProvider>
     </AuthContext.Provider>
   );
 };

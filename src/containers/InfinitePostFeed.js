@@ -1,8 +1,13 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React from 'react';
-import {FlatList, Text, Title, View} from 'react-native';
+import {FlatList, Text, View} from 'react-native';
 import {Post} from '../presentation';
-import {ActivityIndicator, StyleSheet, Dimensions} from 'react-native';
+import {
+  ActivityIndicator,
+  StyleSheet,
+  Dimensions,
+  RefreshControl,
+} from 'react-native';
 import firestore from '@react-native-firebase/firestore';
 // Screen Dimensions
 const {height, width} = Dimensions.get('window');
@@ -17,38 +22,42 @@ export default class InfinitePostFeed extends React.Component {
       loading: false,
       refreshing: false,
       user: props.user,
-      refresh: props.test,
     };
   }
 
-  update = () => {
+  update = (no_load) => {
     try {
-      this.retrieveData(false);
+      this.retrieveData(false, no_load);
     } catch (error) {
       console.log(error);
     }
   };
 
-  componentDidUpdate = (prevProps, prevState) => {
-    if (this.props.refresh != prevProps.refresh) {
-      this.setState({
-        documentData: [],
-      });
-      this.update();
-    }
+  onRefresh = () => {
+    this.setState({
+      documentData: [],
+    });
+    this.update(false);
   };
 
   // Component Did Mount
   componentDidMount = () => {
-    this.update();
+    this._unsubscribe = this.props.navigation.addListener('focus', () => {
+      this.update(true);
+      console.log('Focus');
+    });
   };
 
+  componentWillUnmount() {
+    this._unsubscribe();
+  }
+
   // Retrieve Data
-  retrieveData = async (retrieveMore) => {
+  retrieveData = async (retrieveMore, no_load) => {
     try {
       if (!retrieveMore) {
         this.setState({
-          loading: true,
+          loading: no_load ? false : true,
         });
       } else {
         this.setState({
@@ -120,7 +129,7 @@ export default class InfinitePostFeed extends React.Component {
 
   // Retrieve More Data
   retrieveMore = async () => {
-    this.retrieveData(true);
+    this.retrieveData(true, false);
   };
 
   // Render Header
@@ -144,6 +153,17 @@ export default class InfinitePostFeed extends React.Component {
       console.log(error);
     }
   };
+
+  listEmpty = () => {
+    if (!this.state.loading) {
+      return (
+        <View style={styles.ccontainer}>
+          <Text style={styles.noMessagesText}>No Posts :(</Text>
+        </View>
+      );
+    }
+  };
+
   render() {
     return (
       <FlatList
@@ -165,6 +185,13 @@ export default class InfinitePostFeed extends React.Component {
         ListHeaderComponent={this.renderHeader}
         // Footer (Activity Indicator)
         ListFooterComponent={this.renderFooter}
+        ListEmptyComponent={this.listEmpty}
+        refreshControl={
+          <RefreshControl
+            onRefresh={this.onRefresh}
+            refreshing={this.state.loading}
+          />
+        }
         // On End Reached (Takes a function)
         onEndReached={this.retrieveMore}
         // How Close To The End Of List Until Next Data Request Is Made
@@ -202,5 +229,22 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '400',
     color: '#000',
+  },
+
+  loader: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    flex: 1,
+  },
+  noMessagesText: {
+    fontSize: 22,
+    fontWeight: 'bold',
+    textAlign: 'center',
+    margin: 30,
+  },
+  ccontainer: {
+    justifyContent: 'center',
+    flex: 1,
+    margin: 10,
   },
 });

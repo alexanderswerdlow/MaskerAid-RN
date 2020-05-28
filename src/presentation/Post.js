@@ -68,7 +68,7 @@ export default function Post(props) {
         setThumbnail(url);
       })
       .catch(function (error) {
-        console.log('Could not retrieve thumbnail: ' + error);
+        //console.log('Could not retrieve thumbnail: ' + error);
       });
     storage()
       .ref(`posts/${props.loc.id}`)

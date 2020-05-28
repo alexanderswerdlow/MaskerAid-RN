@@ -1,22 +1,26 @@
-import React, {useState} from 'react';
-import {View, Text, StyleSheet, Button} from 'react-native';
+import React, {useContext} from 'react';
+import {View, StyleSheet, Text} from 'react-native';
 import config from '../config';
 import {PostFeed} from '../containers';
+import {AuthContext} from '../navigation/AuthProvider';
+import {Button} from 'react-native-paper';
 
 export default function Home({navigation}) {
-  const [renderer, setRerender] = useState(false);
+  const {theme, changeTheme} = useContext(AuthContext);
   return (
     <View style={{flex: 1, width: 100 + '%', height: 100 + '%'}}>
       <View style={styles.nav}>
-        <Text style={{fontSize: 20}}>MaskerAid</Text>
+        <Button
+          onPress={() => {
+            changeTheme({
+              primary: theme.primary == '#34345c' ? '#DE6860' : '#34345c',
+            });
+          }}>
+          Change
+        </Button>
+        <Text style={{color: theme.primary}}>Color</Text>
       </View>
-      <Button
-        title="Refresh"
-        onPress={() => {
-          setRerender(!renderer);
-        }}
-      />
-      <PostFeed refresh={renderer} />
+      <PostFeed navigation={navigation} />
     </View>
   );
 }

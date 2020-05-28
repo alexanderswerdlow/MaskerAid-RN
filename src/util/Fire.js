@@ -12,7 +12,6 @@ export const Firebase = {
       .where('following', 'array-contains', other_user.uid)
       .get()
       .then(function (querySnapshot) {
-        //console.log('is following: ' + !querySnapshot.empty);
         return !querySnapshot.empty;
       })
       .catch(function (error) {
@@ -74,7 +73,7 @@ export const Firebase = {
     });
   },
   post: (post_data, p_user, loc) => {
-    console.log('Post Triggered');
+    console.log('Firestore Post Triggered');
 
     var s_user = {
       photoURL: p_user.photoURL,
@@ -97,17 +96,26 @@ export const Firebase = {
     batch.set(postsRef, post);
     batch.commit();
 
+    console.log('Firestore Post Success');
+
     const post_count_ref = firestore().doc(`users/${p_user.uid}`);
-
-    return firestore().runTransaction(async (transaction) => {
-      const postCountData = await transaction.get(post_count_ref);
-
-      await transaction.update(post_count_ref, {
-        post_count: postCountData.exists
-          ? postCountData.data().post_count + 1
-          : 1,
+    return firestore()
+      .runTransaction(function (transaction) {
+        return transaction.get(post_count_ref).then(function (postCountData) {
+          if (!postCountData.exists) {
+            transaction.set(post_count_ref, {post_count: 1});
+          } else {
+            var new_post_count = postCountData.data().post_count + 1;
+            transaction.update(post_count_ref, {post_count: new_post_count});
+          }
+        });
+      })
+      .then(function () {
+        console.log('Post Transaction successfully committed!');
+      })
+      .catch(function (error) {
+        console.log('Post Transaction failed: ', error);
       });
-    });
   },
   deletePost: async (post_id, user) => {
     //Deletes Photo, Thumbnail, then DB entry
@@ -139,16 +147,23 @@ export const Firebase = {
       });
 
     const post_count_ref = firestore().doc(`users/${user.uid}`);
-
-    return firestore().runTransaction(async (transaction) => {
-      const postCountData = await transaction.get(post_count_ref);
-
-      await transaction.update(post_count_ref, {
-        post_count: postCountData.exists
-          ? postCountData.data().post_count - 1
-          : 0,
+    return firestore()
+      .runTransaction(function (transaction) {
+        return transaction.get(post_count_ref).then(function (postCountData) {
+          if (!postCountData.exists) {
+            transaction.set(post_count_ref, {post_count: 0});
+          } else {
+            var new_post_count = postCountData.data().post_count - 1;
+            transaction.update(post_count_ref, {post_count: new_post_count});
+          }
+        });
+      })
+      .then(function () {
+        console.log('Delete Post Transaction successfully committed!');
+      })
+      .catch(function (error) {
+        console.log('Delete Post Transaction failed: ', error);
       });
-    });
   },
   likePost: (post, loc, liked) => {
     const postReference = firestore().doc(`posts/${loc.id}`);

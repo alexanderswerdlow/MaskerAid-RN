@@ -1,12 +1,6 @@
 import React, {useCallback, useState, useEffect, useContext} from 'react';
 import {GiftedChat} from 'react-native-gifted-chat';
-import {
-  ActivityIndicator,
-  FlatList,
-  View,
-  Text,
-  TouchableHighlight,
-} from 'react-native';
+import {ActivityIndicator} from 'react-native';
 import firestore from '@react-native-firebase/firestore';
 import {AuthContext} from '../navigation/AuthProvider';
 
@@ -16,13 +10,23 @@ export default function Chat(props) {
   const [loading, setLoading] = useState(true); // Set loading to true on component mount
 
   useEffect(() => {
-    /*firestore().doc(`users/${user.uid}/messages`).add({
-      name: 'Ada Lovelace',
-    });*/
+    firestore()
+      .doc(`users/${user.uid}/messages/${props.route.params.user.uid}`)
+      .set(props.route.params.user);
+
+    firestore()
+      .doc(`users/${props.route.params.user.uid}/messages/${user.uid}`)
+      .set({
+        uid: user.uid,
+        photoURL: user.photoURL,
+        email: user.email,
+        displayName: user.displayName,
+      });
     const subscriber = firestore()
       .collection(
         `users/${user.uid}/messages/${props.route.params.user.uid}/messages`,
       )
+      .orderBy('createdAt', 'desc')
       .onSnapshot((querySnapshot) => {
         const messages = [];
         querySnapshot.forEach((documentSnapshot) => {
@@ -32,7 +36,6 @@ export default function Chat(props) {
           });
         });
         setMessages(messages);
-        console.log(messages[0]);
         setLoading(false);
       });
 
@@ -42,12 +45,11 @@ export default function Chat(props) {
 
   const onSend = useCallback((newMessages) => {
     setMessages((prevMessages) => [...newMessages, ...prevMessages]);
-    //console.log(newMessages[0]);
 
     const temp = newMessages[0];
     const createdAt = Date.parse(temp.createdAt);
     newMessages[0].createdAt = createdAt;
-
+    newMessages[0].user.avatar = user.photoURL;
     const batch = firestore().batch();
     const loc = firestore()
       .collection('users')

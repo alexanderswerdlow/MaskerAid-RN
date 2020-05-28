@@ -63,9 +63,15 @@ class Profile extends Component {
       .onSnapshot((snapshot) => {
         if (snapshot.data()) {
           this.setState({
-            followerCount: snapshot.data().follower_count,
-            followingCount: snapshot.data().following_count,
-            postCount: snapshot.data().post_count,
+            followerCount: snapshot.data().follower_count
+              ? snapshot.data().follower_count
+              : 0,
+            followingCount: snapshot.data().following_count
+              ? snapshot.data().following_count
+              : 0,
+            postCount: snapshot.data().post_count
+              ? snapshot.data().post_count
+              : 0,
           });
         }
       });
@@ -86,7 +92,7 @@ class Profile extends Component {
       <TouchableOpacity>
         <View
           style={[{width: width / 3}, {height: width / 3}, {marginBottom: 2}]}>
-          <PostFeed user={this.state.user} />
+          <PostFeed user={this.state.user} navigation={this.props.navigation} />
         </View>
       </TouchableOpacity>
     );
@@ -103,7 +109,10 @@ class Profile extends Component {
       return (
         <View>
           <View>
-            <PostFeed user={this.state.user} />
+            <PostFeed
+              user={this.state.user}
+              navigation={this.props.navigation}
+            />
           </View>
         </View>
       );
@@ -166,7 +175,12 @@ class Profile extends Component {
             mode="contained"
             onPress={() => {
               this.props.navigation.navigate('Chat', {
-                user: {uid: this.state.user.uid},
+                user: {
+                  uid: this.state.user.uid,
+                  photoURL: this.state.user.photoURL,
+                  email: this.state.user.email,
+                  displayName: this.state.user.displayName,
+                },
               });
             }}>
             Message

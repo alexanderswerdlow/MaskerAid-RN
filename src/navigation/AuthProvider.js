@@ -1,10 +1,11 @@
-import React, {createContext, useState} from 'react';
+import React, {createContext, useState, useEffect} from 'react';
 import auth from '@react-native-firebase/auth';
 import {Alert} from 'react-native';
 import {GoogleSignin, statusCodes} from '@react-native-community/google-signin';
 import config from '../config';
 import {Platform} from 'react-native';
 import {Provider as PaperProvider} from 'react-native-paper';
+import firestore from '@react-native-firebase/firestore';
 
 export const AuthContext = createContext({});
 
@@ -12,6 +13,20 @@ export const AuthProvider = ({children}) => {
   const [user, setUser] = useState(null);
   const [theme, changeTheme] = useState({
     primary: '#34345c',
+    default: true,
+  });
+
+  useEffect(() => {
+    if (user) {
+      firestore()
+        .doc(`users/${user.uid}`)
+        .update({
+          theme: theme,
+        })
+        .then(() => {
+          console.log('Theme Updated!');
+        });
+    }
   });
 
   GoogleSignin.configure({

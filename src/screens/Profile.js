@@ -61,11 +61,13 @@ class Profile extends Component {
       .collection('users')
       .doc(this.state.user.uid)
       .onSnapshot((snapshot) => {
-        this.setState({
-          followerCount: snapshot.data().follower_count,
-          followingCount: snapshot.data().following_count,
-          postCount: snapshot.data().post_count,
-        });
+        if (snapshot.data()) {
+          this.setState({
+            followerCount: snapshot.data().follower_count,
+            followingCount: snapshot.data().following_count,
+            postCount: snapshot.data().post_count,
+          });
+        }
       });
   }
 
@@ -149,15 +151,27 @@ class Profile extends Component {
       );
     } else if (user.uid != this.state.user.uid) {
       return (
-        <Button
-          icon="logout"
-          mode="contained"
-          onPress={() => {
-            Fire.setFollowing(user, this.state.user, !this.state.following);
-            this.updateFollowState();
-          }}>
-          {this.state.following ? 'Unfollow' : 'Follow'}
-        </Button>
+        <>
+          <Button
+            icon="logout"
+            mode="contained"
+            onPress={() => {
+              Fire.setFollowing(user, this.state.user, !this.state.following);
+              this.updateFollowState();
+            }}>
+            {this.state.following ? 'Unfollow' : 'Follow'}
+          </Button>
+          <Button
+            icon="logout"
+            mode="contained"
+            onPress={() => {
+              this.props.navigation.navigate('Chat', {
+                user: {uid: this.state.user.uid},
+              });
+            }}>
+            Message
+          </Button>
+        </>
       );
     }
   };

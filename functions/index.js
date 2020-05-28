@@ -52,6 +52,13 @@ exports.deleteUserData = functions.auth.user().onDelete((user) => {
       console.error('Error removing User Data: ', error);
     });
 
+  firebase_tools.firestore.delete(`users/${user.uid}/`, {
+    project: process.env.GCLOUD_PROJECT,
+    recursive: true,
+    yes: true,
+    token: functions.config().fb.token,
+  });
+
   const index = client.initIndex('users');
   index.deleteObject(user.uid, (err) => {
     if (err) throw err;

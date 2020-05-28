@@ -102,12 +102,10 @@ export const Firebase = {
     return firestore().runTransaction(async (transaction) => {
       const postCountData = await transaction.get(post_count_ref);
 
-      if (!postCountData.exists) {
-        throw 'Count does not exist!';
-      }
-
       await transaction.update(post_count_ref, {
-        post_count: postCountData.data().post_count + 1,
+        post_count: postCountData.exists
+          ? postCountData.data().post_count + 1
+          : 1,
       });
     });
   },

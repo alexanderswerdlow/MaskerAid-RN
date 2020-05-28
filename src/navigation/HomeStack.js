@@ -10,6 +10,7 @@ import ChatScreen from '../screens/Chat';
 import SearchScreen from '../screens/Search';
 import {AuthContext} from '../navigation/AuthProvider';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import SettingsScreen from '../screens/Settings';
 
 const Tab = createBottomTabNavigator();
 
@@ -76,7 +77,7 @@ export default function App() {
         },
       })}
       tabBarOptions={{
-        activeTintColor: 'blue',
+        activeTintColor: 'rgb('+global.Rvalue+','+global.Gvalue+','+global.Bvalue+')',
         inactiveTintColor: 'gray',
       }}>
       <Tab.Screen name="Home" component={MainStackScreen} />
@@ -86,6 +87,7 @@ export default function App() {
       <Tab.Screen name="Profile">
         {(props) => <ProfileScreen {...props} user={user} />}
       </Tab.Screen>
+      <Tab.Screen name="Settings" component={SettingsScreen} />
     </Tab.Navigator>
   );
 }

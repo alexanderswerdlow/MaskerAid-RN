@@ -7,9 +7,10 @@ import {
   Dimensions,
   Alert,
   TouchableOpacity,
+  Settings,
 } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import {withNavigation} from 'react-navigation';
+import {withNavigation, NavigationEvents} from 'react-navigation';
 import {PostFeed} from '../containers';
 import {Button} from 'react-native-paper';
 import Fire from '../util/Fire';
@@ -195,7 +196,22 @@ class Profile extends Component {
       <View>
         <View>
           <View>
-            {this.renderTopBar()}
+            <Button
+              style={{
+                backgroundColor:
+                  'rgb(' +
+                  global.Rvalue +
+                  ',' +
+                  global.Gvalue +
+                  ',' +
+                  global.Bvalue +
+                  ')',
+              }}
+              icon="logout"
+              mode="contained"
+              onPress={() => logout()}>
+              Logout
+            </Button>
             <Image
               style={styles.userPic}
               source={{uri: this.state.user.photoURL}}
@@ -233,7 +249,20 @@ class Profile extends Component {
               <Ionicons
                 name={'md-apps'}
                 size={30}
-                style={[this.state.activeIndex == 0 ? {} : {color: 'grey'}]}
+                style={[
+                  this.state.activeIndex == 0
+                    ? {
+                        color:
+                          'rgb(' +
+                          global.Rvalue +
+                          ',' +
+                          global.Gvalue +
+                          ',' +
+                          global.Bvalue +
+                          ')',
+                      }
+                    : {color: 'grey'},
+                ]}
               />
             </TouchableOpacity>
             <TouchableOpacity
@@ -242,7 +271,20 @@ class Profile extends Component {
               <Ionicons
                 name={'ios-list'}
                 size={30}
-                style={[this.state.activeIndex == 1 ? {} : {color: 'grey'}]}
+                style={[
+                  this.state.activeIndex == 1
+                    ? {
+                        color:
+                          'rgb(' +
+                          global.Rvalue +
+                          ',' +
+                          global.Gvalue +
+                          ',' +
+                          global.Bvalue +
+                          ')',
+                      }
+                    : {color: 'grey'},
+                ]}
               />
             </TouchableOpacity>
           </View>
@@ -260,8 +302,8 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     width: 125,
     height: 125,
+    marginTop: 20,
     borderRadius: 75,
-    marginTop: 30,
     borderWidth: 1,
     borderColor: 'black',
   },

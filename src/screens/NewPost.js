@@ -91,6 +91,14 @@ function NewPost({navigation}) {
                 alignItems: 'center',
                 padding: 10,
                 margin: 30,
+                backgroundColor:
+                  'rgb(' +
+                  global.Rvalue +
+                  ',' +
+                  global.Gvalue +
+                  ',' +
+                  global.Bvalue +
+                  ')',
               }}>
               Take Photo
             </Button>
@@ -102,6 +110,14 @@ function NewPost({navigation}) {
                 alignItems: 'center',
                 padding: 10,
                 margin: 30,
+                backgroundColor:
+                  'rgb(' +
+                  global.Rvalue +
+                  ',' +
+                  global.Gvalue +
+                  ',' +
+                  global.Bvalue +
+                  ')',
               }}>
               Open from Camera Roll
             </Button>

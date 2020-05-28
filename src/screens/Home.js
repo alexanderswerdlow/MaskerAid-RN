@@ -6,19 +6,16 @@ import {AuthContext} from '../navigation/AuthProvider';
 import {Button} from 'react-native-paper';
 
 export default function Home({navigation}) {
-  const {theme, changeTheme} = useContext(AuthContext);
+  const {theme} = useContext(AuthContext);
   return (
     <View style={{flex: 1, width: 100 + '%', height: 100 + '%'}}>
-      <View style={styles.nav}>
+      <View style={{backgroundColor: theme.backgroundColor}}>
         <Button
           onPress={() => {
-            changeTheme({
-              primary: theme.primary == '#34345c' ? '#DE6860' : '#34345c',
-            });
+            console.log(theme);
           }}>
-          Change
+          Print
         </Button>
-        <Text style={{color: theme.primary}}>Color</Text>
       </View>
       <PostFeed navigation={navigation} />
     </View>
@@ -29,7 +26,6 @@ const styles = StyleSheet.create({
   nav: {
     width: `${100}%`,
     height: 56,
-    backgroundColor: 'rgb('+global.Rvalue +','+global.Gvalue+','+global.Bvalue+')',
     borderBottomWidth: StyleSheet.hairlineWidth,
     borderBottomColor: config.styleConstants.borderColor,
     justifyContent: 'center',

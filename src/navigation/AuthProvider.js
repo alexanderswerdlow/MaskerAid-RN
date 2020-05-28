@@ -14,20 +14,22 @@ export const AuthProvider = ({children}) => {
   const [theme, changeTheme] = useState({
     primary: '#34345c',
     default: true,
+    backgroundColor: '#34345c',
   });
 
   useEffect(() => {
     if (user) {
-      firestore()
+      const subscriber = firestore()
         .doc(`users/${user.uid}`)
-        .update({
-          theme: theme,
-        })
-        .then(() => {
-          console.log('Theme Updated!');
+        .onSnapshot((documentSnapshot) => {
+          if (documentSnapshot.exists) {
+            changeTheme(documentSnapshot.data().theme);
+          }
         });
+      // Stop listening for updates when no longer required
+      return () => subscriber();
     }
-  });
+  }, [user]);
 
   GoogleSignin.configure({
     webClientId:

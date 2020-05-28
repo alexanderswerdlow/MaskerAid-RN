@@ -121,7 +121,7 @@ class Profile extends Component {
   };
 
   renderTopBar = () => {
-    const {user, logout, deleteAccount} = this.context;
+    const {user, logout, deleteAccount, theme} = this.context;
     if (this.state.selfProfile) {
       return (
         <>
@@ -163,6 +163,9 @@ class Profile extends Component {
       return (
         <>
           <Button
+            style={{
+              backgroundColor: theme.backgroundColor,
+            }}
             icon="logout"
             mode="contained"
             onPress={() => {
@@ -192,26 +195,12 @@ class Profile extends Component {
   };
 
   render() {
+    const {theme} = this.context;
     return (
       <View>
         <View>
           <View>
-            <Button
-              style={{
-                backgroundColor:
-                  'rgb(' +
-                  global.Rvalue +
-                  ',' +
-                  global.Gvalue +
-                  ',' +
-                  global.Bvalue +
-                  ')',
-              }}
-              icon="logout"
-              mode="contained"
-              onPress={() => logout()}>
-              Logout
-            </Button>
+            {this.renderTopBar()}
             <Image
               style={styles.userPic}
               source={{uri: this.state.user.photoURL}}
@@ -252,14 +241,7 @@ class Profile extends Component {
                 style={[
                   this.state.activeIndex == 0
                     ? {
-                        color:
-                          'rgb(' +
-                          global.Rvalue +
-                          ',' +
-                          global.Gvalue +
-                          ',' +
-                          global.Bvalue +
-                          ')',
+                        color: theme.primary,
                       }
                     : {color: 'grey'},
                 ]}
@@ -274,14 +256,7 @@ class Profile extends Component {
                 style={[
                   this.state.activeIndex == 1
                     ? {
-                        color:
-                          'rgb(' +
-                          global.Rvalue +
-                          ',' +
-                          global.Gvalue +
-                          ',' +
-                          global.Bvalue +
-                          ')',
+                        color: theme.primary,
                       }
                     : {color: 'grey'},
                 ]}

@@ -54,7 +54,7 @@ function MessagesStackScreen() {
 }
 
 export default function App() {
-  const {user} = React.useContext(AuthContext);
+  const {user, theme} = React.useContext(AuthContext);
   return (
     <Tab.Navigator
       screenOptions={({route}) => ({
@@ -71,13 +71,15 @@ export default function App() {
             iconName = 'ios-search';
           } else if (route.name === 'Messages') {
             iconName = 'ios-mail';
+          } else if (route.name === 'Settings') {
+            iconName = 'ios-hammer';
           }
 
           return <Ionicons name={iconName} size={size} color={color} />;
         },
       })}
       tabBarOptions={{
-        activeTintColor: 'rgb('+global.Rvalue+','+global.Gvalue+','+global.Bvalue+')',
+        activeTintColor: theme.primary,
         inactiveTintColor: 'gray',
       }}>
       <Tab.Screen name="Home" component={MainStackScreen} />

@@ -1,5 +1,5 @@
 import {Image, View, Text, TextInput} from 'react-native';
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useContext} from 'react';
 import ImagePicker from 'react-native-image-crop-picker';
 import {
   Dialog,
@@ -12,6 +12,7 @@ import {
   Snackbar,
 } from 'react-native-paper';
 import {useUpload} from '../util';
+import {AuthContext} from '../navigation/AuthProvider';
 
 function NewPost({navigation}) {
   const [image, setImage] = useState(null);
@@ -22,6 +23,7 @@ function NewPost({navigation}) {
   const [capWarnVisible, setCapWarnVisible] = useState(false);
   const [prompt, setPrompt] = useState(true);
   const [{success, uploading}, monitorUpload] = useUpload();
+  const {theme} = useContext(AuthContext);
 
   const uploadFile = () => {
     if (response) {
@@ -91,14 +93,7 @@ function NewPost({navigation}) {
                 alignItems: 'center',
                 padding: 10,
                 margin: 30,
-                backgroundColor:
-                  'rgb(' +
-                  global.Rvalue +
-                  ',' +
-                  global.Gvalue +
-                  ',' +
-                  global.Bvalue +
-                  ')',
+                backgroundColor: theme.backgroundColor,
               }}>
               Take Photo
             </Button>
@@ -110,14 +105,7 @@ function NewPost({navigation}) {
                 alignItems: 'center',
                 padding: 10,
                 margin: 30,
-                backgroundColor:
-                  'rgb(' +
-                  global.Rvalue +
-                  ',' +
-                  global.Gvalue +
-                  ',' +
-                  global.Bvalue +
-                  ')',
+                backgroundColor: theme.backgroundColor,
               }}>
               Open from Camera Roll
             </Button>

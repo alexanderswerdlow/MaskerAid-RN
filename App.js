@@ -6,9 +6,9 @@ import {AuthProvider} from './src/navigation/AuthProvider';
 export default class App extends Component {
   render() {
     return (
-        <AuthProvider>
-            <MaskerAid />
-        </AuthProvider>
+      <AuthProvider>
+        <MaskerAid />
+      </AuthProvider>
     );
   }
 }

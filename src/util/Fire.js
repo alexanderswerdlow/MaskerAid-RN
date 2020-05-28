@@ -1,41 +1,115 @@
 import firestore from '@react-native-firebase/firestore';
 import storage from '@react-native-firebase/storage';
-import {Platform} from 'react-native';
 
 export const Firebase = {
-  getPosts: async () => {
-    try {
-      const querySnapshot = await firestore().collection('posts').get();
-      let posts = querySnapshot.docs.map((doc) => doc.data());
-      return posts;
-    } catch (error) {
-      console.log('Error getting documents: ', error);
+  isFollowing: (self_user, other_user) => {
+    if (self_user.uid == other_user.uid) {
+      return false;
     }
+    const snapshot = firestore()
+      .collection('users')
+      .where('uid', '==', self_user.uid)
+      .where('following', 'array-contains', other_user.uid)
+      .get()
+      .then(function (querySnapshot) {
+        //console.log('is following: ' + !querySnapshot.empty);
+        return !querySnapshot.empty;
+      })
+      .catch(function (error) {
+        console.log('Error getting documents: ', error);
+      });
+  },
+  setFollowing: async (self_user, other_user, val) => {
+    if (self_user.uid == other_user.uid) {
+      return;
+    }
+    const querySnapshot = await firestore()
+      .collection('users')
+      .doc(self_user.uid);
+
+    const batch = firestore().batch();
+
+    batch.update(querySnapshot, {
+      following: val
+        ? firestore.FieldValue.arrayUnion(other_user.uid)
+        : firestore.FieldValue.arrayRemove(other_user.uid),
+    });
+
+    const otherQuerySnapshot = await firestore()
+      .collection('users')
+      .doc(other_user.uid);
+
+    batch.update(otherQuerySnapshot, {
+      followers: val
+        ? firestore.FieldValue.arrayUnion(self_user.uid)
+        : firestore.FieldValue.arrayRemove(self_user.uid),
+    });
+
+    batch.commit();
+
+    const following_count_ref = firestore().doc(`users/${self_user.uid}`);
+    const follower_count_ref = firestore().doc(`users/${other_user.uid}`);
+
+    return firestore().runTransaction(async (transaction) => {
+      const followingCountData = await transaction.get(following_count_ref);
+      const followerCountData = await transaction.get(follower_count_ref);
+
+      await transaction.update(following_count_ref, {
+        following_count: followingCountData.exists
+          ? followingCountData.data().following_count + (val ? 1 : -1)
+          : 1,
+      });
+
+      await transaction.update(follower_count_ref, {
+        follower_count: followerCountData.exists
+          ? followerCountData.data().follower_count + (val ? 1 : -1)
+          : 1,
+      });
+    });
   },
   uploadFileToFireBase: (response, user, loc) => {
-    //const {path, uri} = response;
-    //const fileSource = Platform.OS === 'android' ? path : uri;
     const storageRef = storage().ref(`posts/${loc}`);
     return storageRef.putFile(response.path, {
       cacheControl: 'max-age=7200', // cache photos for two hours
     });
   },
-  post: (post_data, user, loc) => {
+  post: (post_data, p_user, loc) => {
     console.log('Post Triggered');
+
+    var s_user = {
+      photoURL: p_user.photoURL,
+      displayName: p_user.displayName,
+      email: p_user.email,
+      uid: p_user.uid,
+    };
+
     var post = {
-      post_date: firestore.Timestamp.fromDate(new Date()),
+      post_date: firestore.FieldValue.serverTimestamp(),
       text: `${post_data}`,
       like_count: 0,
-      user_name: user.displayName,
-      user_photo: user.photoURL,
-      user_id: user.uid,
+      user: s_user,
     };
+
     const batch = firestore().batch();
 
     batch.set(loc, post);
     const postsRef = firestore().collection('posts').doc(loc.id);
     batch.set(postsRef, post);
-    return batch.commit();
+    batch.commit();
+
+    const post_count_ref = firestore().doc(`users/${p_user.uid}`);
+
+    return firestore().runTransaction(async (transaction) => {
+      const postCountData = await transaction.get(post_count_ref);
+
+      if (!postCountData.exists) {
+        throw 'Count does not exist!';
+      }
+
+      await transaction.update(post_count_ref, {
+        post_count: postCountData.data().post_count + 1,
+      });
+    });
   },
   deletePost: async (post_id, user) => {
     //Deletes Photo, Thumbnail, then DB entry
@@ -65,6 +139,20 @@ export const Firebase = {
       .catch(function (error) {
         console.log('Could Not Delete Photo: ' + error);
       });
+
+    const post_count_ref = firestore().doc(`users/${user.uid}`);
+
+    return firestore().runTransaction(async (transaction) => {
+      const postCountData = await transaction.get(post_count_ref);
+
+      if (!postCountData.exists) {
+        throw 'Count does not exist!';
+      }
+
+      await transaction.update(post_count_ref, {
+        post_count: postCountData.data().post_count - 1,
+      });
+    });
   },
   likePost: (post, loc, liked) => {
     const postReference = firestore().doc(`posts/${loc.id}`);

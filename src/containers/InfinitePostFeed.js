@@ -1,108 +1,132 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, {useState, useEffect} from 'react';
-import {FlatList, Text, View} from 'react-native';
+import React from 'react';
+import {FlatList, Text, Title, View} from 'react-native';
 import {Post} from '../presentation';
 import {ActivityIndicator, StyleSheet, Dimensions} from 'react-native';
 import firestore from '@react-native-firebase/firestore';
 // Screen Dimensions
 const {height, width} = Dimensions.get('window');
 
-class PostFeed extends React.Component {
+export default class InfinitePostFeed extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       documentData: [],
-      limit: 9,
+      limit: 2,
       lastVisible: null,
       loading: false,
       refreshing: false,
-      userData: props.userData,
+      user: props.user,
+      refresh: props.test,
     };
   }
-  // Component Did Mount
-  componentDidMount = () => {
+
+  update = () => {
     try {
-      // Cloud Firestore: Initial Query
-      this.retrieveData();
+      this.retrieveData(false);
     } catch (error) {
       console.log(error);
     }
   };
-  // Retrieve Data
-  retrieveData = async () => {
-    try {
-      // Set State: Loading
+
+  componentDidUpdate = (prevProps, prevState) => {
+    if (this.props.refresh != prevProps.refresh) {
       this.setState({
-        loading: true,
+        documentData: [],
       });
+      this.update();
+    }
+  };
+
+  // Component Did Mount
+  componentDidMount = () => {
+    this.update();
+  };
+
+  // Retrieve Data
+  retrieveData = async (retrieveMore) => {
+    try {
+      if (!retrieveMore) {
+        this.setState({
+          loading: true,
+        });
+      } else {
+        this.setState({
+          refreshing: true,
+        });
+      }
       console.log('Retrieving Data');
       // Cloud Firestore: Query
-      let initialQuery = await firestore()
-        .collection(
-          this.state.userData
-            ? `users/${this.state.userData.uid}/posts`
-            : 'posts',
-        )
-        .orderBy('post_date', 'desc')
-        .limit(this.state.limit);
+      let initialQuery;
+
+      if (!retrieveMore) {
+        initialQuery = await firestore()
+          .collection(
+            this.state.user ? `users/${this.state.user.uid}/posts` : 'posts',
+          )
+          .orderBy('post_date', 'desc')
+          .limit(this.state.limit);
+      } else {
+        initialQuery = await firestore()
+          .collection(
+            this.state.user ? `users/${this.state.user.uid}/posts` : 'posts',
+          )
+          .orderBy('post_date', 'desc')
+          .startAfter(this.state.lastVisible)
+          .limit(this.state.limit);
+      }
+
       // Cloud Firestore: Query Snapshot
       let documentSnapshots = await initialQuery.get();
       // Cloud Firestore: Document Data
-      let documentData = documentSnapshots.docs.map((document) =>
-        document.data(),
-      );
-      // Cloud Firestore: Last Visible Document (Document ID To Start From For Proceeding Queries)
-      let lastVisible = documentData[documentData.length - 1].id;
-      // Set State
-      this.setState({
-        documentData: documentData,
-        lastVisible: lastVisible,
-        loading: false,
+      let documentData = [];
+      documentSnapshots.forEach((postSnapshot) => {
+        documentData.push({
+          key: postSnapshot.data().post_date,
+          post: postSnapshot.data(),
+          user: postSnapshot.data().user,
+          ref: postSnapshot.ref,
+        });
       });
+
+      if (documentData.length == 0) {
+        this.setState({
+          loading: false,
+        });
+        return;
+      }
+
+      // Cloud Firestore: Last Visible Document (Document ID To Start From For Proceeding Queries)
+      let lastVisible = documentData[documentData.length - 1].key;
+      // Set State
+
+      if (!retrieveMore) {
+        this.setState({
+          documentData: documentData,
+          lastVisible: lastVisible,
+          loading: false,
+        });
+      } else {
+        this.setState({
+          documentData: [...this.state.documentData, ...documentData],
+          lastVisible: lastVisible,
+          refreshing: false,
+        });
+      }
     } catch (error) {
       console.log(error);
     }
   };
-  // Retrieve More
+
+  // Retrieve More Data
   retrieveMore = async () => {
-    try {
-      // Set State: Refreshing
-      this.setState({
-        refreshing: true,
-      });
-      console.log('Retrieving additional Data');
-      // Cloud Firestore: Query (Additional Query)
-      let additionalQuery = await firestore()
-        .collection(
-          this.state.userData
-            ? `users/${this.state.userData.uid}/posts`
-            : 'posts',
-        )
-        .orderBy('post_date', 'desc')
-        .startAfter(this.state.lastVisible)
-        .limit(this.state.limit);
-      // Cloud Firestore: Query Snapshot
-      let documentSnapshots = await additionalQuery.get();
-      // Cloud Firestore: Document Data
-      let documentData = documentSnapshots.docs.map((document) =>
-        document.data(),
-      );
-      // Cloud Firestore: Last Visible Document (Document ID To Start From For Proceeding Queries)
-      let lastVisible = documentData[documentData.length - 1].id;
-      // Set State
-      this.setState({
-        documentData: [...this.state.documentData, ...documentData],
-        lastVisible: lastVisible,
-        refreshing: false,
-      });
-    } catch (error) {
-      console.log(error);
-    }
+    this.retrieveData(true);
   };
+
   // Render Header
   renderHeader = () => {
     try {
-      return <Text style={styles.headerText}>Items</Text>;
+      return <Text style={styles.headerText}>Posts</Text>;
     } catch (error) {
       console.log(error);
     }
@@ -126,9 +150,14 @@ class PostFeed extends React.Component {
         // Data
         data={this.state.documentData}
         // Render Items
-        renderItem={(item, index) => {
-          console.log(this.documentData[index]);
-          return <Post post={item} />;
+        renderItem={(item) => {
+          return (
+            <Post
+              post={item.item.post}
+              user={item.item.user}
+              loc={item.item.ref}
+            />
+          );
         }}
         // Item Key
         keyExtractor={(item, index) => String(index)}
@@ -175,5 +204,3 @@ const styles = StyleSheet.create({
     color: '#000',
   },
 });
-
-export default PostFeed;

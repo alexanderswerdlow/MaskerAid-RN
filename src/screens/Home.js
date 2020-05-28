@@ -1,15 +1,22 @@
-import React, {useContext, useState} from 'react';
-import {View, Text, StyleSheet} from 'react-native';
+import React, {useState} from 'react';
+import {View, Text, StyleSheet, Button} from 'react-native';
 import config from '../config';
 import {PostFeed} from '../containers';
 
 export default function Home({navigation}) {
+  const [renderer, setRerender] = useState(false);
   return (
     <View style={{flex: 1, width: 100 + '%', height: 100 + '%'}}>
       <View style={styles.nav}>
         <Text style={{fontSize: 20}}>MaskerAid</Text>
       </View>
-      <PostFeed />
+      <Button
+        title="Refresh"
+        onPress={() => {
+          setRerender(!renderer);
+        }}
+      />
+      <PostFeed refresh={renderer} />
     </View>
   );
 }

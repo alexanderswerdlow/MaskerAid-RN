@@ -21,10 +21,28 @@ export const AuthProvider = ({children}) => {
         user,
         setUser,
         login: async () => {
-          console.log('Signing In');
-          const {idToken} = await GoogleSignin.signIn();
-          const googleCredential = auth.GoogleAuthProvider.credential(idToken);
-          auth().signInWithCredential(googleCredential);
+          try {
+            console.log('Signing In');
+            const {idToken} = await GoogleSignin.signIn();
+            const googleCredential = auth.GoogleAuthProvider.credential(
+              idToken,
+            );
+            auth().signInWithCredential(googleCredential);
+          } catch (error) {
+            console.log(error);
+            if (error.code === statusCodes.SIGN_IN_CANCELLED) {
+              // user cancelled the login flow
+              console.log('Sign In Cancelled');
+            } else if (error.code === statusCodes.IN_PROGRESS) {
+              // operation (e.g. sign in) is in progress already
+            } else if (error.code === statusCodes.PLAY_SERVICES_NOT_AVAILABLE) {
+              // play services not available or outdated
+              console.log('Play Services Not Available');
+            } else {
+              // some other error happened
+              console.log('Sign In Error');
+            }
+          }
         },
         logout: async () => {
           try {
@@ -32,6 +50,33 @@ export const AuthProvider = ({children}) => {
           } catch (e) {
             console.error(e);
           }
+        },
+        deleteAccount: async () => {
+          var user = auth().currentUser;
+          user
+            .delete()
+            .then(function () {
+              console.log('User Deleted');
+              auth().signOut();
+            })
+            .catch(async function (error) {
+              const {idToken} = await GoogleSignin.signIn();
+              const googleCredential = auth.GoogleAuthProvider.credential(
+                idToken,
+              );
+              const userCredential = await auth().signInWithCredential(
+                googleCredential,
+              );
+              var user = auth().currentUser;
+              user.delete().then(function () {
+                console.log('User Deleted');
+                auth()
+                  .signOut()
+                  .catch(async function (error) {
+                    console.log(error);
+                  });
+              });
+            });
         },
       }}>
       {children}

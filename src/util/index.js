@@ -1,3 +1,3 @@
-import Fire from './Fire';
+import {Fire} from './Fire';
 export {useUpload} from './Upload';
 export {Fire};

@@ -1,5 +1,5 @@
 import {Image, View, Text, TextInput} from 'react-native';
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useContext} from 'react';
 import ImagePicker from 'react-native-image-crop-picker';
 import {
   Dialog,
@@ -12,6 +12,7 @@ import {
   Snackbar,
 } from 'react-native-paper';
 import {useUpload} from '../util';
+import {AuthContext} from '../navigation/AuthProvider';
 
 function NewPost({navigation}) {
   const [image, setImage] = useState(null);
@@ -21,11 +22,14 @@ function NewPost({navigation}) {
   const [postDialogVisible, setPostDialogVisible] = useState(false);
   const [capWarnVisible, setCapWarnVisible] = useState(false);
   const [prompt, setPrompt] = useState(true);
-  const [{success, uploading, progress}, monitorUpload] = useUpload();
+  const [{success, uploading}, monitorUpload] = useUpload();
+  const {theme} = useContext(AuthContext);
 
   const uploadFile = () => {
     if (response) {
       monitorUpload(response, title);
+      setPrompt(true);
+      setResponse(null);
     }
   };
 
@@ -46,10 +50,14 @@ function NewPost({navigation}) {
       forceJpg: true,
       mediaType: 'photo',
       maxFiles: 1,
-    }).then((image) => {
-      setResponse(image);
-      setImage({uri: image.path});
-    });
+    })
+      .then((image) => {
+        setResponse(image);
+        setImage({uri: image.path});
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   };
 
   const selectImage = () => {
@@ -60,10 +68,14 @@ function NewPost({navigation}) {
       forceJpg: true,
       mediaType: 'photo',
       maxFiles: 1,
-    }).then((image) => {
-      setResponse(image);
-      setImage({uri: image.path});
-    });
+    })
+      .then((image) => {
+        setResponse(image);
+        setImage({uri: image.path});
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   };
 
   return (
@@ -81,6 +93,7 @@ function NewPost({navigation}) {
                 alignItems: 'center',
                 padding: 10,
                 margin: 30,
+                backgroundColor: theme.colors.primary,
               }}>
               Take Photo
             </Button>
@@ -92,6 +105,7 @@ function NewPost({navigation}) {
                 alignItems: 'center',
                 padding: 10,
                 margin: 30,
+                backgroundColor: theme.colors.primary,
               }}>
               Open from Camera Roll
             </Button>
@@ -102,8 +116,10 @@ function NewPost({navigation}) {
         <Text>Post Details</Text>
         <TextInput
           placeholder="Enter a caption (Required)"
-          style={{margin: 20}}
+          style={{margin: 20, width: 300}}
           value={title}
+          defaultValue="Default Value"
+          clearButtonMode="while-editing"
           onChangeText={(text) => setTitle(text)}
         />
         {uploading ? (

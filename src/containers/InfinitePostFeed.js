@@ -1,108 +1,147 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, {useState, useEffect} from 'react';
+import React from 'react';
 import {FlatList, Text, View} from 'react-native';
 import {Post} from '../presentation';
-import {ActivityIndicator, StyleSheet, Dimensions} from 'react-native';
+import {
+  ActivityIndicator,
+  StyleSheet,
+  Dimensions,
+  RefreshControl,
+} from 'react-native';
 import firestore from '@react-native-firebase/firestore';
 // Screen Dimensions
 const {height, width} = Dimensions.get('window');
 
-class PostFeed extends React.Component {
+export default class InfinitePostFeed extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       documentData: [],
-      limit: 9,
+      limit: 2,
       lastVisible: null,
       loading: false,
       refreshing: false,
-      userData: props.userData,
+      user: props.user,
+      updating: true,
     };
   }
-  // Component Did Mount
-  componentDidMount = () => {
+
+  update = (no_load) => {
     try {
-      // Cloud Firestore: Initial Query
-      this.retrieveData();
+      this.retrieveData(false, no_load);
     } catch (error) {
       console.log(error);
     }
   };
+
+  onRefresh = () => {
+    this.setState({
+      documentData: [],
+    });
+    this.update(false);
+  };
+
+  // Component Did Mount
+  componentDidMount = () => {
+    this._unsubscribe = this.props.navigation.addListener('focus', () => {
+      this.setState({updating: true});
+      this.update(true);
+      this.setState({updating: false});
+    });
+  };
+
+  componentWillUnmount() {
+    this._unsubscribe();
+  }
+
   // Retrieve Data
-  retrieveData = async () => {
+  retrieveData = async (retrieveMore, no_load) => {
     try {
-      // Set State: Loading
-      this.setState({
-        loading: true,
-      });
+      if (!retrieveMore) {
+        this.setState({
+          loading: no_load ? false : true,
+        });
+      } else {
+        this.setState({
+          refreshing: true,
+        });
+      }
       console.log('Retrieving Data');
       // Cloud Firestore: Query
-      let initialQuery = await firestore()
-        .collection(
-          this.state.userData
-            ? `users/${this.state.userData.uid}/posts`
-            : 'posts',
-        )
-        .orderBy('post_date', 'desc')
-        .limit(this.state.limit);
+      let initialQuery;
+
+      if (!retrieveMore) {
+        initialQuery = await firestore()
+          .collection(
+            this.state.user ? `users/${this.state.user.uid}/posts` : 'posts',
+          )
+          .orderBy('post_date', 'desc')
+          .limit(this.state.limit);
+      } else {
+        initialQuery = await firestore()
+          .collection(
+            this.state.user ? `users/${this.state.user.uid}/posts` : 'posts',
+          )
+          .orderBy('post_date', 'desc')
+          .startAfter(this.state.lastVisible)
+          .limit(this.state.limit);
+      }
+
       // Cloud Firestore: Query Snapshot
       let documentSnapshots = await initialQuery.get();
       // Cloud Firestore: Document Data
-      let documentData = documentSnapshots.docs.map((document) =>
-        document.data(),
-      );
-      // Cloud Firestore: Last Visible Document (Document ID To Start From For Proceeding Queries)
-      let lastVisible = documentData[documentData.length - 1].id;
-      // Set State
-      this.setState({
-        documentData: documentData,
-        lastVisible: lastVisible,
-        loading: false,
+      let documentData = [];
+      documentSnapshots.forEach((postSnapshot) => {
+        documentData.push({
+          key: postSnapshot.data().post_date,
+          post: postSnapshot.data(),
+          user: postSnapshot.data().user,
+          ref: postSnapshot.ref,
+        });
       });
+
+      if (documentData.length == 0) {
+        this.setState({
+          loading: false,
+        });
+        return;
+      }
+
+      // Cloud Firestore: Last Visible Document (Document ID To Start From For Proceeding Queries)
+      let lastVisible = documentData[documentData.length - 1].key;
+      // Set State
+
+      if (!retrieveMore) {
+        this.setState({
+          documentData: documentData,
+          lastVisible: lastVisible,
+          loading: false,
+        });
+      } else {
+        this.setState({
+          documentData: [...this.state.documentData, ...documentData],
+          lastVisible: lastVisible,
+          refreshing: false,
+        });
+      }
     } catch (error) {
       console.log(error);
     }
   };
-  // Retrieve More
+
+  // Retrieve More Data
   retrieveMore = async () => {
-    try {
-      // Set State: Refreshing
-      this.setState({
-        refreshing: true,
-      });
-      console.log('Retrieving additional Data');
-      // Cloud Firestore: Query (Additional Query)
-      let additionalQuery = await firestore()
-        .collection(
-          this.state.userData
-            ? `users/${this.state.userData.uid}/posts`
-            : 'posts',
-        )
-        .orderBy('post_date', 'desc')
-        .startAfter(this.state.lastVisible)
-        .limit(this.state.limit);
-      // Cloud Firestore: Query Snapshot
-      let documentSnapshots = await additionalQuery.get();
-      // Cloud Firestore: Document Data
-      let documentData = documentSnapshots.docs.map((document) =>
-        document.data(),
-      );
-      // Cloud Firestore: Last Visible Document (Document ID To Start From For Proceeding Queries)
-      let lastVisible = documentData[documentData.length - 1].id;
-      // Set State
-      this.setState({
-        documentData: [...this.state.documentData, ...documentData],
-        lastVisible: lastVisible,
-        refreshing: false,
-      });
-    } catch (error) {
-      console.log(error);
-    }
+    this.retrieveData(true, false);
   };
+
   // Render Header
   renderHeader = () => {
     try {
-      return <Text style={styles.headerText}>Items</Text>;
+      if (this.props.onHeader) {
+        return this.props.onHeader();
+      } else {
+        return <Text style={styles.headerText}>Posts</Text>;
+      }
     } catch (error) {
       console.log(error);
     }
@@ -120,15 +159,33 @@ class PostFeed extends React.Component {
       console.log(error);
     }
   };
+
+  listEmpty = () => {
+    if (!this.state.updating) {
+      return <View style={styles.ccontainer}></View>;
+    } else if (!this.state.loading) {
+      return (
+        <View style={styles.ccontainer}>
+          <Text style={styles.noMessagesText}>No Posts :(</Text>
+        </View>
+      );
+    }
+  };
+
   render() {
     return (
       <FlatList
         // Data
         data={this.state.documentData}
         // Render Items
-        renderItem={(item, index) => {
-          console.log(this.documentData[index]);
-          return <Post post={item} />;
+        renderItem={(item) => {
+          return (
+            <Post
+              post={item.item.post}
+              user={item.item.user}
+              loc={item.item.ref}
+            />
+          );
         }}
         // Item Key
         keyExtractor={(item, index) => String(index)}
@@ -136,6 +193,13 @@ class PostFeed extends React.Component {
         ListHeaderComponent={this.renderHeader}
         // Footer (Activity Indicator)
         ListFooterComponent={this.renderFooter}
+        ListEmptyComponent={this.listEmpty}
+        refreshControl={
+          <RefreshControl
+            onRefresh={this.onRefresh}
+            refreshing={this.state.loading}
+          />
+        }
         // On End Reached (Takes a function)
         onEndReached={this.retrieveMore}
         // How Close To The End Of List Until Next Data Request Is Made
@@ -174,6 +238,21 @@ const styles = StyleSheet.create({
     fontWeight: '400',
     color: '#000',
   },
-});
 
-export default PostFeed;
+  loader: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    flex: 1,
+  },
+  noMessagesText: {
+    fontSize: 22,
+    fontWeight: 'bold',
+    textAlign: 'center',
+    margin: 30,
+  },
+  ccontainer: {
+    justifyContent: 'center',
+    flex: 1,
+    margin: 10,
+  },
+});

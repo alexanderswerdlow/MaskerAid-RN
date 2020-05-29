@@ -1,5 +1,12 @@
 import React, {useContext, useState, useEffect} from 'react';
-import {View, Text, Image, StyleSheet, Dimensions} from 'react-native';
+import {
+  TouchableOpacity,
+  View,
+  Text,
+  Image,
+  StyleSheet,
+  Dimensions,
+} from 'react-native';
 import config from '../config';
 import Icon from 'react-native-vector-icons/Fontisto';
 import IconAntDesign from 'react-native-vector-icons/AntDesign';
@@ -9,39 +16,53 @@ import ProgressiveImage from './ProgressiveImage';
 import DoubleTap from './DoubleTap';
 import Fire from '../util/Fire';
 import {Dialog, Portal, Button, Paragraph} from 'react-native-paper';
+import * as RootNavigation from '../navigation/RootNavigation.js';
+import PropTypes from 'prop-types';
+import firestore from '@react-native-firebase/firestore';
 
 export default function Post(props) {
   const w = Dimensions.get('window');
   const {user} = useContext(AuthContext);
-  const [liked, _addLike] = useState(false);
+  const [liked, setLiked] = useState(false);
   const [thumbnail, setThumbnail] = useState('');
   const [image, setImage] = useState('');
-  const [like_count, set_like_count] = useState(0);
   const [dialogVisible, setDialogVisible] = useState(false);
   const heartIconColor = liked ? 'rgb(252,61,57)' : null;
   const heartIconID = liked ? 'heart' : 'hearto';
-  /* Slows down like updating but ensures consistency
-  function likePhoto() {
-    _addLike(!liked);
-    Fire.likePost(props.post, props.loc, liked);
-  } */
+  const [like_count, set_like_count] = useState(0);
 
+  useEffect(() => {
+    const subscriber = props.loc.onSnapshot((postSnapshot) => {
+      if (postSnapshot.data()) {
+        set_like_count(postSnapshot.data().like_count);
+      }
+    });
+    return () => subscriber();
+  }, []);
 
   const likePhoto = () => {
-    _addLike(!liked);
-    props.loc
-      .update({
-        like_count: liked
-          ? props.post.like_count - 1
-          : props.post.like_count + 1,
-      })
-      .then(() => {
-        console.log('Liked!');
-      });
+    let new_count = 1;
+
+    if (like_count != 0 || liked) {
+      setLiked(!liked);
+      new_count = liked ? like_count - 1 : like_count + 1;
+    }
+
+    const batch = firestore().batch();
+    const userRef = firestore().doc(
+      `users/${props.user.uid}/posts/${props.loc.id}`,
+    );
+    batch.update(userRef, {
+      like_count: new_count,
+    });
+    const postsRef = firestore().collection('posts').doc(props.loc.id);
+    batch.update(postsRef, {
+      like_count: new_count,
+    });
+    batch.commit();
   };
 
   useEffect(() => {
-    //set_like_count(props.post.like_count);
     storage()
       .ref(`posts/thumbnails/${props.loc.id}_50x50`)
       .getDownloadURL()
@@ -49,7 +70,7 @@ export default function Post(props) {
         setThumbnail(url);
       })
       .catch(function (error) {
-        console.log('Could not retrieve thumbnail: ' + error);
+        //console.log('Could not retrieve thumbnail: ' + error);
       });
     storage()
       .ref(`posts/${props.loc.id}`)
@@ -66,8 +87,22 @@ export default function Post(props) {
     <View style={{flex: 1, width: 100 + '%'}}>
       <View style={styles.userBar}>
         <View style={{flexDirection: 'row', alignItems: 'center'}}>
-          <Image style={styles.userPic} source={{uri: props.post.user_photo}} />
-          <Text style={styles.username}>{props.post.user_name}</Text>
+          <TouchableOpacity
+            onPress={() => {
+              RootNavigation.navigate('Profile', {
+                user: props.user,
+              });
+            }}>
+            <Image style={styles.userPic} source={{uri: props.user.photoURL}} />
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => {
+              RootNavigation.navigate('ViewProfile', {
+                user: props.user,
+              });
+            }}>
+            <Text style={styles.username}>{props.user.displayName}</Text>
+          </TouchableOpacity>
         </View>
         <View>
           <Text style={styles.dotmenu}>...</Text>
@@ -89,7 +124,7 @@ export default function Post(props) {
           onPress={() => likePhoto()}
         />
         <Icon name={'comment'} size={27} style={{padding: 5}} />
-        {user.uid == props.post.user_id && (
+        {user.uid == props.user.uid && (
           <IconAntDesign
             name={'delete'}
             size={30}
@@ -101,10 +136,10 @@ export default function Post(props) {
       <View style={styles.commentBar}>
         <View style={{flexDirection: 'row'}}>
           <IconAntDesign name={'heart'} size={10} style={{padding: 5}} />
-          <Text>{props.post.like_count} Likes</Text>
+          <Text>{like_count} Likes</Text>
         </View>
         <View style={styles.caption}>
-          <Text style={styles.username}>{props.post.user_name}</Text>
+          <Text style={styles.username}>{props.user.displayName}</Text>
           <Text style={styles.username}>{props.post.text}</Text>
         </View>
       </View>
@@ -202,3 +237,8 @@ const styles = StyleSheet.create({
     marginLeft: 4,
   },
 });
+
+Post.propTypes = {
+  user: PropTypes.objectOf(PropTypes.string),
+  loc: PropTypes.any.isRequired,
+};

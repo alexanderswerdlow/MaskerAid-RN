@@ -137,7 +137,11 @@ export default class InfinitePostFeed extends React.Component {
   // Render Header
   renderHeader = () => {
     try {
-      return <Text style={styles.headerText}>Posts</Text>;
+      if (this.props.onHeader) {
+        return this.props.onHeader();
+      } else {
+        return <Text style={styles.headerText}>Posts</Text>;
+      }
     } catch (error) {
       console.log(error);
     }

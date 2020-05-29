@@ -11,7 +11,6 @@ import {SlidersColorPicker} from 'react-native-color';
 import tinycolor from 'tinycolor2';
 import {AuthContext} from '../navigation/AuthProvider';
 import {withNavigation} from 'react-navigation';
-import firestore from '@react-native-firebase/firestore';
 import {YellowBox} from 'react-native';
 
 class SettingsScreen extends React.Component {
@@ -34,7 +33,7 @@ class SettingsScreen extends React.Component {
   updateLightness = (l) => this.setState({color: {...this.state.color, l}});
 
   render() {
-    const {user, theme, changeTheme} = this.context;
+    const {theme, changeTheme} = this.context;
     const overlayTextColor = tinycolor(this.state.color).isDark()
       ? '#FAFAFA'
       : '#222';
@@ -79,7 +78,7 @@ class SettingsScreen extends React.Component {
               changeTheme({
                 ...theme,
                 colors: {primary: colorHex},
-                dark: tinycolor(this.state.color),
+                dark: false,
               });
             }}
             swatches={this.state.recents}

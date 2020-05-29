@@ -8,10 +8,17 @@ import auth from '@react-native-firebase/auth';
 import {NavigationContainer} from '@react-navigation/native';
 import {StyleSheet, SafeAreaView} from 'react-native';
 import {navigationRef} from './navigation/RootNavigation';
+import firestore from '@react-native-firebase/firestore';
 
 export default function MaskerAid() {
   const [initializing, setInitializing] = useState(true);
   const {user, setUser} = useContext(AuthContext);
+
+  async function bootstrap() {
+    await firestore().settings({
+      persistence: false, // disable offline persistence
+    });
+  }
 
   // Handle user state changes
   function onAuthStateChanged(user) {
@@ -27,6 +34,7 @@ export default function MaskerAid() {
   }, []);
 
   if (initializing) {
+    bootstrap();
     return (
       <>
         <ActivityIndicator animating={true} color={Colors.red800} />

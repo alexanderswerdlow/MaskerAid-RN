@@ -18,6 +18,7 @@ import Fire from '../util/Fire';
 import {Dialog, Portal, Button, Paragraph} from 'react-native-paper';
 import * as RootNavigation from '../navigation/RootNavigation.js';
 import PropTypes from 'prop-types';
+import firestore from '@react-native-firebase/firestore';
 
 export default function Post(props) {
   const w = Dimensions.get('window');
@@ -40,24 +41,25 @@ export default function Post(props) {
   }, []);
 
   const likePhoto = () => {
-    if (like_count == 0 && liked) {
-      props.loc
-        .update({
-          like_count: 1,
-        })
-        .then(() => {
-          console.log('Fixed Like');
-        });
-    } else {
+    let new_count = 1;
+
+    if (like_count != 0 || liked) {
       setLiked(!liked);
-      props.loc
-        .update({
-          like_count: liked ? like_count - 1 : like_count + 1,
-        })
-        .then(() => {
-          console.log('Liked!');
-        });
+      new_count = liked ? like_count - 1 : like_count + 1;
     }
+
+    const batch = firestore().batch();
+    const userRef = firestore().doc(
+      `users/${props.user.uid}/posts/${props.loc.id}`,
+    );
+    batch.update(userRef, {
+      like_count: new_count,
+    });
+    const postsRef = firestore().collection('posts').doc(props.loc.id);
+    batch.update(postsRef, {
+      like_count: new_count,
+    });
+    batch.commit();
   };
 
   useEffect(() => {

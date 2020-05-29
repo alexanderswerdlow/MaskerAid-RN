@@ -88,116 +88,10 @@ class Profile extends Component {
     });
   };
 
-  renderSectionOne = () => {
-    return (
-      <TouchableOpacity>
-        <View
-          style={[{width: width / 3}, {height: width / 3}, {marginBottom: 2}]}>
-          <PostFeed user={this.state.user} navigation={this.props.navigation} />
-        </View>
-      </TouchableOpacity>
-    );
-  };
-
-  renderSection = () => {
-    if (this.state.activeIndex == 0) {
-      return (
-        <View style={{flexDirection: 'row', flexWrap: 'wrap'}}>
-          {this.renderSectionOne()}
-        </View>
-      );
-    } else if (this.state.activeIndex == 1) {
-      return (
-        <View>
-          <View>
-            <PostFeed
-              user={this.state.user}
-              navigation={this.props.navigation}
-            />
-          </View>
-        </View>
-      );
-    }
-  };
-
-  renderTopBar = () => {
-    const {user, logout, deleteAccount, theme} = this.context;
-    if (this.state.selfProfile) {
-      return (
-        <>
-          <Button
-            icon="logout"
-            mode="contained"
-            onPress={() => {
-              Alert.alert(
-                'Are you sure you want to logout?',
-                'All your posts will be saved',
-                [
-                  {text: 'Cancel', style: 'cancel'},
-                  {text: 'OK', onPress: () => logout()},
-                ],
-                {cancelable: false},
-              );
-            }}>
-            Logout
-          </Button>
-          <Button
-            icon="trash-can-outline"
-            mode="contained"
-            onPress={() => {
-              Alert.alert(
-                'Are you sure you want to delete your account?',
-                "There's no turning back",
-                [
-                  {text: 'Cancel', style: 'cancel'},
-                  {text: 'OK', onPress: () => deleteAccount()},
-                ],
-                {cancelable: false},
-              );
-            }}>
-            Delete Account
-          </Button>
-        </>
-      );
-    } else if (user.uid != this.state.user.uid) {
-      return (
-        <>
-          <Button
-            style={{
-              backgroundColor: theme.colors.primary,
-            }}
-            icon="logout"
-            mode="contained"
-            onPress={() => {
-              Fire.setFollowing(user, this.state.user, !this.state.following);
-              this.updateFollowState();
-            }}>
-            {this.state.following ? 'Unfollow' : 'Follow'}
-          </Button>
-          <Button
-            icon="logout"
-            mode="contained"
-            onPress={() => {
-              this.props.navigation.navigate('Chat', {
-                user: {
-                  uid: this.state.user.uid,
-                  photoURL: this.state.user.photoURL,
-                  email: this.state.user.email,
-                  displayName: this.state.user.displayName,
-                },
-              });
-            }}>
-            Message
-          </Button>
-        </>
-      );
-    }
-  };
-
-  render() {
+  renderHeader = () => {
     const {theme} = this.context;
     return (
-      <View>
+      <>
         <View>
           <View>
             {this.renderTopBar()}
@@ -264,9 +158,131 @@ class Profile extends Component {
             </TouchableOpacity>
           </View>
         </View>
-        {this.renderSection()}
-      </View>
+      </>
     );
+  };
+
+  renderTopBar = () => {
+    const {user, logout, deleteAccount, theme} = this.context;
+    if (this.state.selfProfile) {
+      return (
+        <>
+          <Button
+            icon="logout"
+            mode="contained"
+            onPress={() => {
+              Alert.alert(
+                'Are you sure you want to logout?',
+                'All your posts will be saved',
+                [
+                  {text: 'Cancel', style: 'cancel'},
+                  {text: 'OK', onPress: () => logout()},
+                ],
+                {cancelable: false},
+              );
+            }}>
+            Logout
+          </Button>
+          <Button
+            icon="trash-can-outline"
+            mode="contained"
+            onPress={() => {
+              Alert.alert(
+                'Are you sure you want to delete your account?',
+                "There's no turning back",
+                [
+                  {text: 'Cancel', style: 'cancel'},
+                  {text: 'OK', onPress: () => deleteAccount()},
+                ],
+                {cancelable: false},
+              );
+            }}>
+            Delete Account
+          </Button>
+          <Button
+            icon="settings"
+            mode="contained"
+            onPress={() => {
+              this.props.navigation.navigate('Settings');
+            }}>
+            Settings
+          </Button>
+        </>
+      );
+    } else if (user.uid != this.state.user.uid) {
+      return (
+        <>
+          <Button
+            style={{
+              backgroundColor: theme.colors.primary,
+            }}
+            icon="logout"
+            mode="contained"
+            onPress={() => {
+              Fire.setFollowing(user, this.state.user, !this.state.following);
+              this.updateFollowState();
+            }}>
+            {this.state.following ? 'Unfollow' : 'Follow'}
+          </Button>
+          <Button
+            icon="logout"
+            mode="contained"
+            onPress={() => {
+              this.props.navigation.navigate('Chat', {
+                user: {
+                  uid: this.state.user.uid,
+                  photoURL: this.state.user.photoURL,
+                  email: this.state.user.email,
+                  displayName: this.state.user.displayName,
+                },
+              });
+            }}>
+            Message
+          </Button>
+        </>
+      );
+    }
+  };
+
+  renderSectionOne = () => {
+    return (
+      <TouchableOpacity>
+        <View
+          style={[{width: width / 3}, {height: width / 3}, {marginBottom: 2}]}>
+          <PostFeed
+            user={this.state.user}
+            navigation={this.props.navigation}
+            onHeader={() => {
+              return this.renderHeader();
+            }}
+          />
+        </View>
+      </TouchableOpacity>
+    );
+  };
+
+  renderSection = () => {
+    /*  if (this.state.activeIndex == 0) {
+      return (
+        <View style={{flexDirection: 'row', flexWrap: 'wrap'}}>
+          {this.renderSectionOne()}
+        </View>
+      );
+    } else if (this.state.activeIndex == 1) {*/
+    return (
+      <PostFeed
+        user={this.state.user}
+        navigation={this.props.navigation}
+        onHeader={() => {
+          return this.renderHeader();
+        }}
+      />
+    );
+    // }
+  };
+
+  render() {
+    return <View>{this.renderSection()}</View>;
   }
 }
 

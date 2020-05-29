@@ -13,12 +13,9 @@ export const AuthProvider = ({children}) => {
   const [user, setUser] = useState(null);
   const [theme, changeTheme] = useState({
     ...DefaultTheme,
-    roundness: 2,
     backgroundColor: '#34345c',
     colors: {
       ...DefaultTheme.colors,
-      primary: '#3498db',
-      accent: '#f1c40f',
     },
   });
 
@@ -41,6 +38,7 @@ export const AuthProvider = ({children}) => {
         .doc(`users/${user.uid}`)
         .onSnapshot((documentSnapshot) => {
           if (documentSnapshot.exists && documentSnapshot.data().theme) {
+            console.log(documentSnapshot.data().theme);
             changeTheme(documentSnapshot.data().theme);
           }
         });

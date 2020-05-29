@@ -3,7 +3,7 @@ import React from 'react';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {createStackNavigator} from '@react-navigation/stack';
 import HomeScreen from '../screens/Home';
-import ProfileScreen from '../screens/Profile';
+import ViewProfileScreen from '../screens/Profile';
 import NewPostScreen from '../screens/NewPost';
 import MessagesScreen from '../screens/Messages';
 import ChatScreen from '../screens/Chat';
@@ -20,7 +20,7 @@ function MainStackScreen() {
   return (
     <MainStack.Navigator>
       <MainStack.Screen name="Home" component={HomeScreen} />
-      <MainStack.Screen name="ViewProfile" component={ProfileScreen} />
+      <MainStack.Screen name="ViewProfile" component={ViewProfileScreen} />
       <MainStack.Screen name="Chat" component={ChatScreen} />
     </MainStack.Navigator>
   );
@@ -31,13 +31,13 @@ const SearchStack = createStackNavigator();
 function SearchStackScreen() {
   return (
     <SearchStack.Navigator>
-      <MainStack.Screen name="Search" component={SearchScreen} />
-      <MainStack.Screen
+      <SearchStack.Screen name="Search" component={SearchScreen} />
+      <SearchStack.Screen
         name="ViewSearchProfile"
         options={{title: 'Profile'}}
-        component={ProfileScreen}
+        component={ViewProfileScreen}
       />
-      <MainStack.Screen name="Chat" component={ChatScreen} />
+      <SearchStack.Screen name="Chat" component={ChatScreen} />
     </SearchStack.Navigator>
   );
 }
@@ -47,9 +47,23 @@ const MessagesStack = createStackNavigator();
 function MessagesStackScreen() {
   return (
     <MessagesStack.Navigator>
-      <MainStack.Screen name="Messages" component={MessagesScreen} />
-      <MainStack.Screen name="Chat" component={ChatScreen} />
+      <MessagesStack.Screen name="Messages" component={MessagesScreen} />
+      <MessagesStack.Screen name="Chat" component={ChatScreen} />
     </MessagesStack.Navigator>
+  );
+}
+
+const ProfileStackScreen = createStackNavigator();
+
+function ProfileScreen() {
+  const {user} = React.useContext(AuthContext);
+  return (
+    <ProfileStackScreen.Navigator>
+      <ProfileStackScreen.Screen name="Profile">
+        {(props) => <ViewProfileScreen {...props} user={user} />}
+      </ProfileStackScreen.Screen>
+      <ProfileStackScreen.Screen name="Settings" component={SettingsScreen} />
+    </ProfileStackScreen.Navigator>
   );
 }
 
@@ -71,10 +85,7 @@ export default function App() {
             iconName = 'ios-search';
           } else if (route.name === 'Messages') {
             iconName = 'ios-mail';
-          } else if (route.name === 'Settings') {
-            iconName = 'ios-hammer';
           }
-
           return <Ionicons name={iconName} size={size} color={color} />;
         },
       })}
@@ -86,10 +97,7 @@ export default function App() {
       <Tab.Screen name="Post" component={NewPostScreen} />
       <Tab.Screen name="Messages" component={MessagesStackScreen} />
       <Tab.Screen name="Search" component={SearchStackScreen} />
-      <Tab.Screen name="Profile">
-        {(props) => <ProfileScreen {...props} user={user} />}
-      </Tab.Screen>
-      <Tab.Screen name="Settings" component={SettingsScreen} />
+      <Tab.Screen name="Profile" component={ProfileScreen} />
     </Tab.Navigator>
   );
 }

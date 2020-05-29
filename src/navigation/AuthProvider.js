@@ -4,25 +4,43 @@ import {Alert} from 'react-native';
 import {GoogleSignin, statusCodes} from '@react-native-community/google-signin';
 import config from '../config';
 import {Platform} from 'react-native';
-import {Provider as PaperProvider} from 'react-native-paper';
 import firestore from '@react-native-firebase/firestore';
+import {DefaultTheme, Provider as PaperProvider} from 'react-native-paper';
 
 export const AuthContext = createContext({});
 
 export const AuthProvider = ({children}) => {
   const [user, setUser] = useState(null);
   const [theme, changeTheme] = useState({
-    primary: '#34345c',
-    default: true,
+    ...DefaultTheme,
+    roundness: 2,
     backgroundColor: '#34345c',
+    colors: {
+      ...DefaultTheme.colors,
+      primary: '#3498db',
+      accent: '#f1c40f',
+    },
   });
+
+  useEffect(() => {
+    if (user) {
+      firestore()
+        .doc(`users/${user.uid}`)
+        .update({
+          theme,
+        })
+        .then(() => {
+          console.log('Color updated!');
+        });
+    }
+  }, [theme]);
 
   useEffect(() => {
     if (user) {
       const subscriber = firestore()
         .doc(`users/${user.uid}`)
         .onSnapshot((documentSnapshot) => {
-          if (documentSnapshot.exists) {
+          if (documentSnapshot.exists && documentSnapshot.data().theme) {
             changeTheme(documentSnapshot.data().theme);
           }
         });
@@ -115,7 +133,7 @@ export const AuthProvider = ({children}) => {
             });
         },
       }}>
-      <PaperProvider>{children}</PaperProvider>
+      <PaperProvider theme={theme}>{children}</PaperProvider>
     </AuthContext.Provider>
   );
 };

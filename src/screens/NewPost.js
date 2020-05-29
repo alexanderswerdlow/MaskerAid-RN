@@ -93,7 +93,7 @@ function NewPost({navigation}) {
                 alignItems: 'center',
                 padding: 10,
                 margin: 30,
-                backgroundColor: theme.backgroundColor,
+                backgroundColor: theme.colors.primary,
               }}>
               Take Photo
             </Button>
@@ -105,7 +105,7 @@ function NewPost({navigation}) {
                 alignItems: 'center',
                 padding: 10,
                 margin: 30,
-                backgroundColor: theme.backgroundColor,
+                backgroundColor: theme.colors.primary,
               }}>
               Open from Camera Roll
             </Button>

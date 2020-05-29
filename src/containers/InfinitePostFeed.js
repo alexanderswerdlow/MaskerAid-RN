@@ -22,6 +22,7 @@ export default class InfinitePostFeed extends React.Component {
       loading: false,
       refreshing: false,
       user: props.user,
+      updating: true,
     };
   }
 
@@ -43,8 +44,9 @@ export default class InfinitePostFeed extends React.Component {
   // Component Did Mount
   componentDidMount = () => {
     this._unsubscribe = this.props.navigation.addListener('focus', () => {
+      this.setState({updating: true});
       this.update(true);
-      console.log('Focus');
+      this.setState({updating: false});
     });
   };
 
@@ -155,7 +157,9 @@ export default class InfinitePostFeed extends React.Component {
   };
 
   listEmpty = () => {
-    if (!this.state.loading) {
+    if (!this.state.updating) {
+      return <View style={styles.ccontainer}></View>;
+    } else if (!this.state.loading) {
       return (
         <View style={styles.ccontainer}>
           <Text style={styles.noMessagesText}>No Posts :(</Text>

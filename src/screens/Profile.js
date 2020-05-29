@@ -164,7 +164,7 @@ class Profile extends Component {
         <>
           <Button
             style={{
-              backgroundColor: theme.backgroundColor,
+              backgroundColor: theme.colors.primary,
             }}
             icon="logout"
             mode="contained"

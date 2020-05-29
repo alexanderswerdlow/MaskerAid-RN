@@ -26,7 +26,7 @@ class SettingsScreen extends React.Component {
     YellowBox.ignoreWarnings(['Animated:']);
     YellowBox.ignoreWarnings(['Warning: componentWill']);
     const {theme} = this.context;
-    this.setState({color: theme.backgroundColor});
+    this.setState({color: theme.colors.primary});
   };
 
   updateHue = (h) => this.setState({color: {...this.state.color, h}});
@@ -34,7 +34,7 @@ class SettingsScreen extends React.Component {
   updateLightness = (l) => this.setState({color: {...this.state.color, l}});
 
   render() {
-    const {user} = this.context;
+    const {user, theme, changeTheme} = this.context;
     const overlayTextColor = tinycolor(this.state.color).isDark()
       ? '#FAFAFA'
       : '#222';
@@ -76,15 +76,11 @@ class SettingsScreen extends React.Component {
                     .slice(0, 4),
                 ],
               });
-
-              firestore()
-                .doc(`users/${user.uid}`)
-                .update({
-                  theme: {backgroundColor: colorHex},
-                })
-                .then(() => {
-                  console.log('Color updated!' + colorHex);
-                });
+              changeTheme({
+                ...theme,
+                colors: {primary: colorHex},
+                dark: tinycolor(this.state.color),
+              });
             }}
             swatches={this.state.recents}
             swatchesLabel="RECENTS"

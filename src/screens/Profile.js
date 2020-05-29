@@ -7,10 +7,9 @@ import {
   Dimensions,
   Alert,
   TouchableOpacity,
-  Settings,
 } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import {withNavigation, NavigationEvents} from 'react-navigation';
+import {withNavigation} from 'react-navigation';
 import {PostFeed} from '../containers';
 import {Button} from 'react-native-paper';
 import Fire from '../util/Fire';

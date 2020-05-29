@@ -4,7 +4,8 @@ const functions = require('firebase-functions');
 const algoliasearch = require('algoliasearch');
 
 const admin = require('firebase-admin');
-admin.initializeApp();
+const firebase_tools = require('firebase-tools');
+const firebase = admin.initializeApp();
 
 const ALGOLIA_ID = functions.config().algolia.app_id;
 const ALGOLIA_ADMIN_KEY = functions.config().algolia.api_key;
@@ -24,6 +25,20 @@ exports.deleteUserData = functions.auth.user().onDelete((user) => {
       querySnapshot.forEach((documentSnapshot) => {
         admin
           .firestore()
+          .collection('posts')
+          .doc(documentSnapshot.id)
+          .delete()
+          .then(() => {
+            console.log('Post successfully deleted!');
+          })
+          .catch((error) => {
+            console.error('Error removing Post: ', error);
+          });
+
+        admin
+          .firestore()
+          .collection('users')
+          .doc(user.uid)
           .collection('posts')
           .doc(documentSnapshot.id)
           .delete()
@@ -60,7 +75,7 @@ exports.deleteUserData = functions.auth.user().onDelete((user) => {
   });
 
   const index = client.initIndex('users');
-  index.deleteObject(user.uid, (err) => {
+  return index.deleteObject(user.uid, (err) => {
     if (err) throw err;
     console.log('User Removed from Algolia Index', user.uid);
   });
@@ -85,16 +100,21 @@ exports.createUserData = functions.auth.user().onCreate((user) => {
 exports.onPostUpdate = functions.firestore
   .document('posts/{postId}')
   .onWrite((change, context) => {
-    const post = change.after.data();
-    post.objectID = context.params.postId;
     const index = client.initIndex('posts');
 
     if (!change.after.data()) {
-      return index.deleteObject(postId, (err) => {
+      index.deleteObject(context.params.postId, (err) => {
         if (err) throw err;
         console.log('Post Removed from Algolia Index', postId);
       });
+
+      const bucket = firebase.storage().bucket();
+      bucket.file(`posts/thumbnails/${context.params.postId}_50x50`).delete();
+      return bucket.file(`posts/${context.params.postId}`).delete();
     }
+
+    const post = change.after.data();
+    post.objectID = context.params.postId;
 
     return index.saveObject(post, (err, content) => {
       if (err) throw err;

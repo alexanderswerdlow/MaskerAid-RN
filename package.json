@@ -22,6 +22,7 @@
     "@react-navigation/native": "^5.5.0",
     "@react-navigation/stack": "^5.4.1",
     "algoliasearch": "^4.2.0",
+    "firebase-functions": "^3.6.2",
     "react": "16.11.0",
     "react-graceful-image": "^1.5.0",
     "react-instantsearch-native": "^6.5.0",

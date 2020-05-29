@@ -99,7 +99,7 @@ export const AuthProvider = ({children}) => {
               console.log('User Deleted');
               auth().signOut();
             })
-            .catch(async function (error) {
+            .catch(async function () {
               Alert.alert(
                 'You must re-authenticate before deleting your account',
                 'Your account will be permanately deleted',

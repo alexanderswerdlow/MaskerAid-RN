@@ -68,7 +68,7 @@ function ProfileScreen() {
 }
 
 export default function App() {
-  const {user, theme} = React.useContext(AuthContext);
+  const {theme} = React.useContext(AuthContext);
   return (
     <Tab.Navigator
       screenOptions={({route}) => ({

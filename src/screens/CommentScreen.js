@@ -10,7 +10,6 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import config from '../config';
-import IosIcon from 'react-native-vector-icons/Ionicons';
 import CommentFeed from '../containers/CommentFeed';
 
 export default function Comment(props) {
@@ -19,10 +18,9 @@ export default function Comment(props) {
   return (
     <View style={{flex: 1, width: 100 + '%', height: 100 + '%'}}>
       <View style={styles.nav}>
-        <IosIcon size={30} style={{marginLeft: 20}} name="ios-arrow-back" />
-        <Text style={styles.CommentText}>Comments</Text>
+        <Text style= {styles.CommentText}>Comments</Text>
       </View>
-      <CommentFeed />
+      <CommentFeed id = {props.route.params.post}/>
       <View
         style={{
           flexDirection: 'row',
@@ -54,9 +52,6 @@ const styles = StyleSheet.create({
 
   CommentText: {
     fontSize: 20,
-    flex: 1,
-    paddingRight: 21,
-    textAlign: 'center',
   },
 
   TextInput: {
@@ -64,7 +59,7 @@ const styles = StyleSheet.create({
     borderColor: 'blue',
     borderWidth: 1,
     flex: 1,
-    backgroundColor: 'transparent',
+    backgroundColor: 'white',
     borderRadius: 13,
     paddingLeft: 10,
   },

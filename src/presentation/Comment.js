@@ -2,6 +2,7 @@ import React, {useState} from 'react';
 import {View, Text, Image, StyleSheet, Dimensions} from 'react-native';
 import config from '../config';
 import Icon from 'react-native-vector-icons/AntDesign';
+import * as RootNavigation from '../navigation/RootNavigation.js';
 
 export default function Comment(props) {
   return (
@@ -11,17 +12,17 @@ export default function Comment(props) {
           <Image
             style={styles.userPic}
             source={{
-              uri: 'https://reactnative.dev/img/tiny_logo.png',
+              uri: props.user.photoURL,
             }}
           />
           <View style={styles.caption}>
             <View>
               <Text>
-                <Text style={{fontWeight: 'bold'}}>{props.name} </Text>
-                {props.caption}
+                <Text style={{fontWeight: 'bold'}}>{props.user.displayName} </Text>
+                {props.comment.text}
               </Text>
             </View>
-            <Text style={{fontWeight: 'bold'}}>229 Likes</Text>
+            <Text style={{fontWeight: 'bold'}}>{props.comment.like_count}</Text>
           </View>
         </View>
         <View

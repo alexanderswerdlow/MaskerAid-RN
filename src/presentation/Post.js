@@ -121,7 +121,15 @@ export default function Post(props) {
           style={{padding: 5, color: heartIconColor}}
           onPress={() => likePhoto()}
         />
-        <Icon name={'comment'} size={27} style={{padding: 5}} />
+        <TouchableOpacity 
+          onPress = {() => {
+            RootNavigation.navigate('CommentScreen', {
+              post: props.loc.id
+            });
+          }}
+        >
+          <Icon name={'comment'} size={27} style={{padding: 5}} />
+        </TouchableOpacity>
         {user.uid == props.user.uid && (
           <IconAntDesign
             name={'delete'}

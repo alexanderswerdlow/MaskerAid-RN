@@ -27,6 +27,7 @@ function NewPost({navigation}) {
     if (response) {
       monitorUpload(response, title);
       setPrompt(true);
+      setResponse(null);
     }
   };
 

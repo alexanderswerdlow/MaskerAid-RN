@@ -53,6 +53,7 @@ class Profile extends Component {
   };
 
   componentDidMount() {
+    console.log('asdas');
     if (!this.state.selfProfile) {
       this.updateFollowState();
     }
@@ -133,9 +134,7 @@ class Profile extends Component {
                 size={30}
                 style={[
                   this.state.activeIndex == 0
-                    ? {
-                        color: theme.primary,
-                      }
+                    ? {color: theme.primary}
                     : {color: 'grey'},
                 ]}
               />

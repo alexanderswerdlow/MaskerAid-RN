@@ -1,13 +1,15 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React from 'react';
-import {FlatList, Text, View} from 'react-native';
-import {Post} from '../presentation';
 import {
+  FlatList,
+  Text,
+  View,
   ActivityIndicator,
   StyleSheet,
   Dimensions,
   RefreshControl,
 } from 'react-native';
+import {Post} from '../presentation';
 import firestore from '@react-native-firebase/firestore';
 // Screen Dimensions
 const {height, width} = Dimensions.get('window');
@@ -17,36 +19,25 @@ export default class InfinitePostFeed extends React.Component {
     super(props);
     this.state = {
       documentData: [],
-      limit: 2,
+      limit: 4,
       lastVisible: null,
       loading: false,
       refreshing: false,
       user: props.user,
-      updating: true,
+      empty: false,
     };
   }
 
-  update = (no_load) => {
-    try {
-      this.retrieveData(false, no_load);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
   onRefresh = () => {
-    this.setState({
-      documentData: [],
-    });
-    this.update(false);
+    this.setState({refreshing: true});
+    this.retrieveData(false);
+    this.setState({refreshing: false});
   };
 
   // Component Did Mount
   componentDidMount = () => {
     this._unsubscribe = this.props.navigation.addListener('focus', () => {
-      this.setState({updating: true});
-      this.update(true);
-      this.setState({updating: false});
+      this.retrieveData(false);
     });
   };
 
@@ -54,75 +45,51 @@ export default class InfinitePostFeed extends React.Component {
     this._unsubscribe();
   }
 
-  // Retrieve Data
-  retrieveData = async (retrieveMore, no_load) => {
-    try {
-      if (!retrieveMore) {
-        this.setState({
-          loading: no_load ? false : true,
-        });
-      } else {
-        this.setState({
-          refreshing: true,
-        });
-      }
-      console.log('Retrieving Data');
-      // Cloud Firestore: Query
-      let initialQuery;
-
-      if (!retrieveMore) {
-        initialQuery = await firestore()
-          .collection(
-            this.state.user ? `users/${this.state.user.uid}/posts` : 'posts',
-          )
-          .orderBy('post_date', 'desc')
-          .limit(this.state.limit);
-      } else {
-        initialQuery = await firestore()
-          .collection(
-            this.state.user ? `users/${this.state.user.uid}/posts` : 'posts',
-          )
-          .orderBy('post_date', 'desc')
-          .startAfter(this.state.lastVisible)
-          .limit(this.state.limit);
-      }
-
-      // Cloud Firestore: Query Snapshot
-      let documentSnapshots = await initialQuery.get();
-      // Cloud Firestore: Document Data
-      let documentData = [];
-      documentSnapshots.forEach((postSnapshot) => {
-        documentData.push({
-          key: postSnapshot.data().post_date,
-          post: postSnapshot.data(),
-          user: postSnapshot.data().user,
-          ref: postSnapshot.ref,
-        });
+  onResult = (documentSnapshots) => {
+    let documentData = [];
+    documentSnapshots.forEach((postSnapshot) => {
+      documentData.push({
+        key: postSnapshot.data().post_date,
+        post: postSnapshot.data(),
+        user: postSnapshot.data().user,
+        ref: postSnapshot.ref,
+        like_count: postSnapshot.data().like_count,
       });
+    });
 
-      if (documentData.length == 0) {
-        this.setState({
-          loading: false,
-        });
-        return;
-      }
+    if (documentData.length == 0) {
+      this.setState({
+        loading: false,
+        empty: true,
+      });
+      return;
+    }
+    // Cloud Firestore: Last Visible Document (Document ID To Start From For Proceeding Queries)
+    let lastVisible = documentData[documentData.length - 1].key;
+    // Set State
 
-      // Cloud Firestore: Last Visible Document (Document ID To Start From For Proceeding Queries)
-      let lastVisible = documentData[documentData.length - 1].key;
-      // Set State
+    this.setState({
+      documentData: documentData,
+      lastVisible: lastVisible,
+    });
+  };
 
-      if (!retrieveMore) {
-        this.setState({
-          documentData: documentData,
-          lastVisible: lastVisible,
-          loading: false,
-        });
-      } else {
-        this.setState({
-          documentData: [...this.state.documentData, ...documentData],
-          lastVisible: lastVisible,
-          refreshing: false,
-        });
+  onError = (error) => {
+    console.error(error);
+  };
+
+  // Retrieve Data
+  retrieveData = async (increment) => {
+    try {
+      let initialQuery = await firestore()
+        .collection(
+          this.state.user ? `users/${this.state.user.uid}/posts` : 'posts',
+        )
+        .orderBy('post_date', 'desc')
+        .limit(this.state.limit + 1)
+        .onSnapshot(this.onResult, this.onError);
+      if (increment) {
+        this.setState({limit: this.state.limit + 1, loading: false});
       }
     } catch (error) {
       console.log(error);
@@ -131,7 +98,9 @@ export default class InfinitePostFeed extends React.Component {
 
   // Retrieve More Data
   retrieveMore = async () => {
-    this.retrieveData(true, false);
+    this.setState({loading: true});
+    this.retrieveData(true);
+    this.setState({loading: false});
   };
 
   // Render Header
@@ -146,11 +115,13 @@ export default class InfinitePostFeed extends React.Component {
       console.log(error);
     }
   };
+
   // Render Footer
   renderFooter = () => {
     try {
       // Check If Loading
       if (this.state.loading) {
+        console.log('loading...');
         return <ActivityIndicator />;
       } else {
         return null;
@@ -161,9 +132,9 @@ export default class InfinitePostFeed extends React.Component {
   };
 
   listEmpty = () => {
-    if (!this.state.updating) {
+    if (!this.state.empty) {
       return <View style={styles.ccontainer}></View>;
-    } else if (!this.state.loading) {
+    } else {
       return (
         <View style={styles.ccontainer}>
           <Text style={styles.noMessagesText}>No Posts :(</Text>
@@ -178,9 +149,11 @@ export default class InfinitePostFeed extends React.Component {
         // Data
         data={this.state.documentData}
         // Render Items
-        renderItem={(item) => {
+        renderItem={(item, index) => {
           return (
             <Post
+              currentIndex={index}
+              currentVisibleIndex={this.state.currentVisibleIndex}
               post={item.item.post}
               user={item.item.user}
               loc={item.item.ref}
@@ -197,15 +170,12 @@ export default class InfinitePostFeed extends React.Component {
         refreshControl={
           <RefreshControl
             onRefresh={this.onRefresh}
-            refreshing={this.state.loading}
+            refreshing={this.state.refreshing}
           />
         }
-        // On End Reached (Takes a function)
         onEndReached={this.retrieveMore}
-        // How Close To The End Of List Until Next Data Request Is Made
-        onEndReachedThreshold={0}
-        // Refreshing (Set To True When End Reached)
-        refreshing={this.state.refreshing}
+        onEndReachedThreshold={1.0}
+        onMomentumScrollEnd={this.retrieveMore}
       />
     );
   }
@@ -238,7 +208,6 @@ const styles = StyleSheet.create({
     fontWeight: '400',
     color: '#000',
   },
-
   loader: {
     justifyContent: 'center',
     alignItems: 'center',
@@ -254,5 +223,9 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     flex: 1,
     margin: 10,
+  },
+  vidcontainer: {
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });

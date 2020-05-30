@@ -13,6 +13,7 @@ import {
 } from 'react-native-paper';
 import {useUpload} from '../util';
 import {AuthContext} from '../navigation/AuthProvider';
+import VideoMedia from '../presentation/VideoMedia';
 
 function NewPost({navigation}) {
   const [image, setImage] = useState(null);
@@ -24,6 +25,7 @@ function NewPost({navigation}) {
   const [prompt, setPrompt] = useState(true);
   const [{success, uploading}, monitorUpload] = useUpload();
   const {theme} = useContext(AuthContext);
+  const [isVideo, setVideo] = useState(false);
 
   const uploadFile = () => {
     if (response) {
@@ -46,14 +48,31 @@ function NewPost({navigation}) {
     ImagePicker.openCamera({
       width: 1000,
       height: 1000,
-      cropping: true,
-      forceJpg: true,
-      mediaType: 'photo',
       maxFiles: 1,
+      forceJpg: true,
     })
       .then((image) => {
         setResponse(image);
         setImage({uri: image.path});
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
+  const takeVideo = () => {
+    ImagePicker.openCamera({
+      width: 1000,
+      height: 1000,
+      maxFiles: 1,
+      mediaType: 'video',
+    })
+      .then((image) => {
+        setResponse(image);
+        setImage({uri: image.path});
+        if (image.mime == 'video/mp4') {
+          setVideo(true);
+        }
       })
       .catch((error) => {
         console.log(error);
@@ -64,54 +83,91 @@ function NewPost({navigation}) {
     ImagePicker.openPicker({
       width: 1000,
       height: 1000,
-      cropping: true,
-      forceJpg: true,
-      mediaType: 'photo',
       maxFiles: 1,
+      forceJpg: true,
     })
       .then((image) => {
         setResponse(image);
         setImage({uri: image.path});
+        if (image.mime == 'video/mp4') {
+          setVideo(true);
+        }
       })
       .catch((error) => {
         console.log(error);
       });
   };
 
+  const postView = () => {
+    if (image) {
+      return (
+        <>
+          {isVideo ? (
+            <VideoMedia source={image.uri} />
+          ) : (
+            <Image source={image} style={{width: '100%', height: 300}} />
+          )}
+          <Button
+            icon="trash-can"
+            mode="contained"
+            onPress={() => setImage(null)}
+            style={{
+              alignItems: 'center',
+              padding: 10,
+              margin: 30,
+              backgroundColor: theme.colors.primary,
+            }}>
+            Clear Media
+          </Button>
+        </>
+      );
+    } else {
+      return (
+        <>
+          <Button
+            icon="video"
+            mode="contained"
+            onPress={() => takeVideo()}
+            style={{
+              alignItems: 'center',
+              padding: 10,
+              margin: 30,
+              backgroundColor: theme.colors.primary,
+            }}>
+            Take Video
+          </Button>
+          <Button
+            icon="camera"
+            mode="contained"
+            onPress={() => takeImage()}
+            style={{
+              alignItems: 'center',
+              padding: 10,
+              margin: 30,
+              backgroundColor: theme.colors.primary,
+            }}>
+            Take Photo
+          </Button>
+          <Button
+            icon="camera"
+            mode="contained"
+            onPress={() => selectImage()}
+            style={{
+              alignItems: 'center',
+              padding: 10,
+              margin: 30,
+              backgroundColor: theme.colors.primary,
+            }}>
+            Open from Camera Roll
+          </Button>
+        </>
+      );
+    }
+  };
+
   return (
     <View style={{flex: 1, marginTop: 60}}>
-      <View>
-        {image ? (
-          <Image source={image} style={{width: '100%', height: 300}} />
-        ) : (
-          <>
-            <Button
-              icon="camera"
-              mode="contained"
-              onPress={() => takeImage()}
-              style={{
-                alignItems: 'center',
-                padding: 10,
-                margin: 30,
-                backgroundColor: theme.colors.primary,
-              }}>
-              Take Photo
-            </Button>
-            <Button
-              icon="camera"
-              mode="contained"
-              onPress={() => selectImage()}
-              style={{
-                alignItems: 'center',
-                padding: 10,
-                margin: 30,
-                backgroundColor: theme.colors.primary,
-              }}>
-              Open from Camera Roll
-            </Button>
-          </>
-        )}
-      </View>
+      <View>{postView()}</View>
       <View style={{marginTop: 20, alignItems: 'center'}}>
         <Text>Post Details</Text>
         <TextInput

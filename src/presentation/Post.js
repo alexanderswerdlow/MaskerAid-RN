@@ -121,13 +121,12 @@ export default function Post(props) {
           style={{padding: 5, color: heartIconColor}}
           onPress={() => likePhoto()}
         />
-        <TouchableOpacity 
-          onPress = {() => {
+        <TouchableOpacity
+          onPress={() => {
             RootNavigation.navigate('CommentScreen', {
-              post: props.loc.id
+              post: props.loc.id,
             });
-          }}
-        >
+          }}>
           <Icon name={'comment'} size={27} style={{padding: 5}} />
         </TouchableOpacity>
         {user.uid == props.user.uid && (

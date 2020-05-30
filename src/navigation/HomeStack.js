@@ -19,7 +19,7 @@ function MainStackScreen() {
     <MainStack.Navigator>
       <MainStack.Screen name="Home" component={HomeScreen} />
       <MainStack.Screen name="ViewProfile" component={ViewProfileScreen} />
-      <MainStack.Screen name="CommentScreen" component={CommentScreen}/>
+      <MainStack.Screen name="CommentScreen" component={CommentScreen} />
     </MainStack.Navigator>
   );
 }
@@ -34,7 +34,8 @@ function SearchStackScreen() {
         name="ViewSearchProfile"
         options={{title: 'Profile'}}
         component={ViewProfileScreen}
-      />    </SearchStack.Navigator>
+      />{' '}
+    </SearchStack.Navigator>
   );
 }
 

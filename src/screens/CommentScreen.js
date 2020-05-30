@@ -18,9 +18,9 @@ export default function Comment(props) {
   return (
     <View style={{flex: 1, width: 100 + '%', height: 100 + '%'}}>
       <View style={styles.nav}>
-        <Text style= {styles.CommentText}>Comments</Text>
+        <Text style={styles.CommentText}>Comments</Text>
       </View>
-      <CommentFeed id = {props.route.params.post}/>
+      <CommentFeed id={props.route.params.post} />
       <View
         style={{
           flexDirection: 'row',

@@ -18,7 +18,9 @@ export default function Comment(props) {
           <View style={styles.caption}>
             <View>
               <Text>
-                <Text style={{fontWeight: 'bold'}}>{props.user.displayName} </Text>
+                <Text style={{fontWeight: 'bold'}}>
+                  {props.user.displayName}{' '}
+                </Text>
                 {props.comment.text}
               </Text>
             </View>

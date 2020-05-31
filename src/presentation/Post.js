@@ -52,13 +52,11 @@ export default function Post(props) {
       .then(function (metadata) {
         setVideo(metadata.contentType != 'image/jpeg');
       })
-      .catch(function (error) {
-        console.log('Could not retrieve image metadata: ' + error);
-      });
+      .catch(function (error) {});
 
     if (!isVideo) {
       storage()
-        .ref(`posts/thumbnails/${props.loc.id}_50x50`)
+        .ref(`posts/thumb_${props.loc.id}`)
         .getDownloadURL()
         .then(function (url) {
           setThumbnail(url);
@@ -71,9 +69,7 @@ export default function Post(props) {
       .then(function (url) {
         setImage(url);
       })
-      .catch(function (error) {
-        console.log('Could not retrieve image: ' + error);
-      });
+      .catch(function (error) {});
   });
 
   const likePhoto = () => {

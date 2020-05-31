@@ -66,6 +66,7 @@ function NewPost({navigation}) {
       height: 1000,
       maxFiles: 1,
       mediaType: 'video',
+      compressVideoPreset: 'HighestQuality',
     })
       .then((image) => {
         setResponse(image);
@@ -85,6 +86,7 @@ function NewPost({navigation}) {
       height: 1000,
       maxFiles: 1,
       forceJpg: true,
+      compressVideoPreset: 'HighestQuality',
     })
       .then((image) => {
         setResponse(image);

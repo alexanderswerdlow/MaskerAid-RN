@@ -64,7 +64,7 @@ export const ContextProvider = ({children}) => {
           try {
             console.log('Signing In');
             const {idToken} = await GoogleSignin.signIn();
-            const googleCredential = auth.GoogleContextProvider.credential(
+            const googleCredential = auth.GoogleAuthProvider.credential(
               idToken,
             );
             auth().signInWithCredential(googleCredential);

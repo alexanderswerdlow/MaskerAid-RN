@@ -44,7 +44,6 @@ export default class InfinitePostFeed extends React.Component {
   componentWillUnmount() {
     this._unsubscribe();
     this.unsubscribe();
-    console.log('Unmount');
   }
 
   onResult = (documentSnapshots) => {
@@ -60,6 +59,7 @@ export default class InfinitePostFeed extends React.Component {
 
     if (documentData.length == 0) {
       this.setState({
+        documentData: [],
         loading: false,
         empty: true,
       });

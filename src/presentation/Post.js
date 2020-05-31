@@ -112,7 +112,7 @@ export default function Post(props) {
         <View style={{flexDirection: 'row', alignItems: 'center'}}>
           <TouchableOpacity
             onPress={() => {
-              RootNavigation.navigate('Profile', {
+              RootNavigation.navigate('ViewProfile', {
                 user: props.user,
               });
             }}>

@@ -9,7 +9,7 @@ export const Firebase = {
     const snapshot = firestore()
       .collection('users')
       .where('uid', '==', self_user.uid)
-      .where('following', 'array-contains', other_user.uid)
+      .where('_following', 'array-contains', other_user.uid)
       .get()
       .then(function (querySnapshot) {
         return !querySnapshot.empty;
@@ -29,7 +29,7 @@ export const Firebase = {
     const batch = firestore().batch();
 
     batch.update(querySnapshot, {
-      following: val
+      _following: val
         ? firestore.FieldValue.arrayUnion(other_user.uid)
         : firestore.FieldValue.arrayRemove(other_user.uid),
     });
@@ -39,9 +39,31 @@ export const Firebase = {
       .doc(other_user.uid);
 
     batch.update(otherQuerySnapshot, {
-      followers: val
+      _followers: val
         ? firestore.FieldValue.arrayUnion(self_user.uid)
         : firestore.FieldValue.arrayRemove(self_user.uid),
+    });
+
+    const selfFollowingRef = firestore().doc(
+      `users/${self_user.uid}/following/${other_user.uid}`,
+    );
+
+    batch.set(selfFollowingRef, {
+      uid: other_user.uid,
+      displayName: other_user.displayName,
+      email: other_user.email,
+      photoURL: other_user.photoURL,
+    });
+
+    const otherFollowingRef = firestore().doc(
+      `users/${other_user.uid}/followers/${self_user.uid}`,
+    );
+
+    batch.set(otherFollowingRef, {
+      uid: self_user.uid,
+      displayName: self_user.displayName,
+      email: self_user.email,
+      photoURL: self_user.photoURL,
     });
 
     batch.commit();

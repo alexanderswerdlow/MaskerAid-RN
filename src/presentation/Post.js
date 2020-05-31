@@ -11,7 +11,7 @@ import config from '../config';
 import Icon from 'react-native-vector-icons/Fontisto';
 import IconAntDesign from 'react-native-vector-icons/AntDesign';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import {AuthContext} from '../navigation/AuthProvider';
+import {AuthContext} from '../navigation/ContextProvider';
 import storage from '@react-native-firebase/storage';
 import ProgressiveImage from './ProgressiveImage';
 import DoubleTap from './DoubleTap';

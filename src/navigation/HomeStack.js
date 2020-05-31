@@ -8,7 +8,7 @@ import NewPostScreen from '../screens/NewPost';
 import MessagesScreen from '../screens/Messages';
 import ChatScreen from '../screens/Chat';
 import SearchScreen from '../screens/Search';
-import {AuthContext} from '../navigation/AuthProvider';
+import {AuthContext} from '../navigation/ContextProvider';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import SettingsScreen from '../screens/Settings';
 

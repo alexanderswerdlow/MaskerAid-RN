@@ -1,7 +1,7 @@
 import React, {useContext} from 'react';
 import {View, StyleSheet, Alert, Text, Image, Button} from 'react-native';
 import {GoogleSigninButton} from '@react-native-community/google-signin';
-import {AuthContext} from '../navigation/AuthProvider';
+import {AuthContext} from '../navigation/ContextProvider';
 
 export default function Login({navigation}) {
   const {user, login} = useContext(AuthContext);

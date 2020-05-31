@@ -72,7 +72,7 @@ export const Firebase = {
       cacheControl: 'max-age=7200', // cache photos for two hours
     });
   },
-  post: (post_data, p_user, loc) => {
+  post: async (post_data, p_user, loc) => {
     console.log('Firestore Post Triggered');
 
     var s_user = {
@@ -99,8 +99,8 @@ export const Firebase = {
     console.log('Firestore Post Success');
 
     const post_count_ref = firestore().doc(`users/${p_user.uid}`);
-    return firestore()
-      .runTransaction(function (transaction) {
+    try {
+      await firestore().runTransaction(async (transaction) => {
         return transaction.get(post_count_ref).then(function (postCountData) {
           if (!postCountData.exists) {
             transaction.set(post_count_ref, {post_count: 1});
@@ -109,13 +109,10 @@ export const Firebase = {
             transaction.update(post_count_ref, {post_count: new_post_count});
           }
         });
-      })
-      .then(function () {
-        console.log('Post Transaction successfully committed!');
-      })
-      .catch(function (error) {
-        console.log('Post Transaction failed: ', error);
       });
+    } catch (e) {
+      console.log('post transaction failed', e);
+    }
   },
   deletePost: async (post_id, user, isVideo) => {
     try {
@@ -153,6 +150,7 @@ export const Firebase = {
             transaction.set(post_count_ref, {post_count: 0});
           } else {
             var new_post_count = postCountData.data().post_count - 1;
+            new_post_count = new_post_count < 0 ? 0 : new_post_count;
             transaction.update(post_count_ref, {post_count: new_post_count});
           }
         });

@@ -1,7 +1,7 @@
 import {useState, useCallback, useContext} from 'react';
 import storage from '@react-native-firebase/storage';
 import {Firebase} from './Fire.js';
-import {AuthContext} from '../navigation/AuthProvider';
+import {AuthContext} from '../navigation/ContextProvider';
 import firestore from '@react-native-firebase/firestore';
 import {Alert} from 'react-native';
 

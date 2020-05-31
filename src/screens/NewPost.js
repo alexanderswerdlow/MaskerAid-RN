@@ -12,7 +12,7 @@ import {
   Snackbar,
 } from 'react-native-paper';
 import {useUpload} from '../util';
-import {AuthContext} from '../navigation/AuthProvider';
+import {AuthContext} from '../navigation/ContextProvider';
 import VideoMedia from '../presentation/VideoMedia';
 
 function NewPost({navigation}) {

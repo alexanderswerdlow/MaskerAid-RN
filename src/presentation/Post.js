@@ -1,4 +1,4 @@
-import React, {useContext, useState, useEffect} from 'react';
+import React, {useContext, useState, useEffect, useRef} from 'react';
 import {
   TouchableOpacity,
   View,
@@ -34,17 +34,31 @@ export default function Post(props) {
   const heartIconColor = liked ? 'rgb(252,61,57)' : null;
   const heartIconID = liked ? 'heart' : 'hearto';
   const [muted, setMuted] = useState(false);
+  const _isMounted = useRef(true); // Initial value _isMounted = true
 
   useEffect(() => {
+    return () => {
+      _isMounted.current = false;
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!_isMounted.current) {
+      return;
+    }
     const subscriber = props.loc.onSnapshot((postSnapshot) => {
       if (postSnapshot.data()) {
         set_like_count(postSnapshot.data().like_count);
       }
     });
     return () => subscriber();
-  });
+  }, [props.loc]);
 
   useEffect(() => {
+    if (!_isMounted.current) {
+      return;
+    }
+
     const ref = storage().ref(`posts/${props.loc.id}`);
 
     ref
@@ -70,7 +84,7 @@ export default function Post(props) {
         setImage(url);
       })
       .catch(function (error) {});
-  });
+  }, [props.loc]);
 
   const likePhoto = () => {
     let new_count = 1;
@@ -157,7 +171,9 @@ export default function Post(props) {
             name={'delete'}
             size={30}
             style={{padding: 5}}
-            onPress={() => setDialogVisible(true)}
+            onPress={() => {
+              setDialogVisible(true);
+            }}
           />
         )}
       </View>
@@ -186,7 +202,12 @@ export default function Post(props) {
             </Paragraph>
           </Dialog.Content>
           <Dialog.Actions>
-            <Button onPress={() => setDialogVisible(false)}>Cancel</Button>
+            <Button
+              onPress={() => {
+                setDialogVisible(false);
+              }}>
+              Cancel
+            </Button>
             <Button
               onPress={() => {
                 Fire.deletePost(props.loc.id, user, isVideo);

@@ -21,8 +21,16 @@ function MainStackScreen() {
   return (
     <MainStack.Navigator>
       <MainStack.Screen name="Home" component={HomeScreen} />
-      <MainStack.Screen name="ViewProfile" component={ViewProfileScreen} />
-      <MainStack.Screen name="UserList" component={UserListScreen} />
+      <MainStack.Screen
+        name="ViewProfile"
+        options={{title: 'Profile'}}
+        component={ViewProfileScreen}
+      />
+      <MainStack.Screen
+        name="UserList"
+        options={{title: 'Followers/Following'}}
+        component={UserListScreen}
+      />
       <MainStack.Screen name="Chat" component={ChatScreen} />
     </MainStack.Navigator>
   );
@@ -39,7 +47,11 @@ function SearchStackScreen() {
         options={{title: 'Profile'}}
         component={ViewProfileScreen}
       />
-      <SearchStack.Screen name="UserList" component={UserListScreen} />
+      <SearchStack.Screen
+        name="UserList"
+        options={{title: 'Followers/Following'}}
+        component={UserListScreen}
+      />
       <SearchStack.Screen name="Chat" component={ChatScreen} />
     </SearchStack.Navigator>
   );
@@ -66,7 +78,11 @@ function ProfileScreen() {
         {(props) => <ViewProfileScreen {...props} user={user} />}
       </ProfileStackScreen.Screen>
       <ProfileStackScreen.Screen name="Settings" component={SettingsScreen} />
-      <ProfileStackScreen.Screen name="UserList" component={UserListScreen} />
+      <ProfileStackScreen.Screen
+        name="UserList"
+        options={{title: 'Followers/Following'}}
+        component={UserListScreen}
+      />
     </ProfileStackScreen.Navigator>
   );
 }

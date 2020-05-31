@@ -9,18 +9,23 @@ import React, {Component} from 'react';
 import {View, NativeMethodsMixin, Dimensions} from 'react-native';
 
 export default class InViewPort extends Component {
+  _isMounted = false;
+
   constructor(props) {
     super(props);
     this.state = {rectTop: 0, rectBottom: 0};
   }
 
   componentDidMount() {
+    this._isMounted = true;
+
     if (!this.props.disabled) {
       this.startWatching();
     }
   }
 
   componentWillUnmount() {
+    this._isMounted = false;
     this.stopWatching();
   }
 
@@ -34,7 +39,7 @@ export default class InViewPort extends Component {
   }
 
   startWatching() {
-    if (this.interval) {
+    if (this.interval || !this._isMounted) {
       return;
     }
     this.interval = setInterval(() => {

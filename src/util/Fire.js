@@ -103,9 +103,11 @@ export const Firebase = {
       email: p_user.email,
       uid: p_user.uid,
     };
+    var d = new Date();
 
     var post = {
       post_date: firestore.FieldValue.serverTimestamp(),
+      post_day: d.getDate(),
       text: `${post_data}`,
       like_count: 0,
       user: s_user,

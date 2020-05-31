@@ -10,6 +10,7 @@ import {
 import config from '../config';
 import Icon from 'react-native-vector-icons/Fontisto';
 import IconAntDesign from 'react-native-vector-icons/AntDesign';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 import {AuthContext} from '../navigation/AuthProvider';
 import storage from '@react-native-firebase/storage';
 import ProgressiveImage from './ProgressiveImage';
@@ -20,7 +21,6 @@ import * as RootNavigation from '../navigation/RootNavigation.js';
 import PropTypes from 'prop-types';
 import firestore from '@react-native-firebase/firestore';
 import VideoMedia from './VideoMedia';
-import Video from 'react-native-video';
 
 export default function Post(props) {
   const w = Dimensions.get('window');
@@ -29,10 +29,11 @@ export default function Post(props) {
   const [thumbnail, setThumbnail] = useState('');
   const [image, setImage] = useState('');
   const [dialogVisible, setDialogVisible] = useState(false);
-  const heartIconColor = liked ? 'rgb(252,61,57)' : null;
-  const heartIconID = liked ? 'heart' : 'hearto';
   const [like_count, set_like_count] = useState(0);
   const [isVideo, setVideo] = useState(false);
+  const heartIconColor = liked ? 'rgb(252,61,57)' : null;
+  const heartIconID = liked ? 'heart' : 'hearto';
+  const [muted, setMuted] = useState(false);
 
   useEffect(() => {
     const subscriber = props.loc.onSnapshot((postSnapshot) => {
@@ -45,6 +46,7 @@ export default function Post(props) {
 
   useEffect(() => {
     const ref = storage().ref(`posts/${props.loc.id}`);
+
     ref
       .getMetadata()
       .then(function (metadata) {
@@ -104,8 +106,7 @@ export default function Post(props) {
         />
       );
     } else {
-      console.log(image);
-      return <VideoMedia source={image} />;
+      return <VideoMedia source={image} muted={muted} />;
     }
   };
 
@@ -145,6 +146,16 @@ export default function Post(props) {
           onPress={() => likePhoto()}
         />
         <Icon name={'comment'} size={27} style={{padding: 5}} />
+        {isVideo && (
+          <Ionicons
+            name={muted ? 'md-volume-mute' : 'md-volume-high'}
+            size={30}
+            style={{padding: 5}}
+            onPress={() => {
+              setMuted(!muted);
+            }}
+          />
+        )}
         {user.uid == props.user.uid && (
           <IconAntDesign
             name={'delete'}

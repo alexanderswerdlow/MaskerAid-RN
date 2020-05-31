@@ -53,7 +53,6 @@ class Profile extends Component {
   };
 
   componentDidMount() {
-    console.log('asdas');
     if (!this.state.selfProfile) {
       this.updateFollowState();
     }

@@ -11,7 +11,7 @@ import {
 } from 'react-native';
 import {Post} from '../presentation';
 import firestore from '@react-native-firebase/firestore';
-// Screen Dimensions
+
 const {height, width} = Dimensions.get('window');
 
 export default class InfinitePostFeed extends React.Component {
@@ -43,6 +43,8 @@ export default class InfinitePostFeed extends React.Component {
 
   componentWillUnmount() {
     this._unsubscribe();
+    this.unsubscribe();
+    console.log('Unmount');
   }
 
   onResult = (documentSnapshots) => {
@@ -53,7 +55,6 @@ export default class InfinitePostFeed extends React.Component {
         post: postSnapshot.data(),
         user: postSnapshot.data().user,
         ref: postSnapshot.ref,
-        like_count: postSnapshot.data().like_count,
       });
     });
 
@@ -81,7 +82,7 @@ export default class InfinitePostFeed extends React.Component {
   // Retrieve Data
   retrieveData = async (increment) => {
     try {
-      let initialQuery = await firestore()
+      this.unsubscribe = firestore()
         .collection(
           this.state.user ? `users/${this.state.user.uid}/posts` : 'posts',
         )
@@ -121,7 +122,6 @@ export default class InfinitePostFeed extends React.Component {
     try {
       // Check If Loading
       if (this.state.loading) {
-        console.log('loading...');
         return <ActivityIndicator />;
       } else {
         return null;

@@ -1,14 +1,15 @@
 import React, {Component} from 'react';
-import {View, StyleSheet, Text} from 'react-native';
+import {View, StyleSheet} from 'react-native';
 import InViewPort from './InViewPort';
 import Video from 'react-native-video';
-
+import {ActivityIndicator} from 'react-native-paper';
 export default class VideoPlayer extends Component {
   constructor(props) {
     super(props);
     this.state = {
       paused: false,
       source: props.source,
+      opacity: 0,
     };
   }
 
@@ -32,8 +33,16 @@ export default class VideoPlayer extends Component {
     console.log('Video Error');
   };
 
-  onBuffer = () => {
-    //console.log('Video Buffer');
+  onLoadStart = () => {
+    this.setState({opacity: 1});
+  };
+
+  onLoad = () => {
+    this.setState({opacity: 0});
+  };
+
+  onBuffer = ({isBuffering}) => {
+    this.setState({opacity: isBuffering ? 1 : 0});
   };
 
   Media = () => {
@@ -46,7 +55,7 @@ export default class VideoPlayer extends Component {
           source={{uri: this.props.source}}
           rate={1.0}
           volume={1.0}
-          muted={true}
+          muted={this.props.muted}
           resizeMode="cover"
           shouldPlay={false}
           repeat={true}
@@ -54,18 +63,26 @@ export default class VideoPlayer extends Component {
           paused={this.state.paused}
           onError={this.videoError}
           onBuffer={this.onBuffer}
+          onLoadStart={this.onLoadStart}
+          onLoad={this.onLoad}
         />
       );
     } else {
-      console.log(this.props.source.uri);
-      return <Text>Words</Text>;
+      return <View></View>;
     }
   };
 
   render() {
     return (
       <View style={styles.container}>
-        <InViewPort onChange={this.handlePlaying}>{this.Media()}</InViewPort>
+        <InViewPort onChange={this.handlePlaying}>
+          {this.Media()}
+          <ActivityIndicator
+            animating
+            size="large"
+            style={[styles.indicator, {opacity: this.state.opacity}]}
+          />
+        </InViewPort>
       </View>
     );
   }
@@ -75,5 +92,12 @@ const styles = StyleSheet.create({
   container: {
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  indicator: {
+    position: 'absolute',
+    top: 130,
+    left: 70,
+    right: 70,
+    height: 50,
   },
 });

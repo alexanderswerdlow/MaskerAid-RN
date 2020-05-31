@@ -72,7 +72,7 @@ export const Firebase = {
       cacheControl: 'max-age=7200', // cache photos for two hours
     });
   },
-  post: (post_data, p_user, loc) => {
+  post: async (post_data, p_user, loc) => {
     console.log('Firestore Post Triggered');
 
     var s_user = {
@@ -99,8 +99,8 @@ export const Firebase = {
     console.log('Firestore Post Success');
 
     const post_count_ref = firestore().doc(`users/${p_user.uid}`);
-    return firestore()
-      .runTransaction(function (transaction) {
+    try {
+      await firestore().runTransaction(async (transaction) => {
         return transaction.get(post_count_ref).then(function (postCountData) {
           if (!postCountData.exists) {
             transaction.set(post_count_ref, {post_count: 1});
@@ -109,61 +109,53 @@ export const Firebase = {
             transaction.update(post_count_ref, {post_count: new_post_count});
           }
         });
-      })
-      .then(function () {
-        console.log('Post Transaction successfully committed!');
-      })
-      .catch(function (error) {
-        console.log('Post Transaction failed: ', error);
       });
+    } catch (e) {
+      console.log('post transaction failed', e);
+    }
   },
-  deletePost: async (post_id, user) => {
-    //Deletes Photo, Thumbnail, then DB entry
-    var storageRef = storage().ref(`posts/${post_id}`);
-    var thumbStorageRef = storage().ref(`posts/thumbnails/${post_id}_50x50`);
-    storageRef
-      .delete()
-      .then(function () {
-        thumbStorageRef
-          .delete()
-          .then(function () {
-            const usersQuerySnapshot = firestore()
-              .collection(`users/${user.uid}/posts`)
-              .doc(post_id);
-            const postsQuerySnapshot = firestore()
-              .collection('posts')
-              .doc(post_id);
-            const batch = firestore().batch();
-            batch.delete(usersQuerySnapshot);
-            batch.delete(postsQuerySnapshot);
-            return batch.commit();
-          })
-          .catch(function (error) {
-            console.log('Could Not Delete Photo Thumbnail: ' + error);
-          });
-      })
-      .catch(function (error) {
-        console.log('Could Not Delete Photo: ' + error);
-      });
+  deletePost: async (post_id, user, isVideo) => {
+    try {
+      var storageRef = storage().ref(`posts/${post_id}`);
+      let delPhoto = await storageRef.delete();
+    } catch (e) {
+      console.log('delete media failed', e);
+    }
+
+    if (!isVideo) {
+      try {
+        var thumbStorageRef = storage().ref(`posts/thumb_${post_id}`);
+        let delThumb = await thumbStorageRef.delete();
+      } catch (e) {
+        console.log('delete media failed', e);
+      }
+    }
+
+    const usersQuerySnapshot = firestore().doc(
+      `users/${user.uid}/posts/${post_id}`,
+    );
+    const postsQuerySnapshot = firestore().collection('posts').doc(post_id);
+    const batch = firestore().batch();
+    batch.delete(usersQuerySnapshot);
+    batch.delete(postsQuerySnapshot);
+    let delPost = batch.commit();
 
     const post_count_ref = firestore().doc(`users/${user.uid}`);
-    return firestore()
-      .runTransaction(function (transaction) {
+    try {
+      await firestore().runTransaction(async (transaction) => {
         return transaction.get(post_count_ref).then(function (postCountData) {
-          if (!postCountData.exists) {
+          if (!postCountData.exists || postCountData.data() == 0) {
             transaction.set(post_count_ref, {post_count: 0});
           } else {
             var new_post_count = postCountData.data().post_count - 1;
+            new_post_count = new_post_count < 0 ? 0 : new_post_count;
             transaction.update(post_count_ref, {post_count: new_post_count});
           }
         });
-      })
-      .then(function () {
-        console.log('Delete Post Transaction successfully committed!');
-      })
-      .catch(function (error) {
-        console.log('Delete Post Transaction failed: ', error);
       });
+    } catch (e) {
+      console.log('transaction failed', e);
+    }
   },
   likePost: (post, loc, liked) => {
     const postReference = firestore().doc(`posts/${loc.id}`);

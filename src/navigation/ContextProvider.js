@@ -9,7 +9,7 @@ import {DefaultTheme, Provider as PaperProvider} from 'react-native-paper';
 
 export const AuthContext = createContext({});
 
-export const AuthProvider = ({children}) => {
+export const ContextProvider = ({children}) => {
   const [user, setUser] = useState(null);
   const [theme, changeTheme] = useState({
     ...DefaultTheme,
@@ -108,7 +108,7 @@ export const AuthProvider = ({children}) => {
                     text: 'OK',
                     onPress: async () => {
                       const {idToken} = await GoogleSignin.signIn();
-                      const googleCredential = auth.GoogleAuthProvider.credential(
+                      const googleCredential = auth.GoogleContextProvider.credential(
                         idToken,
                       );
                       const userCredential = await auth().signInWithCredential(

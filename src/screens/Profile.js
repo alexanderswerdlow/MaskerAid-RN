@@ -13,7 +13,7 @@ import {withNavigation} from 'react-navigation';
 import {PostFeed} from '../containers';
 import {Button} from 'react-native-paper';
 import Fire from '../util/Fire';
-import {AuthContext} from '../navigation/AuthProvider';
+import {AuthContext} from '../navigation/ContextProvider';
 import firestore from '@react-native-firebase/firestore';
 
 var width = Dimensions.get('window').width;
@@ -133,9 +133,7 @@ class Profile extends Component {
                 size={30}
                 style={[
                   this.state.activeIndex == 0
-                    ? {
-                        color: theme.primary,
-                      }
+                    ? {color: theme.primary}
                     : {color: 'grey'},
                 ]}
               />

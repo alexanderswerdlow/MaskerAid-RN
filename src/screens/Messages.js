@@ -8,7 +8,7 @@ import {
   RefreshControl,
 } from 'react-native';
 import firestore from '@react-native-firebase/firestore';
-import {AuthContext} from '../navigation/AuthProvider';
+import {AuthContext} from '../navigation/ContextProvider';
 import {ListItem} from 'react-native-elements';
 import {ActivityIndicator, Colors} from 'react-native-paper';
 

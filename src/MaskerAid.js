@@ -1,7 +1,7 @@
 import 'react-native-gesture-handler';
 import AuthStack from './navigation/AuthStack';
 import HomeStack from './navigation/HomeStack';
-import {AuthContext} from './navigation/AuthProvider';
+import {AuthContext} from './navigation/ContextProvider';
 import React, {useState, useContext, useEffect} from 'react';
 import {ActivityIndicator, Colors} from 'react-native-paper';
 import auth from '@react-native-firebase/auth';

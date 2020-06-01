@@ -13,6 +13,7 @@ import firestore from '@react-native-firebase/firestore';
 export default function MaskerAid() {
   const [initializing, setInitializing] = useState(true);
   const {user, setUser} = useContext(AuthContext);
+  const {theme} = useContext(AuthContext);
 
   async function bootstrap() {
     await firestore().settings({
@@ -37,7 +38,7 @@ export default function MaskerAid() {
     bootstrap();
     return (
       <>
-        <ActivityIndicator animating={true} color={Colors.red800} />
+        <ActivityIndicator animating={true} color={theme.colors.primary} />
       </>
     );
   }

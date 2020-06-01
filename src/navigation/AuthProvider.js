@@ -13,7 +13,7 @@ export const AuthProvider = ({children}) => {
   const [user, setUser] = useState(null);
   const [theme, changeTheme] = useState({
     ...DefaultTheme,
-    backgroundColor: '#34345c',
+    backgroundColor: 'pink',
     colors: {
       ...DefaultTheme.colors,
     },

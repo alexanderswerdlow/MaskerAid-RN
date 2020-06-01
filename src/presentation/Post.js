@@ -145,6 +145,7 @@ export default function Post(props) {
       </View>
       <Portal>
         <Dialog
+          style={{backgroundColor: 'white'}}
           visible={dialogVisible}
           onDismiss={() => {
             setDialogVisible(false);
@@ -154,7 +155,7 @@ export default function Post(props) {
           </Dialog.Title>
           <Dialog.Content>
             <Paragraph>
-              There&apos;s no way to retrieve it once deleted
+              There&apos;s no way to retrieve it once deleted!
             </Paragraph>
           </Dialog.Content>
           <Dialog.Actions>
@@ -212,22 +213,20 @@ const styles = StyleSheet.create({
   iconBar: {
     height: config.styleConstants.rowHeight,
     width: 100 + '%',
-    borderBottomWidth: StyleSheet.hairlineWidth,
-    borderTopWidth: StyleSheet.hairlineWidth,
     borderColor: config.styleConstants.borderColor,
     flexDirection: 'row',
     paddingHorizontal: 10,
     alignItems: 'center',
+    backgroundColor: 'white',
   },
 
   commentBar: {
     height: config.styleConstants.rowHeight,
     width: 100 + '%',
-    borderBottomWidth: StyleSheet.hairlineWidth,
-    borderTopWidth: StyleSheet.hairlineWidth,
     borderColor: config.styleConstants.borderColor,
     flexDirection: 'column',
     paddingHorizontal: 10,
+    backgroundColor: 'white',
   },
 
   caption: {

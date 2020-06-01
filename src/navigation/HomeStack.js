@@ -45,6 +45,7 @@ function SearchStackScreen() {
 const MessagesStack = createStackNavigator();
 
 function MessagesStackScreen() {
+  const {theme} = React.useContext(AuthContext);
   return (
     <MessagesStack.Navigator>
       <MessagesStack.Screen name="Messages" component={MessagesScreen} />
@@ -92,6 +93,7 @@ export default function App() {
       tabBarOptions={{
         activeTintColor: theme.colors.primary,
         inactiveTintColor: 'gray',
+        activeBackgroundColor: 'white',
       }}>
       <Tab.Screen name="Home" component={MainStackScreen} />
       <Tab.Screen name="Post" component={NewPostScreen} />

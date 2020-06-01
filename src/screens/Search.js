@@ -6,6 +6,7 @@ import SearchBox from '../search/SearchBox';
 import InfiniteHits from '../search/InfiniteHits';
 import {ToggleButton, Title} from 'react-native-paper';
 import {connectStateResults} from 'react-instantsearch-native';
+import {AuthContext} from '../navigation/AuthProvider';
 
 const searchClient = algoliasearch(
   'V6KRQS64EW',
@@ -16,6 +17,7 @@ const styles = StyleSheet.create({
   safe: {
     flex: 1,
     backgroundColor: '#252b33',
+
   },
   container: {
     flex: 1,
@@ -27,7 +29,7 @@ const SearchNotice = (props) => {
   if (props.query) {
     return <Title>No results have been found for: {props.query}</Title>;
   } else {
-    return <Title>No query was entered</Title>;
+    return <Title style={{marginLeft: 30, marginTop: 15}}>No query was entered</Title>;
   }
 };
 
@@ -40,6 +42,7 @@ const Results = connectStateResults(({searchState, searchResults, children}) =>
 );
 
 class Search extends React.Component {
+  static contextType = AuthContext;
   root = {
     Root: View,
     props: {
@@ -54,6 +57,7 @@ class Search extends React.Component {
   };
 
   render() {
+    const {theme} = this.context;
     return (
       <SafeAreaView style={styles.safe}>
         <StatusBar barStyle="light-content" />
@@ -64,14 +68,15 @@ class Search extends React.Component {
             root={this.root}>
             <SearchBox />
             <ToggleButton.Row
+              style={{marginLeft: 30}}
               onValueChange={(value) => {
                 if (value) {
                   this.setState({value});
                 }
               }}
               value={this.state.value}>
-              <ToggleButton icon="account-circle" value="users" />
-              <ToggleButton icon="note" value="posts" />
+              <ToggleButton color={theme.colors.primary} icon="account-circle" value="users" />
+              <ToggleButton color={theme.colors.primary} icon="note" value="posts" />
             </ToggleButton.Row>
             <Results>
               <InfiniteHits searchType={this.state.value} />

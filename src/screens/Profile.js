@@ -91,7 +91,7 @@ class Profile extends Component {
     const {theme} = this.context;
     return (
       <>
-        <View>
+        <View style={{backgroundColor: 'white'}}>
           <View>
             {this.renderTopBar()}
             <Image
@@ -101,7 +101,7 @@ class Profile extends Component {
             />
             <Text style={styles.userName}>{this.state.user.displayName}</Text>
           </View>
-          <View style={{flexDirection: 'row', justifyContent: 'space-evenly'}}>
+          <View style={{marginBottom:20 ,backgroundColor: 'white', flexDirection: 'row', justifyContent: 'space-evenly'}}>
             <View style={{alignItems: 'center'}}>
               <Text style={styles.userStatus}>{this.state.postCount}</Text>
               <Text>Posts</Text>
@@ -116,12 +116,12 @@ class Profile extends Component {
             </View>
           </View>
         </View>
-        <View>
+        <View stle={{backgroundColor: 'white',}}>
           <View
             style={{
+              backgroundColor: 'white',
               flexDirection: 'row',
               justifyContent: 'space-around',
-              marginTop: 20,
               borderTopWidth: 0.75,
               borderTopColor: 'black',
             }}>
@@ -134,7 +134,7 @@ class Profile extends Component {
                 style={[
                   this.state.activeIndex == 0
                     ? {
-                        color: theme.primary,
+                        color: theme.colors.primary,
                       }
                     : {color: 'grey'},
                 ]}
@@ -149,7 +149,7 @@ class Profile extends Component {
                 style={[
                   this.state.activeIndex == 1
                     ? {
-                        color: theme.primary,
+                        color: theme.colors.primary,
                       }
                     : {color: 'grey'},
                 ]}
@@ -166,13 +166,24 @@ class Profile extends Component {
     if (this.state.selfProfile) {
       return (
         <>
+        <View style={{flexDirection: 'row'}}>
           <Button
+            style={{width: 120, height: 35}}
+            icon="settings"
+            mode="contained"
+            onPress={() => {
+              this.props.navigation.navigate('Settings');
+            }}>
+            Settings
+          </Button>
+          <Button
+            style={{width: 115, height: 35}}
             icon="logout"
             mode="contained"
             onPress={() => {
               Alert.alert(
                 'Are you sure you want to logout?',
-                'All your posts will be saved',
+                'All your posts will be saved!',
                 [
                   {text: 'Cancel', style: 'cancel'},
                   {text: 'OK', onPress: () => logout()},
@@ -183,12 +194,13 @@ class Profile extends Component {
             Logout
           </Button>
           <Button
+            style={{width: 180, height: 35}}
             icon="trash-can-outline"
             mode="contained"
             onPress={() => {
               Alert.alert(
                 'Are you sure you want to delete your account?',
-                "There's no turning back",
+                "There's no turning back!",
                 [
                   {text: 'Cancel', style: 'cancel'},
                   {text: 'OK', onPress: () => deleteAccount()},
@@ -198,22 +210,16 @@ class Profile extends Component {
             }}>
             Delete Account
           </Button>
-          <Button
-            icon="settings"
-            mode="contained"
-            onPress={() => {
-              this.props.navigation.navigate('Settings');
-            }}>
-            Settings
-          </Button>
+        </View>
         </>
       );
     } else if (user.uid != this.state.user.uid) {
       return (
         <>
+        <View style={{backgroundColor: 'white', flexDirection: 'row'}}>
           <Button
             style={{
-              backgroundColor: theme.colors.primary,
+              backgroundColor: theme.colors.primary, width: 207
             }}
             icon="logout"
             mode="contained"
@@ -224,6 +230,7 @@ class Profile extends Component {
             {this.state.following ? 'Unfollow' : 'Follow'}
           </Button>
           <Button
+            style={{backgroundColor: theme.colors.primary, width: 207}}
             icon="logout"
             mode="contained"
             onPress={() => {
@@ -238,6 +245,7 @@ class Profile extends Component {
             }}>
             Message
           </Button>
+        </View>
         </>
       );
     }
@@ -245,29 +253,30 @@ class Profile extends Component {
 
   renderSectionOne = () => {
     return (
-      <TouchableOpacity>
-        <View
-          style={[{width: width / 3}, {height: width / 3}, {marginBottom: 2}]}>
-          <PostFeed
-            user={this.state.user}
-            navigation={this.props.navigation}
-            onHeader={() => {
-              return this.renderHeader();
-            }}
-          />
+        <View>
+        <PostFeed
+          user={this.state.user}
+          navigation={this.props.navigation}
+          onHeader={() => {
+            return this.renderHeader();
+          }}
+        />
         </View>
-      </TouchableOpacity>
     );
   };
 
   renderSection = () => {
-    /*  if (this.state.activeIndex == 0) {
+    if (this.state.activeIndex == 0) {
       return (
-        <View style={{flexDirection: 'row', flexWrap: 'wrap'}}>
-          {this.renderSectionOne()}
-        </View>
+        <PostFeed
+        user={this.state.user}
+        navigation={this.props.navigation}
+        onHeader={() => {
+          return this.renderHeader();
+        }}
+      />
       );
-    } else if (this.state.activeIndex == 1) {*/
+    } else if (this.state.activeIndex == 1) {
     return (
       <PostFeed
         user={this.state.user}
@@ -277,7 +286,7 @@ class Profile extends Component {
         }}
       />
     );
-    // }
+    }
   };
 
   render() {

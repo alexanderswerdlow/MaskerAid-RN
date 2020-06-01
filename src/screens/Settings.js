@@ -39,11 +39,6 @@ class SettingsScreen extends React.Component {
       : '#222';
     return (
       <View style={styles.container}>
-        <View
-          style={[
-            styles.header,
-            {backgroundColor: tinycolor(this.state.color).toHslString()},
-          ]}></View>
         <ScrollView contentContainerStyle={styles.content}>
           <Text style={styles.sectionText}>Background Color</Text>
           <TouchableOpacity
@@ -86,6 +81,7 @@ class SettingsScreen extends React.Component {
             okLabel="Done"
             cancelLabel="Cancel"
           />
+          
         </ScrollView>
       </View>
     );
@@ -127,6 +123,7 @@ const styles = StyleSheet.create({
     color: '#222',
     fontSize: 22,
     lineHeight: 28,
+    alignSelf: 'center',
     ...Platform.select({
       android: {
         fontFamily: 'sans-serif-medium',
@@ -153,9 +150,9 @@ const styles = StyleSheet.create({
     }),
   },
   colorPreview: {
-    marginLeft: 12,
     marginTop: 12,
     flexDirection: 'column',
+    alignSelf: 'center',
     alignItems: 'flex-end',
     justifyContent: 'flex-end',
     paddingVertical: 16,

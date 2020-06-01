@@ -34,7 +34,7 @@ const InfiniteHits = ({hits, hasMore, refine, searchType}) => (
             <View style={styles.item}>
               <TouchableOpacity
                 onPress={() => {
-                  RootNavigation.navigate('ViewSearchProfile', {
+                  RootNavigation.navigate('ViewProfile', {
                     user: item,
                   });
                 }}>

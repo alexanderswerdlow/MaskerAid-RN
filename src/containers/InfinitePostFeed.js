@@ -11,10 +11,13 @@ import {
 } from 'react-native';
 import {Post} from '../presentation';
 import firestore from '@react-native-firebase/firestore';
+import {withNavigation} from 'react-navigation';
 
 const {height, width} = Dimensions.get('window');
 
-export default class InfinitePostFeed extends React.Component {
+class InfinitePostFeed extends React.Component {
+  _isMounted = false;
+
   constructor(props) {
     super(props);
     this.state = {
@@ -25,25 +28,39 @@ export default class InfinitePostFeed extends React.Component {
       refreshing: false,
       user: props.user,
       empty: false,
+      following: props.following,
     };
   }
 
   onRefresh = () => {
-    this.setState({refreshing: true});
-    this.retrieveData(false);
-    this.setState({refreshing: false});
+    if (this._isMounted) {
+      this.setState({refreshing: true});
+      this.retrieveData(false);
+      this.setState({refreshing: false});
+    }
   };
 
-  // Component Did Mount
-  componentDidMount = () => {
+  componentDidUpdate(prevProps) {
+    if (this._isMounted && this.props.feedType !== prevProps.feedType) {
+      this.retrieveData(false);
+    }
+  }
+
+  componentDidMount() {
+    this._isMounted = true;
     this._unsubscribe = this.props.navigation.addListener('focus', () => {
       this.retrieveData(false);
     });
-  };
+    /*this.__unsubscribe = this.props.navigation.addListener('blur', () => {
+      console.log('Blur');
+      this.unsubscribe();
+    });*/
+  }
 
   componentWillUnmount() {
+    this._isMounted = false;
     this._unsubscribe();
-    this.unsubscribe();
+    //this.__unsubscribe();
   }
 
   onResult = (documentSnapshots) => {
@@ -81,14 +98,38 @@ export default class InfinitePostFeed extends React.Component {
 
   // Retrieve Data
   retrieveData = async (increment) => {
+    if (!this._isMounted) {
+      return;
+    }
     try {
-      this.unsubscribe = firestore()
-        .collection(
-          this.state.user ? `users/${this.state.user.uid}/posts` : 'posts',
-        )
-        .orderBy('post_date', 'desc')
-        .limit(this.state.limit + 1)
-        .onSnapshot(this.onResult, this.onError);
+      let query;
+      if (
+        this.props.feedType &&
+        this.props.following &&
+        this.props.following.length > 0
+      ) {
+        query = firestore()
+          .collection(
+            this.state.user ? `users/${this.state.user.uid}/posts` : 'posts',
+          )
+          .where('user.uid', 'in', this.props.following)
+          .orderBy('post_day', 'desc')
+          .orderBy('like_count', 'desc')
+          .limit(this.state.limit + 1)
+          .onSnapshot(this.onResult, this.onError);
+        this.unsubscribe = query;
+      } else {
+        query = firestore()
+          .collection(
+            this.state.user ? `users/${this.state.user.uid}/posts` : 'posts',
+          )
+          .orderBy('post_date', 'desc')
+          .orderBy('like_count', 'desc')
+          .limit(this.state.limit + 1)
+          .onSnapshot(this.onResult, this.onError);
+        this.unsubscribe = query;
+      }
+
       if (increment) {
         this.setState({limit: this.state.limit + 1, loading: false});
       }
@@ -99,6 +140,9 @@ export default class InfinitePostFeed extends React.Component {
 
   // Retrieve More Data
   retrieveMore = async () => {
+    if (!this._isMounted) {
+      return;
+    }
     this.setState({loading: true});
     this.retrieveData(true);
     this.setState({loading: false});
@@ -180,6 +224,9 @@ export default class InfinitePostFeed extends React.Component {
     );
   }
 }
+
+export default withNavigation(InfinitePostFeed);
+
 // Styles
 const styles = StyleSheet.create({
   container: {

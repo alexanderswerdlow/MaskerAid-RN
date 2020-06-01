@@ -8,6 +8,7 @@ import NewPostScreen from '../screens/NewPost';
 import MessagesScreen from '../screens/Messages';
 import ChatScreen from '../screens/Chat';
 import SearchScreen from '../screens/Search';
+import UserListScreen from '../screens/UserList';
 import {AuthContext} from '../navigation/ContextProvider';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import SettingsScreen from '../screens/Settings';
@@ -20,7 +21,16 @@ function MainStackScreen() {
   return (
     <MainStack.Navigator>
       <MainStack.Screen name="Home" component={HomeScreen} />
-      <MainStack.Screen name="ViewProfile" component={ViewProfileScreen} />
+      <MainStack.Screen
+        name="ViewProfile"
+        options={{title: 'Profile'}}
+        component={ViewProfileScreen}
+      />
+      <MainStack.Screen
+        name="UserList"
+        options={{title: 'Followers/Following'}}
+        component={UserListScreen}
+      />
       <MainStack.Screen name="Chat" component={ChatScreen} />
     </MainStack.Navigator>
   );
@@ -33,9 +43,14 @@ function SearchStackScreen() {
     <SearchStack.Navigator>
       <SearchStack.Screen name="Search" component={SearchScreen} />
       <SearchStack.Screen
-        name="ViewSearchProfile"
+        name="ViewProfile"
         options={{title: 'Profile'}}
         component={ViewProfileScreen}
+      />
+      <SearchStack.Screen
+        name="UserList"
+        options={{title: 'Followers/Following'}}
+        component={UserListScreen}
       />
       <SearchStack.Screen name="Chat" component={ChatScreen} />
     </SearchStack.Navigator>
@@ -63,6 +78,11 @@ function ProfileScreen() {
         {(props) => <ViewProfileScreen {...props} user={user} />}
       </ProfileStackScreen.Screen>
       <ProfileStackScreen.Screen name="Settings" component={SettingsScreen} />
+      <ProfileStackScreen.Screen
+        name="UserList"
+        options={{title: 'Followers/Following'}}
+        component={UserListScreen}
+      />
     </ProfileStackScreen.Navigator>
   );
 }

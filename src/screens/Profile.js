@@ -15,6 +15,7 @@ import {Button} from 'react-native-paper';
 import Fire from '../util/Fire';
 import {AuthContext} from '../navigation/ContextProvider';
 import firestore from '@react-native-firebase/firestore';
+import * as RootNavigation from '../navigation/RootNavigation.js';
 
 var width = Dimensions.get('window').width;
 
@@ -26,7 +27,14 @@ class Profile extends Component {
     super(props);
     this.state = {
       activeIndex: 1,
-      user: this.props.user ? this.props.user : this.props.route.params.user,
+      user: this.props.user
+        ? {
+            uid: this.props.user.uid,
+            email: this.props.user.email,
+            displayName: this.props.user.displayName,
+            photoURL: this.props.user.photoURL,
+          }
+        : this.props.route.params.user,
       selfProfile: this.props.user ? true : false,
       following: false,
       followerCount: 0,
@@ -40,7 +48,7 @@ class Profile extends Component {
     const snapshot = firestore()
       .collection('users')
       .where('uid', '==', user.uid)
-      .where('following', 'array-contains', this.state.user.uid)
+      .where('_following', 'array-contains', this.state.user.uid)
       .get()
       .then(
         function (querySnapshot) {
@@ -89,6 +97,7 @@ class Profile extends Component {
 
   renderHeader = () => {
     const {theme} = this.context;
+
     return (
       <>
         <View>
@@ -107,12 +116,33 @@ class Profile extends Component {
               <Text>Posts</Text>
             </View>
             <View style={{alignItems: 'center'}}>
-              <Text style={styles.userStatus}>{this.state.followingCount}</Text>
-              <Text>Following</Text>
+              <TouchableOpacity
+                onPress={() => {
+                  RootNavigation.navigate('UserList', {
+                    user: this.state.user,
+                    listType: 'following',
+                  });
+                }}>
+                <Text style={styles.userStatus}>
+                  {this.state.followingCount}
+                </Text>
+                <Text>Following</Text>
+              </TouchableOpacity>
             </View>
             <View style={{alignItems: 'center'}}>
-              <Text style={styles.userStatus}>{this.state.followerCount}</Text>
-              <Text>Followers</Text>
+              <TouchableOpacity
+                onPress={() => {
+                  console.log(this.state.user);
+                  RootNavigation.navigate('UserList', {
+                    user: this.state.user,
+                    listType: 'followers',
+                  });
+                }}>
+                <Text style={styles.userStatus}>
+                  {this.state.followerCount}
+                </Text>
+                <Text>Followers</Text>
+              </TouchableOpacity>
             </View>
           </View>
         </View>
@@ -259,13 +289,6 @@ class Profile extends Component {
   };
 
   renderSection = () => {
-    /*  if (this.state.activeIndex == 0) {
-      return (
-        <View style={{flexDirection: 'row', flexWrap: 'wrap'}}>
-          {this.renderSectionOne()}
-        </View>
-      );
-    } else if (this.state.activeIndex == 1) {*/
     return (
       <PostFeed
         user={this.state.user}
@@ -275,7 +298,6 @@ class Profile extends Component {
         }}
       />
     );
-    // }
   };
 
   render() {

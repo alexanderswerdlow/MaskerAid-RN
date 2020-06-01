@@ -45,7 +45,7 @@ class Profile extends Component {
 
   updateFollowState = () => {
     const {user} = this.context;
-    const snapshot = firestore()
+    firestore()
       .collection('users')
       .where('uid', '==', user.uid)
       .where('_following', 'array-contains', this.state.user.uid)

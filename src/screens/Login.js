@@ -3,7 +3,7 @@ import {View, StyleSheet, Image} from 'react-native';
 import {GoogleSigninButton} from '@react-native-community/google-signin';
 import {AuthContext} from '../navigation/ContextProvider';
 
-export default function Login({navigation}) {
+export default function Login() {
   const {login} = useContext(AuthContext);
   return (
     <View style={[styles.container, styles.pageContainer]}>

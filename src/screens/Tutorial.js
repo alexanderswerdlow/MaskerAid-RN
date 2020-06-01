@@ -1,8 +1,8 @@
+/* eslint-disable max-len */
 import React from 'react';
 import {StyleSheet, View, Text, Image} from 'react-native';
 import AppIntroSlider from 'react-native-app-intro-slider';
 import Login from './Login';
-import Ionicons from 'react-native-vector-icons/Ionicons';
 
 const styles = StyleSheet.create({
   image: {

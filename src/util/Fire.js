@@ -6,7 +6,7 @@ export const Firebase = {
     if (self_user.uid == other_user.uid) {
       return false;
     }
-    const snapshot = firestore()
+    firestore()
       .collection('users')
       .where('uid', '==', self_user.uid)
       .where('_following', 'array-contains', other_user.uid)
@@ -141,7 +141,7 @@ export const Firebase = {
   deletePost: async (post_id, user, isVideo) => {
     try {
       var storageRef = storage().ref(`posts/${post_id}`);
-      let delPhoto = await storageRef.delete();
+      await storageRef.delete();
     } catch (e) {
       console.log('delete media failed', e);
     }
@@ -149,7 +149,7 @@ export const Firebase = {
     if (!isVideo) {
       try {
         var thumbStorageRef = storage().ref(`posts/thumb_${post_id}`);
-        let delThumb = await thumbStorageRef.delete();
+        await thumbStorageRef.delete();
       } catch (e) {
         console.log('delete media failed', e);
       }
@@ -162,7 +162,7 @@ export const Firebase = {
     const batch = firestore().batch();
     batch.delete(usersQuerySnapshot);
     batch.delete(postsQuerySnapshot);
-    let delPost = batch.commit();
+    batch.commit();
 
     const post_count_ref = firestore().doc(`users/${user.uid}`);
     try {

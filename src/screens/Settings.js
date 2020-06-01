@@ -11,7 +11,6 @@ import {SlidersColorPicker} from 'react-native-color';
 import tinycolor from 'tinycolor2';
 import {AuthContext} from '../navigation/ContextProvider';
 import {withNavigation} from 'react-navigation';
-import {YellowBox} from 'react-native';
 
 class SettingsScreen extends React.Component {
   static contextType = AuthContext;
@@ -22,8 +21,6 @@ class SettingsScreen extends React.Component {
   };
 
   componentDidMount = () => {
-    YellowBox.ignoreWarnings(['Animated:']);
-    YellowBox.ignoreWarnings(['Warning: componentWill']);
     const {theme} = this.context;
     this.setState({color: theme.colors.primary});
   };

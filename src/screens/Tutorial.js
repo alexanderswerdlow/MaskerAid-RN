@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 import React from 'react';
 import {StyleSheet, View, Text, Image} from 'react-native';
 import AppIntroSlider from 'react-native-app-intro-slider';
@@ -78,6 +79,7 @@ export default class App extends React.Component {
     };
   }
   _renderItem = ({item}) => {
+    console.log(item);
     return (
       <View
         style={{
@@ -109,6 +111,7 @@ export default class App extends React.Component {
           onDone={this._onDone}
           showSkipButton={true}
           onSkip={this._onSkip}
+          keyExtractor={(item, index) => index.toString()}
         />
       );
     }

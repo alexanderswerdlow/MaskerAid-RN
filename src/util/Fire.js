@@ -181,36 +181,31 @@ export const Firebase = {
       console.log('transaction failed', e);
     }
   },
-  likePost: (post, loc, liked) => {
-    const postReference = firestore().doc(`posts/${loc.id}`);
-    const userPostReference = firestore().doc(
-      `users/${post.user_id}/posts/${loc.id}`,
-    );
-    return firestore().runTransaction(async (transaction) => {
-      // Get post data first
-      const postSnapshot = await transaction.get(postReference);
-      const userPostSnapshot = await transaction.get(userPostReference);
+  likePost: (post_id, post_user_id, user_id, like_count, liked) => {
+    console.log(user_id);
+    let new_count = 1;
+    if (like_count == 0) {
+      new_count = 1;
+    } else if (like_count > 0 || liked) {
+      new_count = liked ? like_count - 1 : like_count + 1;
+    }
 
-      if (!postSnapshot.exists) {
-        throw 'Post does not exist!';
-      }
-
-      if (!userPostSnapshot.exists) {
-        throw 'User Post does not exist!';
-      }
-
-      await transaction.update(postReference, {
-        like_count: liked
-          ? postSnapshot.data().like_count - 1
-          : postSnapshot.data().like_count + 1,
-      });
-
-      await transaction.update(userPostReference, {
-        like_count: liked
-          ? userPostSnapshot.data().like_count - 1
-          : userPostSnapshot.data().like_count + 1,
-      });
+    const batch = firestore().batch();
+    const userRef = firestore().doc(`users/${post_user_id}/posts/${post_id}`);
+    batch.update(userRef, {
+      like_count: new_count,
+      like_users: !liked
+        ? firestore.FieldValue.arrayUnion(user_id)
+        : firestore.FieldValue.arrayRemove(user_id),
     });
+    const postsRef = firestore().collection('posts').doc(post_id);
+    batch.update(postsRef, {
+      like_count: new_count,
+      like_users: !liked
+        ? firestore.FieldValue.arrayUnion(user_id)
+        : firestore.FieldValue.arrayRemove(user_id),
+    });
+    batch.commit();
   },
 };
 

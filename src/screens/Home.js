@@ -17,7 +17,6 @@ export default function Home({navigation}) {
           setFollowing(documentSnapshot.data()._following);
         }
       });
-
     return () => subscriber();
   }, []);
 

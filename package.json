@@ -26,7 +26,7 @@
     "react": "16.11.0",
     "react-graceful-image": "^1.5.0",
     "react-instantsearch-native": "^6.5.0",
-    "react-native": "0.62.2",
+    "react-native": "^0.62.2",
     "react-native-color": "^0.0.10",
     "react-native-elements": "^2.0.0",
     "react-native-gesture-handler": "^1.6.1",

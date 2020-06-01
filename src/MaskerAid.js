@@ -16,6 +16,7 @@ export default function MaskerAid() {
 
   async function bootstrap() {
     YellowBox.ignoreWarnings(["Can't perform a React state"]);
+    YellowBox.ignoreWarnings(['Require cycle:']);
     await firestore().settings({
       persistence: false, // disable offline persistence
     });

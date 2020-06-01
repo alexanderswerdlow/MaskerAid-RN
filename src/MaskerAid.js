@@ -1,12 +1,12 @@
 import 'react-native-gesture-handler';
 import AuthStack from './navigation/AuthStack';
 import HomeStack from './navigation/HomeStack';
-import {AuthContext} from './navigation/AuthProvider';
+import {AuthContext} from './navigation/ContextProvider';
 import React, {useState, useContext, useEffect} from 'react';
 import {ActivityIndicator, Colors} from 'react-native-paper';
 import auth from '@react-native-firebase/auth';
 import {NavigationContainer} from '@react-navigation/native';
-import {StyleSheet, SafeAreaView} from 'react-native';
+import {StyleSheet, SafeAreaView, YellowBox} from 'react-native';
 import {navigationRef} from './navigation/RootNavigation';
 import firestore from '@react-native-firebase/firestore';
 
@@ -15,6 +15,8 @@ export default function MaskerAid() {
   const {user, setUser} = useContext(AuthContext);
 
   async function bootstrap() {
+    YellowBox.ignoreWarnings(["Can't perform a React state"]);
+    YellowBox.ignoreWarnings(['Require cycle:']);
     await firestore().settings({
       persistence: false, // disable offline persistence
     });

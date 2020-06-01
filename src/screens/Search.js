@@ -32,7 +32,7 @@ const SearchNotice = (props) => {
 };
 
 const Results = connectStateResults(({searchState, searchResults, children}) =>
-  searchResults && searchState.query && searchResults.nbHits !== 0 ? (
+  searchResults && searchResults.nbHits !== 0 ? (
     children
   ) : (
     <SearchNotice query={searchState.query} />

@@ -9,7 +9,7 @@ import {
 } from 'react-native';
 import {SlidersColorPicker} from 'react-native-color';
 import tinycolor from 'tinycolor2';
-import {AuthContext} from '../navigation/AuthProvider';
+import {AuthContext} from '../navigation/ContextProvider';
 import {withNavigation} from 'react-navigation';
 import {YellowBox} from 'react-native';
 

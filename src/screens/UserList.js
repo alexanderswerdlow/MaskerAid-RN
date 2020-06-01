@@ -1,53 +1,101 @@
-import React from 'react';
-import {SafeAreaView, View, FlatList, StyleSheet, Text} from 'react-native';
+import React, {useState, useEffect} from 'react';
+import {
+  FlatList,
+  View,
+  Text,
+  TouchableOpacity,
+  StyleSheet,
+  RefreshControl,
+} from 'react-native';
+import firestore from '@react-native-firebase/firestore';
+import {ListItem} from 'react-native-elements';
+import {ActivityIndicator, Colors} from 'react-native-paper';
 
-const DATA = [
-  {
-    id: 'bd7acbea-c1b1-46c2-aed5-3ad53abb28ba',
-    title: 'First Item',
-  },
-  {
-    id: '3ac68afc-c605-48d3-a4f8-fbd91aa97f63',
-    title: 'Second Item',
-  },
-  {
-    id: '58694a0f-3da1-471f-bd96-145571e29d72',
-    title: 'Third Item',
-  },
-];
+export default function UserList({route, navigation}) {
+  const [loading, setLoading] = useState(true); // Set loading to true on component mount
+  const [users, setUsers] = useState([]); // Initial empty array of users
 
-function Item({title}) {
-  return (
-    <View style={styles.item}>
-      <Text style={styles.title}>{title}</Text>
+  useEffect(() => {
+    const subscriber = firestore()
+      .collection(`users/${route.params.user.uid}/${route.params.listType}`)
+      .onSnapshot((querySnapshot) => {
+        const users = [];
+        querySnapshot.forEach((documentSnapshot) => {
+          console.log(documentSnapshot.id);
+          users.push({
+            ...documentSnapshot.data(),
+            key: documentSnapshot.id,
+          });
+        });
+        setUsers(users);
+        setLoading(false);
+      });
+
+    // Unsubscribe from events when no longer in use
+    return () => subscriber();
+  }, []);
+
+  const renderItem = ({item}) => (
+    <TouchableOpacity
+      onPress={() => {
+        navigation.navigate('ViewProfile', {user: item});
+      }}>
+      <ListItem
+        title={item.displayName}
+        subtitle={item.email}
+        leftAvatar={{
+          source: item.photoURL && {uri: item.photoURL},
+        }}
+        bottomDivider
+        chevron
+      />
+    </TouchableOpacity>
+  );
+
+  const listEmpty = () => (
+    <View style={styles.container}>
+      <Text style={styles.noMessagesText}>
+        {route.params.listType == 'followers'
+          ? 'This user has no followers'
+          : 'This user is not following anyone'}
+      </Text>
     </View>
   );
-}
 
-export default function App() {
+  if (loading) {
+    return (
+      <View style={styles.loader}>
+        <ActivityIndicator animating={true} color={Colors.red800} />
+      </View>
+    );
+  }
+
   return (
-    <SafeAreaView style={styles.container}>
-      <FlatList
-        data={DATA}
-        renderItem={({item}) => <Item title={item.title} />}
-        keyExtractor={(item) => item.id}
-      />
-    </SafeAreaView>
+    <FlatList
+      refreshControl={<RefreshControl refreshing={loading} />}
+      keyExtractor={(item, index) => index.toString()}
+      data={users}
+      renderItem={renderItem}
+      ListEmptyComponent={listEmpty}
+    />
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
+  loader: {
+    justifyContent: 'center',
+    alignItems: 'center',
     flex: 1,
-    marginTop: 4,
   },
-  item: {
-    backgroundColor: '#f9c2ff',
-    padding: 20,
-    marginVertical: 8,
-    marginHorizontal: 16,
+  noMessagesText: {
+    fontSize: 22,
+    fontWeight: 'bold',
+    textAlign: 'center',
+    margin: 30,
   },
-  title: {
-    fontSize: 32,
+  container: {
+    justifyContent: 'center',
+    flex: 1,
+    margin: 10,
   },
 });

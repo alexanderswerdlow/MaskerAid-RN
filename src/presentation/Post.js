@@ -1,4 +1,4 @@
-import React, {useContext, useState, useEffect} from 'react';
+import React, {useContext, useState, useEffect, useRef} from 'react';
 import {
   TouchableOpacity,
   View,
@@ -10,7 +10,8 @@ import {
 import config from '../config';
 import Icon from 'react-native-vector-icons/Fontisto';
 import IconAntDesign from 'react-native-vector-icons/AntDesign';
-import {AuthContext} from '../navigation/AuthProvider';
+import Ionicons from 'react-native-vector-icons/Ionicons';
+import {AuthContext} from '../navigation/ContextProvider';
 import storage from '@react-native-firebase/storage';
 import ProgressiveImage from './ProgressiveImage';
 import DoubleTap from './DoubleTap';
@@ -19,6 +20,7 @@ import {Dialog, Portal, Button, Paragraph} from 'react-native-paper';
 import * as RootNavigation from '../navigation/RootNavigation.js';
 import PropTypes from 'prop-types';
 import firestore from '@react-native-firebase/firestore';
+import VideoMedia from './VideoMedia';
 
 export default function Post(props) {
   const w = Dimensions.get('window');
@@ -27,24 +29,69 @@ export default function Post(props) {
   const [thumbnail, setThumbnail] = useState('');
   const [image, setImage] = useState('');
   const [dialogVisible, setDialogVisible] = useState(false);
+  const [like_count, set_like_count] = useState(0);
+  const [isVideo, setVideo] = useState(false);
   const heartIconColor = liked ? 'rgb(252,61,57)' : null;
   const heartIconID = liked ? 'heart' : 'hearto';
-  const [like_count, set_like_count] = useState(0);
+  const [muted, setMuted] = useState(false);
+  const _isMounted = useRef(true); // Initial value _isMounted = true
 
   useEffect(() => {
+    return () => {
+      _isMounted.current = false;
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!_isMounted.current) {
+      return;
+    }
     const subscriber = props.loc.onSnapshot((postSnapshot) => {
       if (postSnapshot.data()) {
         set_like_count(postSnapshot.data().like_count);
       }
     });
     return () => subscriber();
-  }, []);
+  }, [props.loc]);
+
+  useEffect(() => {
+    if (!_isMounted.current) {
+      return;
+    }
+
+    const ref = storage().ref(`posts/${props.loc.id}`);
+
+    ref
+      .getMetadata()
+      .then(function (metadata) {
+        setVideo(metadata.contentType != 'image/jpeg');
+      })
+      .catch(function (error) {});
+
+    if (!isVideo) {
+      storage()
+        .ref(`posts/thumb_${props.loc.id}`)
+        .getDownloadURL()
+        .then(function (url) {
+          setThumbnail(url);
+        })
+        .catch(function (error) {});
+    }
+
+    ref
+      .getDownloadURL()
+      .then(function (url) {
+        setImage(url);
+      })
+      .catch(function (error) {});
+  }, [props.loc]);
 
   const likePhoto = () => {
     let new_count = 1;
-
-    if (like_count != 0 || liked) {
-      setLiked(!liked);
+    setLiked(!liked);
+    if (like_count == 0) {
+      new_count = 1;
+    } else if (like_count > 0 || liked) {
       new_count = liked ? like_count - 1 : like_count + 1;
     }
 
@@ -52,36 +99,26 @@ export default function Post(props) {
     const userRef = firestore().doc(
       `users/${props.user.uid}/posts/${props.loc.id}`,
     );
-    batch.update(userRef, {
-      like_count: new_count,
-    });
+    batch.update(userRef, {like_count: new_count});
     const postsRef = firestore().collection('posts').doc(props.loc.id);
-    batch.update(postsRef, {
-      like_count: new_count,
-    });
+    batch.update(postsRef, {like_count: new_count});
     batch.commit();
   };
 
-  useEffect(() => {
-    storage()
-      .ref(`posts/thumbnails/${props.loc.id}_50x50`)
-      .getDownloadURL()
-      .then(function (url) {
-        setThumbnail(url);
-      })
-      .catch(function (error) {
-        //console.log('Could not retrieve thumbnail: ' + error);
-      });
-    storage()
-      .ref(`posts/${props.loc.id}`)
-      .getDownloadURL()
-      .then(function (url) {
-        setImage(url);
-      })
-      .catch(function (error) {
-        console.log('Could not retrieve image: ' + error);
-      });
-  });
+  const postMedia = () => {
+    if (!isVideo) {
+      return (
+        <ProgressiveImage
+          thumbnailSource={thumbnail ? {uri: thumbnail} : null}
+          source={image ? {uri: image} : null}
+          style={{width: w.width, height: w.width}}
+          resizeMode="cover"
+        />
+      );
+    } else {
+      return <VideoMedia source={image} muted={muted} />;
+    }
+  };
 
   return (
     <View style={{flex: 1, width: 100 + '%'}}>
@@ -89,7 +126,7 @@ export default function Post(props) {
         <View style={{flexDirection: 'row', alignItems: 'center'}}>
           <TouchableOpacity
             onPress={() => {
-              RootNavigation.navigate('Profile', {
+              RootNavigation.navigate('ViewProfile', {
                 user: props.user,
               });
             }}>
@@ -109,12 +146,7 @@ export default function Post(props) {
         </View>
       </View>
       <DoubleTap onDoubleTap={() => likePhoto()} activeOpacity={0.7}>
-        <ProgressiveImage
-          thumbnailSource={thumbnail ? {uri: thumbnail} : null}
-          source={image ? {uri: image} : null}
-          style={{width: w.width, height: w.width}}
-          resizeMode="cover"
-        />
+        {postMedia()}
       </DoubleTap>
       <View style={styles.iconBar}>
         <IconAntDesign
@@ -124,12 +156,24 @@ export default function Post(props) {
           onPress={() => likePhoto()}
         />
         <Icon name={'comment'} size={27} style={{padding: 5}} />
+        {isVideo && (
+          <Ionicons
+            name={muted ? 'md-volume-mute' : 'md-volume-high'}
+            size={30}
+            style={{padding: 5}}
+            onPress={() => {
+              setMuted(!muted);
+            }}
+          />
+        )}
         {user.uid == props.user.uid && (
           <IconAntDesign
             name={'delete'}
             size={30}
             style={{padding: 5}}
-            onPress={() => setDialogVisible(true)}
+            onPress={() => {
+              setDialogVisible(true);
+            }}
           />
         )}
       </View>
@@ -158,10 +202,15 @@ export default function Post(props) {
             </Paragraph>
           </Dialog.Content>
           <Dialog.Actions>
-            <Button onPress={() => setDialogVisible(false)}>Cancel</Button>
             <Button
               onPress={() => {
-                Fire.deletePost(props.loc.id, user);
+                setDialogVisible(false);
+              }}>
+              Cancel
+            </Button>
+            <Button
+              onPress={() => {
+                Fire.deletePost(props.loc.id, user, isVideo);
                 setDialogVisible(false);
               }}>
               Delete

@@ -1,3 +1,7 @@
+/*
+Taken mostly from: https://github.com/HandlebarLabs/react-native-examples-and-tutorials
+Author: HandlebarLabs
+*/
 import React from 'react';
 import {Vibration, TouchableWithoutFeedback} from 'react-native';
 

@@ -78,7 +78,7 @@ export default function Post(props) {
       .then(function (metadata) {
         setVideo(metadata.contentType != 'image/jpeg');
       })
-      .catch(function (error) {});
+      .catch(function () {});
 
     if (!isVideo) {
       storage()
@@ -87,7 +87,7 @@ export default function Post(props) {
         .then(function (url) {
           setThumbnail(url);
         })
-        .catch(function (error) {});
+        .catch(function () {});
     }
 
     ref
@@ -95,7 +95,7 @@ export default function Post(props) {
       .then(function (url) {
         setImage(url);
       })
-      .catch(function (error) {});
+      .catch(function () {});
   }, [props.loc]);
 
   const likePhoto = () => {

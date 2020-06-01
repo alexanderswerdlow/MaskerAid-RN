@@ -1,12 +1,11 @@
 /*
 Author: Yamill Vallecillo
-Source taken directly from: https://github.com/yamill/react-native-inviewport
-Broken when installing as NPM Package, so copied directly into this file.
+Source taken from: https://github.com/yamill/react-native-inviewport
  */
 'use strict';
 
 import React, {Component} from 'react';
-import {View, NativeMethodsMixin, Dimensions} from 'react-native';
+import {View, Dimensions} from 'react-native';
 
 export default class InViewPort extends Component {
   _isMounted = false;

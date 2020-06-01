@@ -21,9 +21,7 @@ export const ContextProvider = ({children}) => {
 
   useEffect(() => {
     if (user) {
-      firestore().doc(`users/${user.uid}`).update({
-        theme,
-      });
+      firestore().doc(`users/${user.uid}`).update({theme});
     }
   }, [theme]);
 
@@ -103,12 +101,10 @@ export const ContextProvider = ({children}) => {
                     text: 'OK',
                     onPress: async () => {
                       const {idToken} = await GoogleSignin.signIn();
-                      const googleCredential = auth.GoogleContextProvider.credential(
+                      const googleCredential = auth.GoogleAuthProvider.credential(
                         idToken,
                       );
-                      const userCredential = await auth().signInWithCredential(
-                        googleCredential,
-                      );
+                      await auth().signInWithCredential(googleCredential);
                       var user = auth().currentUser;
                       user.delete().then(function () {
                         console.log('User Deleted');

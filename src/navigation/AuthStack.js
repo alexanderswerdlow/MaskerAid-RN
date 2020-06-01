@@ -9,7 +9,7 @@ export default function AuthStack() {
   return (
     <Stack.Navigator initialRouteName=" ">
       <Stack.Screen
-        name=" "
+        name="Tutorial"
         component={TutorialScreen}
         options={{header: () => null}}
       />

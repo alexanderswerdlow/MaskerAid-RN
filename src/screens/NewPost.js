@@ -10,6 +10,7 @@ import {
   ActivityIndicator,
   Colors,
   Snackbar,
+  DefaultTheme,
 } from 'react-native-paper';
 import {useUpload} from '../util';
 import {AuthContext} from '../navigation/ContextProvider';
@@ -117,7 +118,6 @@ function NewPost({navigation}) {
               alignItems: 'center',
               padding: 10,
               margin: 30,
-              backgroundColor: theme.colors.primary,
             }}>
             Clear Media
           </Button>
@@ -134,7 +134,6 @@ function NewPost({navigation}) {
               alignItems: 'center',
               padding: 10,
               margin: 30,
-              backgroundColor: theme.colors.primary,
             }}>
             Take Video
           </Button>
@@ -146,7 +145,6 @@ function NewPost({navigation}) {
               alignItems: 'center',
               padding: 10,
               margin: 30,
-              backgroundColor: theme.colors.primary,
             }}>
             Take Photo
           </Button>
@@ -158,7 +156,6 @@ function NewPost({navigation}) {
               alignItems: 'center',
               padding: 10,
               margin: 30,
-              backgroundColor: theme.colors.primary,
             }}>
             Open from Camera Roll
           </Button>
@@ -203,6 +200,7 @@ function NewPost({navigation}) {
         )}
       </View>
       <Snackbar
+        theme={DefaultTheme}
         duration={2000}
         visible={visible}
         onDismiss={() => {
@@ -218,6 +216,7 @@ function NewPost({navigation}) {
         Posted!
       </Snackbar>
       <Snackbar
+        theme={DefaultTheme}
         duration={4000}
         visible={capWarnVisible}
         onDismiss={() => {
@@ -233,6 +232,7 @@ function NewPost({navigation}) {
       </Snackbar>
       <Portal>
         <Dialog
+          theme={DefaultTheme}
           visible={postDialogVisible}
           onDismiss={() => {
             setPostDialogVisible(false);

@@ -34,7 +34,7 @@ export default function Post(props) {
   const heartIconColor = liked ? 'rgb(252,61,57)' : null;
   const heartIconID = liked ? 'heart' : 'hearto';
   const [muted, setMuted] = useState(false);
-  const _isMounted = useRef(true); // Initial value _isMounted = true
+  const _isMounted = useRef(true);
 
   useEffect(() => {
     return () => {
@@ -46,9 +46,21 @@ export default function Post(props) {
     if (!_isMounted.current) {
       return;
     }
+
     const subscriber = props.loc.onSnapshot((postSnapshot) => {
       if (postSnapshot.data()) {
         set_like_count(postSnapshot.data().like_count);
+        firestore()
+          .collection('posts')
+          .where(firestore.FieldPath.documentId(), '==', props.loc.id)
+          .where('like_users', 'array-contains', user.uid)
+          .get()
+          .then(function (querySnapshot) {
+            setLiked(!querySnapshot.empty);
+          })
+          .catch(function (error) {
+            console.log('Error getting liked state: ', error);
+          });
       }
     });
     return () => subscriber();
@@ -87,22 +99,8 @@ export default function Post(props) {
   }, [props.loc]);
 
   const likePhoto = () => {
-    let new_count = 1;
     setLiked(!liked);
-    if (like_count == 0) {
-      new_count = 1;
-    } else if (like_count > 0 || liked) {
-      new_count = liked ? like_count - 1 : like_count + 1;
-    }
-
-    const batch = firestore().batch();
-    const userRef = firestore().doc(
-      `users/${props.user.uid}/posts/${props.loc.id}`,
-    );
-    batch.update(userRef, {like_count: new_count});
-    const postsRef = firestore().collection('posts').doc(props.loc.id);
-    batch.update(postsRef, {like_count: new_count});
-    batch.commit();
+    Fire.likePost(props.loc.id, props.user.uid, user.uid, like_count, liked);
   };
 
   const postMedia = () => {

@@ -21,14 +21,9 @@ export const ContextProvider = ({children}) => {
 
   useEffect(() => {
     if (user) {
-      firestore()
-        .doc(`users/${user.uid}`)
-        .update({
-          theme,
-        })
-        .then(() => {
-          console.log('Color updated!');
-        });
+      firestore().doc(`users/${user.uid}`).update({
+        theme,
+      });
     }
   }, [theme]);
 

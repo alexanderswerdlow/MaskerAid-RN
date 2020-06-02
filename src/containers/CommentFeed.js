@@ -21,7 +21,7 @@ export default function CommentFeed(props) {
   useEffect(() => {
     const subscriber = firestore()
       .collection(props.id ? `posts/${props.id}/comments` : null)
-      .orderBy('comment_date', 'desc')
+      .orderBy('comment_date')
       .onSnapshot((querySnapshot) => {
         if (isMountedRef.current) {
           const comments = [];
@@ -40,9 +40,40 @@ export default function CommentFeed(props) {
     return () => subscriber();
   }, []);
 
+  const addLike = (commentID, likeCount) => {
+    firestore()
+      .doc(`posts/${props.id}/comments/${commentID}`)
+      .update({
+        likedUsers: firestore.FieldValue.arrayUnion(props.currentUserEmail),
+        like_count: likeCount + 1,
+      });
+  };
+
+  const removeLike = (commentID, likeCount) => {
+    firestore()
+      .doc(`posts/${props.id}/comments/${commentID}`)
+      .update({
+        likedUsers: firestore.FieldValue.arrayRemove(props.currentUserEmail),
+        like_count: likeCount - 1,
+      });
+  };
+
   const renderItem = ({item}) => {
     if (item.comment) {
-      return <Comment comment={item.comment} user={item.user} />;
+      let liked = false;
+      if (item.comment.likedUsers.includes(props.currentUserEmail)) {
+        liked = true;
+      }
+      return (
+        <Comment
+          comment={item.comment}
+          user={item.user}
+          liked={liked}
+          addLike={addLike}
+          removeLike={removeLike}
+          id={item.ref.id}
+        />
+      );
     }
   };
 

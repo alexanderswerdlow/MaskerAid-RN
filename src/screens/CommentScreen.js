@@ -11,16 +11,24 @@ import {
 } from 'react-native';
 import config from '../config';
 import CommentFeed from '../containers/CommentFeed';
+import firestore from '@react-native-firebase/firestore';
 
 export default function Comment(props) {
   const w = Dimensions.get('window');
+  const commentsCollection = firestore().collection(
+    `posts/${props.route.params.post}/comments`,
+  );
+  const [newComment, setNewComment] = useState('');
 
   return (
     <View style={{flex: 1, width: 100 + '%', height: 100 + '%'}}>
       <View style={styles.nav}>
         <Text style={styles.CommentText}>Comments</Text>
       </View>
-      <CommentFeed id={props.route.params.post} />
+      <CommentFeed
+        id={props.route.params.post}
+        currentUserEmail={props.route.params.user.email}
+      />
       <View
         style={{
           flexDirection: 'row',
@@ -28,10 +36,39 @@ export default function Comment(props) {
           alignItems: 'center',
           justifyContent: 'center',
         }}>
-        <TextInput style={styles.TextInput} />
-        <TouchableOpacity style={{alignItems: 'center'}}>
-          <Text>Add</Text>
-        </TouchableOpacity>
+        <TextInput
+          style={styles.TextInput}
+          onChangeText={(text) => setNewComment(text)}
+          value={newComment}
+        />
+        <Button
+          title={'Add'}
+          style={{alignItems: 'center'}}
+          onPress={() => {
+            if (newComment.length > 0) {
+              console.log(props.route.params.user);
+              commentsCollection
+                .add({
+                  user: {
+                    photoURL: props.route.params.user.photoURL,
+                    displayName: props.route.params.user.displayName,
+                    email: props.route.params.user.email,
+                    uid: props.route.params.user.uid,
+                  },
+                  text: newComment,
+                  like_count: 0,
+                  comment_date: firestore.FieldValue.serverTimestamp(),
+                  likedUsers: [],
+                })
+                .then(() => {
+                  console.log('Comment Added!');
+                });
+              setNewComment('');
+            } else {
+              alert('Comments must be atleast 1 character.');
+            }
+          }}
+        />
       </View>
     </View>
   );
@@ -60,7 +97,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     flex: 1,
     backgroundColor: 'white',
-    borderRadius: 13,
+    borderRadius: 10,
     paddingLeft: 10,
   },
 });

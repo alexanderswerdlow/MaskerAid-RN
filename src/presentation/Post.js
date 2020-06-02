@@ -125,6 +125,7 @@ export default function Post(props) {
           onPress={() => {
             RootNavigation.navigate('CommentScreen', {
               post: props.loc.id,
+              user: user,
             });
           }}>
           <Icon name={'comment'} size={27} style={{padding: 5}} />

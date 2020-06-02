@@ -1,10 +1,28 @@
-import React, {useState} from 'react';
-import {View, Text, Image, StyleSheet, Dimensions} from 'react-native';
+import React, {useEffect, useState} from 'react';
+import {
+  View,
+  Text,
+  Image,
+  StyleSheet,
+  Dimensions,
+  TouchableOpacity,
+} from 'react-native';
 import config from '../config';
 import Icon from 'react-native-vector-icons/AntDesign';
 import * as RootNavigation from '../navigation/RootNavigation.js';
 
 export default function Comment(props) {
+  const [heart, setHeart] = useState('hearto');
+  const [heartIconColor, setHeartIconColor] = useState('rgb(0,0,0)');
+  useEffect(() => {
+    if (props.liked) {
+      setHeart('heart');
+      setHeartIconColor('rgb(252,61,57)');
+    } else {
+      setHeart('hearto');
+      setHeartIconColor('rgb(0,0,0)');
+    }
+  });
   return (
     <View style={{flex: 1, width: 100 + '%'}}>
       <View style={styles.userCaption}>
@@ -24,12 +42,23 @@ export default function Comment(props) {
                 {props.comment.text}
               </Text>
             </View>
-            <Text style={{fontWeight: 'bold'}}>{props.comment.like_count}</Text>
+            <Text style={{fontWeight: 'bold'}}>
+              {props.comment.like_count} Likes
+            </Text>
           </View>
         </View>
         <View
           style={{flexDirection: 'row', alignItems: 'center', marginLeft: 10}}>
-          <Icon name="hearto" size={14} />
+          <TouchableOpacity
+            onPress={() => {
+              if (props.liked) {
+                props.removeLike(props.id, props.comment.like_count);
+              } else {
+                props.addLike(props.id, props.comment.like_count);
+              }
+            }}>
+            <Icon name={heart} style={{color: heartIconColor}} size={14} />
+          </TouchableOpacity>
         </View>
       </View>
     </View>

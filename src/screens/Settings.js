@@ -81,7 +81,6 @@ class SettingsScreen extends React.Component {
             okLabel="Done"
             cancelLabel="Cancel"
           />
-          
         </ScrollView>
       </View>
     );

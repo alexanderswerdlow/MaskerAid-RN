@@ -17,7 +17,6 @@ const styles = StyleSheet.create({
   safe: {
     flex: 1,
     backgroundColor: '#252b33',
-
   },
   container: {
     flex: 1,
@@ -29,7 +28,11 @@ const SearchNotice = (props) => {
   if (props.query) {
     return <Title>No results have been found for: {props.query}</Title>;
   } else {
-    return <Title style={{marginLeft: 30, marginTop: 15}}>No query was entered</Title>;
+    return (
+      <Title style={{marginLeft: 30, marginTop: 15}}>
+        No query was entered
+      </Title>
+    );
   }
 };
 
@@ -75,8 +78,16 @@ class Search extends React.Component {
                 }
               }}
               value={this.state.value}>
-              <ToggleButton color={theme.colors.primary} icon="account-circle" value="users" />
-              <ToggleButton color={theme.colors.primary} icon="note" value="posts" />
+              <ToggleButton
+                color={theme.colors.primary}
+                icon="account-circle"
+                value="users"
+              />
+              <ToggleButton
+                color={theme.colors.primary}
+                icon="note"
+                value="posts"
+              />
             </ToggleButton.Row>
             <Results>
               <InfiniteHits searchType={this.state.value} />

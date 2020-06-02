@@ -9,7 +9,7 @@ import MessagesScreen from '../screens/Messages';
 import ChatScreen from '../screens/Chat';
 import SearchScreen from '../screens/Search';
 import UserListScreen from '../screens/UserList';
-import {AuthContext} from '../navigation/ContextProvider';
+import {GlobalContext} from '../navigation/ContextProvider';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import SettingsScreen from '../screens/Settings';
 
@@ -60,7 +60,7 @@ function SearchStackScreen() {
 const MessagesStack = createStackNavigator();
 
 function MessagesStackScreen() {
-  const {theme} = React.useContext(AuthContext);
+  const {theme} = React.useContext(GlobalContext);
   return (
     <MessagesStack.Navigator>
       <MessagesStack.Screen name="Messages" component={MessagesScreen} />
@@ -72,7 +72,7 @@ function MessagesStackScreen() {
 const ProfileStackScreen = createStackNavigator();
 
 function ProfileScreen() {
-  const {user} = React.useContext(AuthContext);
+  const {user} = React.useContext(GlobalContext);
   return (
     <ProfileStackScreen.Navigator>
       <ProfileStackScreen.Screen name="Profile">
@@ -89,7 +89,7 @@ function ProfileScreen() {
 }
 
 export default function App() {
-  const {theme} = React.useContext(AuthContext);
+  const {theme} = React.useContext(GlobalContext);
   return (
     <Tab.Navigator
       screenOptions={({route}) => ({

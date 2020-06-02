@@ -9,10 +9,11 @@ import {
   ProgressBar,
   ActivityIndicator,
   Snackbar,
+  DefaultTheme,
 } from 'react-native-paper';
 import {useUpload} from '../util';
 import VideoMedia from '../presentation/VideoMedia';
-import {ContextProvider} from '../navigation/ContextProvider';
+import {GlobalContext} from '../navigation/ContextProvider';
 
 function NewPost({navigation}) {
   const [image, setImage] = useState(null);
@@ -24,7 +25,7 @@ function NewPost({navigation}) {
   const [prompt, setPrompt] = useState(true);
   const [{success, uploading}, monitorUpload] = useUpload();
   const [isVideo, setVideo] = useState(false);
-  const {theme} = useContext(ContextProvider);
+  const {theme} = useContext(GlobalContext);
 
   const uploadFile = () => {
     if (response) {
@@ -198,7 +199,8 @@ function NewPost({navigation}) {
         )}
       </View>
       <Snackbar
-        theme={{colors: {accent: theme.colors.primary}}}
+        theme={DefaultTheme}
+        //theme={{colors: {accent: theme.colors.primary}}}
         duration={2000}
         visible={visible}
         onDismiss={() => {
@@ -214,7 +216,8 @@ function NewPost({navigation}) {
         Posted!
       </Snackbar>
       <Snackbar
-        theme={{colors: {accent: theme.colors.primary}}}
+        theme={DefaultTheme}
+        //theme={{colors: {accent: theme.colors.primary}}}
         duration={4000}
         visible={capWarnVisible}
         onDismiss={() => {

@@ -1,10 +1,10 @@
 import React, {useContext} from 'react';
 import {View, StyleSheet, Image} from 'react-native';
 import {GoogleSigninButton} from '@react-native-community/google-signin';
-import {AuthContext} from '../navigation/ContextProvider';
+import {GlobalContext} from '../navigation/ContextProvider';
 
 export default function Login() {
-  const {login} = useContext(AuthContext);
+  const {login} = useContext(GlobalContext);
   return (
     <View style={[styles.container, styles.pageContainer]}>
       <Image source={require('../images/180.png')} />

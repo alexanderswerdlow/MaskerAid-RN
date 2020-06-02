@@ -8,15 +8,14 @@ import {
   RefreshControl,
 } from 'react-native';
 import firestore from '@react-native-firebase/firestore';
-import {AuthContext} from '../navigation/ContextProvider';
+import {GlobalContext} from '../navigation/ContextProvider';
 import {ListItem} from 'react-native-elements';
 import {ActivityIndicator, Colors} from 'react-native-paper';
 
 export default function Messages({navigation}) {
   const [loading, setLoading] = useState(true); // Set loading to true on component mount
   const [users, setUsers] = useState([]); // Initial empty array of users
-  const {user} = useContext(AuthContext);
-  const {theme} = useContext(AuthContext);
+  const {user, theme} = useContext(GlobalContext);
 
   useEffect(() => {
     const subscriber = firestore()

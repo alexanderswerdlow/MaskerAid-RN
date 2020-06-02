@@ -11,7 +11,7 @@ import config from '../config';
 import Icon from 'react-native-vector-icons/Fontisto';
 import IconAntDesign from 'react-native-vector-icons/AntDesign';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import {AuthContext} from '../navigation/ContextProvider';
+import {GlobalContext} from '../navigation/ContextProvider';
 import storage from '@react-native-firebase/storage';
 import ProgressiveImage from './ProgressiveImage';
 import DoubleTap from './DoubleTap';
@@ -24,7 +24,7 @@ import VideoMedia from './VideoMedia';
 
 export default function Post(props) {
   const w = Dimensions.get('window');
-  const {user} = useContext(AuthContext);
+  const {user} = useContext(GlobalContext);
   const [liked, setLiked] = useState(false);
   const [thumbnail, setThumbnail] = useState('');
   const [image, setImage] = useState('');

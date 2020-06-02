@@ -9,11 +9,11 @@ import {
 } from 'react-native';
 import {SlidersColorPicker} from 'react-native-color';
 import tinycolor from 'tinycolor2';
-import {AuthContext} from '../navigation/ContextProvider';
+import {GlobalContext} from '../navigation/ContextProvider';
 import {withNavigation} from 'react-navigation';
 
 class SettingsScreen extends React.Component {
-  static contextType = AuthContext;
+  static contextType = GlobalContext;
   state = {
     modalVisible: false,
     recents: ['#247ba0', '#70c1b3', '#b2dbbf', '#f3ffbd', '#ff1654'],

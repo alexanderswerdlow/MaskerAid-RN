@@ -2,11 +2,11 @@ import React, {useCallback, useState, useEffect, useContext} from 'react';
 import {GiftedChat} from 'react-native-gifted-chat';
 import {ActivityIndicator} from 'react-native';
 import firestore from '@react-native-firebase/firestore';
-import {AuthContext} from '../navigation/ContextProvider';
+import {GlobalContext} from '../navigation/ContextProvider';
 
 export default function Chat(props) {
   const [messages, setMessages] = useState([]);
-  const {user} = useContext(AuthContext);
+  const {user} = useContext(GlobalContext);
   const [loading, setLoading] = useState(true); // Set loading to true on component mount
 
   useEffect(() => {

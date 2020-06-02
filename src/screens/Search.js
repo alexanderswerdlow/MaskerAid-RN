@@ -6,7 +6,7 @@ import SearchBox from '../search/SearchBox';
 import InfiniteHits from '../search/InfiniteHits';
 import {ToggleButton, Title} from 'react-native-paper';
 import {connectStateResults} from 'react-instantsearch-native';
-import {AuthContext} from '../navigation/AuthProvider';
+import {GlobalContext} from '../navigation/ContextProvider';
 
 const searchClient = algoliasearch(
   'V6KRQS64EW',
@@ -45,7 +45,7 @@ const Results = connectStateResults(({searchState, searchResults, children}) =>
 );
 
 class Search extends React.Component {
-  static contextType = AuthContext;
+  static contextType = GlobalContext;
   root = {
     Root: View,
     props: {

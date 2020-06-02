@@ -12,13 +12,13 @@ import {withNavigation} from 'react-navigation';
 import {PostFeed} from '../containers';
 import {Button} from 'react-native-paper';
 import Fire from '../util/Fire';
-import {AuthContext} from '../navigation/ContextProvider';
+import {GlobalContext} from '../navigation/ContextProvider';
 import firestore from '@react-native-firebase/firestore';
 import * as RootNavigation from '../navigation/RootNavigation.js';
 
 class Profile extends Component {
   static data = PostFeed;
-  static contextType = AuthContext;
+  static contextType = GlobalContext;
 
   constructor(props) {
     super(props);
@@ -95,7 +95,6 @@ class Profile extends Component {
 
   renderHeader = () => {
     const {theme} = this.context;
-
     return (
       <>
         <View style={{backgroundColor: 'white'}}>
@@ -278,7 +277,7 @@ class Profile extends Component {
     }
   };
 
-  renderSection = () => {
+  render() {
     return (
       <PostFeed
         user={this.state.user}
@@ -288,10 +287,6 @@ class Profile extends Component {
         }}
       />
     );
-  };
-
-  render() {
-    return <View>{this.renderSection()}</View>;
   }
 }
 

@@ -2,13 +2,13 @@ import React, {useEffect, useContext, useState} from 'react';
 import {View} from 'react-native';
 import {PostFeed} from '../containers';
 import firestore from '@react-native-firebase/firestore';
-import {AuthContext} from '../navigation/ContextProvider';
+import {GlobalContext} from '../navigation/ContextProvider';
 import {Switch} from 'react-native-paper';
 import {Button} from 'react-native-paper';
 
 export default function Home({navigation}) {
   const [toggle, setToggle] = useState(false);
-  const {user} = useContext(AuthContext);
+  const {user} = useContext(GlobalContext);
   const [following, setFollowing] = useState([]);
   useEffect(() => {
     const subscriber = firestore()

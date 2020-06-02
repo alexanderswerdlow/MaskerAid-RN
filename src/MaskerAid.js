@@ -1,7 +1,7 @@
 import 'react-native-gesture-handler';
 import AuthStack from './navigation/AuthStack';
 import HomeStack from './navigation/HomeStack';
-import {AuthContext} from './navigation/ContextProvider';
+import {GlobalContext} from './navigation/ContextProvider';
 import React, {useState, useContext, useEffect} from 'react';
 import {ActivityIndicator, Colors} from 'react-native-paper';
 import auth from '@react-native-firebase/auth';
@@ -12,8 +12,8 @@ import firestore from '@react-native-firebase/firestore';
 
 export default function MaskerAid() {
   const [initializing, setInitializing] = useState(true);
-  const {user, setUser} = useContext(AuthContext);
-  const {theme} = useContext(AuthContext);
+  const {user, setUser} = useContext(GlobalContext);
+  const {theme} = useContext(GlobalContext);
 
   async function bootstrap() {
     YellowBox.ignoreWarnings(["Can't perform a React state"]);

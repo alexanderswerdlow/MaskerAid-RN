@@ -7,7 +7,7 @@ import {Platform} from 'react-native';
 import firestore from '@react-native-firebase/firestore';
 import {DefaultTheme, Provider as PaperProvider} from 'react-native-paper';
 
-export const AuthContext = createContext({});
+export const GlobalContext = createContext({});
 
 export const ContextProvider = ({children}) => {
   const [user, setUser] = useState(null);
@@ -47,7 +47,7 @@ export const ContextProvider = ({children}) => {
   });
 
   return (
-    <AuthContext.Provider
+    <GlobalContext.Provider
       value={{
         user,
         setUser,
@@ -123,6 +123,6 @@ export const ContextProvider = ({children}) => {
         },
       }}>
       <PaperProvider theme={theme}>{children}</PaperProvider>
-    </AuthContext.Provider>
+    </GlobalContext.Provider>
   );
 };

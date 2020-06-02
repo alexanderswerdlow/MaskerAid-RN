@@ -1,5 +1,5 @@
 import {Image, View, Text, TextInput} from 'react-native';
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useContext} from 'react';
 import ImagePicker from 'react-native-image-crop-picker';
 import {
   Dialog,
@@ -8,12 +8,11 @@ import {
   Paragraph,
   ProgressBar,
   ActivityIndicator,
-  Colors,
   Snackbar,
-  DefaultTheme,
 } from 'react-native-paper';
 import {useUpload} from '../util';
 import VideoMedia from '../presentation/VideoMedia';
+import {ContextProvider} from '../navigation/ContextProvider';
 
 function NewPost({navigation}) {
   const [image, setImage] = useState(null);
@@ -25,6 +24,7 @@ function NewPost({navigation}) {
   const [prompt, setPrompt] = useState(true);
   const [{success, uploading}, monitorUpload] = useUpload();
   const [isVideo, setVideo] = useState(false);
+  const {theme} = useContext(ContextProvider);
 
   const uploadFile = () => {
     if (response) {

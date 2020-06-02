@@ -64,12 +64,13 @@ export default function Post(props) {
       }
     });
     return () => subscriber();
-  }, [props.loc]);
+  }, []);
 
   useEffect(() => {
     if (!_isMounted.current) {
       return;
     }
+    console.log(props.loc.id);
 
     const ref = storage().ref(`posts/${props.loc.id}`);
 
@@ -96,7 +97,7 @@ export default function Post(props) {
         setImage(url);
       })
       .catch(function () {});
-  }, [props.loc]);
+  }, []);
 
   const likePhoto = () => {
     setLiked(!liked);

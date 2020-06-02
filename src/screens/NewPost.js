@@ -1,5 +1,5 @@
 import {Image, View, Text, TextInput} from 'react-native';
-import React, {useState, useEffect, useContext} from 'react';
+import React, {useState, useEffect} from 'react';
 import ImagePicker from 'react-native-image-crop-picker';
 import {
   Dialog,
@@ -13,7 +13,6 @@ import {
   DefaultTheme,
 } from 'react-native-paper';
 import {useUpload} from '../util';
-import {AuthContext} from '../navigation/ContextProvider';
 import VideoMedia from '../presentation/VideoMedia';
 
 function NewPost({navigation}) {
@@ -25,7 +24,6 @@ function NewPost({navigation}) {
   const [capWarnVisible, setCapWarnVisible] = useState(false);
   const [prompt, setPrompt] = useState(true);
   const [{success, uploading}, monitorUpload] = useUpload();
-  const {theme} = useContext(AuthContext);
   const [isVideo, setVideo] = useState(false);
 
   const uploadFile = () => {

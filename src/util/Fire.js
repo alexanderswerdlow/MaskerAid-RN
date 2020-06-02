@@ -182,7 +182,6 @@ export const Firebase = {
     }
   },
   likePost: (post_id, post_user_id, user_id, like_count, liked) => {
-    console.log(user_id);
     let new_count = 1;
     if (like_count == 0) {
       new_count = 1;

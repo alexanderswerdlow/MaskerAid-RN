@@ -1,3 +1,3 @@
-import PostFeed from './InfinitePostFeed';
+import PostFeed from './PostFeed';
 
 export {PostFeed};

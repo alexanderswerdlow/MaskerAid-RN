@@ -23,6 +23,7 @@ class InfinitePostFeed extends React.Component {
     this.state = {
       documentData: [],
       limit: 4,
+      lastSize: 4,
       lastVisible: null,
       loading: false,
       refreshing: false,
@@ -74,6 +75,34 @@ class InfinitePostFeed extends React.Component {
       });
     });
 
+    var rerender = false;
+    var i;
+    console.log('For');
+    for (
+      i = 0;
+      i < Math.min(this.state.documentData.length, documentData.length);
+      i++
+    ) {
+      console.log(documentData.length);
+      console.log(this.state.documentData.length);
+      if (documentData[i].ref.id != this.state.documentData[i].ref.id) {
+        console.log('here');
+        rerender = true;
+        break;
+      }
+    }
+
+    var same_size = documentSnapshots.size == this.state.lastSize;
+    this.setState({lastSize: documentSnapshots.size});
+    console.log(rerender);
+    console.log(same_size);
+
+    if (!rerender && this.state.documentData.length > 0 && same_size) {
+      return;
+    }
+
+    console.log('down');
+
     if (documentData.length == 0) {
       this.setState({
         documentData: [],
@@ -115,7 +144,7 @@ class InfinitePostFeed extends React.Component {
           .where('user.uid', 'in', this.props.following)
           .orderBy('post_day', 'desc')
           .orderBy('like_count', 'desc')
-          .limit(this.state.limit + 1)
+          .limit(this.state.limit)
           .onSnapshot(this.onResult, this.onError);
         this.unsubscribe = query;
       } else {
@@ -125,7 +154,7 @@ class InfinitePostFeed extends React.Component {
           )
           .orderBy('post_date', 'desc')
           .orderBy('like_count', 'desc')
-          .limit(this.state.limit + 1)
+          .limit(this.state.limit)
           .onSnapshot(this.onResult, this.onError);
         this.unsubscribe = query;
       }

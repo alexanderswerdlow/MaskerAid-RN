@@ -24,7 +24,7 @@ export default function Comment(props) {
     <View style={{flex: 1, width: 100 + '%', height: 100 + '%'}}>
       <CommentFeed
         id={props.route.params.post}
-        currentUserEmail={props.route.params.user.email}
+        currentUserID={props.route.params.user.uid}
       />
       <View
         style={{

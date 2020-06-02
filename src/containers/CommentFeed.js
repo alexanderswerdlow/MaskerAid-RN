@@ -44,7 +44,7 @@ export default function CommentFeed(props) {
     firestore()
       .doc(`posts/${props.id}/comments/${commentID}`)
       .update({
-        likedUsers: firestore.FieldValue.arrayUnion(props.currentUserEmail),
+        likedUsers: firestore.FieldValue.arrayUnion(props.currentUserID),
         like_count: likeCount + 1,
       });
   };
@@ -53,7 +53,7 @@ export default function CommentFeed(props) {
     firestore()
       .doc(`posts/${props.id}/comments/${commentID}`)
       .update({
-        likedUsers: firestore.FieldValue.arrayRemove(props.currentUserEmail),
+        likedUsers: firestore.FieldValue.arrayRemove(props.currentUserID),
         like_count: likeCount - 1,
       });
   };
@@ -61,7 +61,7 @@ export default function CommentFeed(props) {
   const renderItem = ({item}) => {
     if (item.comment) {
       let liked = false;
-      if (item.comment.likedUsers.includes(props.currentUserEmail)) {
+      if (item.comment.likedUsers.includes(props.currentUserID)) {
         liked = true;
       }
       return (

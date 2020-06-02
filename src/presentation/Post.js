@@ -156,14 +156,13 @@ export default function Post(props) {
         />
         <TouchableOpacity
           onPress={() => {
-            RootNavigation.navigate('CommentScreen', {
+            RootNavigation.navigate('Comments', {
               post: props.loc.id,
-              user: user,
+              user: props.user,
             });
           }}>
           <Icon name={'comment'} size={27} style={{padding: 5}} />
         </TouchableOpacity>
-        <Icon name={'comment'} size={27} style={{padding: 5}} />
         {isVideo && (
           <Ionicons
             name={muted ? 'md-volume-mute' : 'md-volume-high'}

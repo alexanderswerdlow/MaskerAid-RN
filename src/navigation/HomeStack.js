@@ -12,6 +12,7 @@ import UserListScreen from '../screens/UserList';
 import {GlobalContext} from '../navigation/ContextProvider';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import SettingsScreen from '../screens/Settings';
+import CommentScreen from '../screens/CommentScreen';
 
 const Tab = createBottomTabNavigator();
 
@@ -32,6 +33,7 @@ function MainStackScreen() {
         component={UserListScreen}
       />
       <MainStack.Screen name="Chat" component={ChatScreen} />
+      <MainStack.Screen name="Comments" component={CommentScreen} />
     </MainStack.Navigator>
   );
 }
@@ -53,6 +55,7 @@ function SearchStackScreen() {
         component={UserListScreen}
       />
       <SearchStack.Screen name="Chat" component={ChatScreen} />
+      <SearchStack.Screen name="Comment" component={CommentScreen} />
     </SearchStack.Navigator>
   );
 }
@@ -65,6 +68,7 @@ function MessagesStackScreen() {
     <MessagesStack.Navigator>
       <MessagesStack.Screen name="Messages" component={MessagesScreen} />
       <MessagesStack.Screen name="Chat" component={ChatScreen} />
+      <MessagesStack.Screen name="Comments" component={CommentScreen} />
     </MessagesStack.Navigator>
   );
 }

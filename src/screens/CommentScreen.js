@@ -65,7 +65,7 @@ export default function Comment(props) {
                 });
               setNewComment('');
             } else {
-              alert('Comments must be atleast 1 character.');
+              alert('Comments must be at least 1 character.');
             }
           }}
         />

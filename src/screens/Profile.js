@@ -4,7 +4,6 @@ import {
   Text,
   StyleSheet,
   Image,
-  Dimensions,
   Alert,
   TouchableOpacity,
 } from 'react-native';
@@ -16,8 +15,6 @@ import Fire from '../util/Fire';
 import {AuthContext} from '../navigation/ContextProvider';
 import firestore from '@react-native-firebase/firestore';
 import * as RootNavigation from '../navigation/RootNavigation.js';
-
-var width = Dimensions.get('window').width;
 
 class Profile extends Component {
   static data = PostFeed;
@@ -40,6 +37,7 @@ class Profile extends Component {
       followerCount: 0,
       followingCount: 0,
       postCount: 0,
+      numColumns: 3,
     };
   }
 
@@ -100,17 +98,31 @@ class Profile extends Component {
 
     return (
       <>
-        <View>
+        <View style={{backgroundColor: 'white'}}>
           <View>
             {this.renderTopBar()}
             <Image
-              style={styles.userPic}
+              style={{
+                alignSelf: 'center',
+                width: 125,
+                height: 125,
+                marginTop: 20,
+                borderRadius: 75,
+                borderWidth: 1,
+                borderColor: theme.colors.primary,
+              }}
               source={{uri: this.state.user.photoURL}}
               resizeMode="stretch"
             />
             <Text style={styles.userName}>{this.state.user.displayName}</Text>
           </View>
-          <View style={{flexDirection: 'row', justifyContent: 'space-evenly'}}>
+          <View
+            style={{
+              marginBottom: 20,
+              backgroundColor: 'white',
+              flexDirection: 'row',
+              justifyContent: 'space-evenly',
+            }}>
             <View style={{alignItems: 'center'}}>
               <Text style={styles.userStatus}>{this.state.postCount}</Text>
               <Text>Posts</Text>
@@ -146,43 +158,29 @@ class Profile extends Component {
             </View>
           </View>
         </View>
-        <View>
+        <View stle={{backgroundColor: 'white'}}>
           <View
             style={{
+              backgroundColor: 'white',
               flexDirection: 'row',
-              justifyContent: 'space-around',
-              marginTop: 20,
               borderTopWidth: 0.75,
               borderTopColor: 'black',
+              alignItems: 'center',
+              justifyContent: 'center',
             }}>
-            <TouchableOpacity
-              onPress={() => this.segmentClicked(0)}
-              active={this.state.activeIndex == 0}>
-              <Ionicons
-                name={'md-apps'}
-                size={30}
-                style={[
-                  this.state.activeIndex == 0
-                    ? {color: theme.primary}
-                    : {color: 'grey'},
-                ]}
-              />
-            </TouchableOpacity>
-            <TouchableOpacity
-              onPress={() => this.segmentClicked(1)}
-              active={this.state.activeIndex == 1}>
-              <Ionicons
-                name={'ios-list'}
-                size={30}
-                style={[
-                  this.state.activeIndex == 1
-                    ? {
-                        color: theme.primary,
-                      }
-                    : {color: 'grey'},
-                ]}
-              />
-            </TouchableOpacity>
+            <Ionicons
+              name={'ios-list'}
+              size={30}
+              style={{color: theme.colors.primary}}
+            />
+            <Text
+              style={{
+                marginLeft: 10,
+                fontSize: 20,
+                color: theme.colors.primary,
+              }}>
+              Posts
+            </Text>
           </View>
         </View>
       </>
@@ -194,98 +192,90 @@ class Profile extends Component {
     if (this.state.selfProfile) {
       return (
         <>
-          <Button
-            icon="logout"
-            mode="contained"
-            onPress={() => {
-              Alert.alert(
-                'Are you sure you want to logout?',
-                'All your posts will be saved',
-                [
-                  {text: 'Cancel', style: 'cancel'},
-                  {text: 'OK', onPress: () => logout()},
-                ],
-                {cancelable: false},
-              );
-            }}>
-            Logout
-          </Button>
-          <Button
-            icon="trash-can-outline"
-            mode="contained"
-            onPress={() => {
-              Alert.alert(
-                'Are you sure you want to delete your account?',
-                "There's no turning back",
-                [
-                  {text: 'Cancel', style: 'cancel'},
-                  {text: 'OK', onPress: () => deleteAccount()},
-                ],
-                {cancelable: false},
-              );
-            }}>
-            Delete Account
-          </Button>
-          <Button
-            icon="settings"
-            mode="contained"
-            onPress={() => {
-              this.props.navigation.navigate('Settings');
-            }}>
-            Settings
-          </Button>
+          <View style={{flexDirection: 'row'}}>
+            <Button
+              style={{width: 120, height: 35}}
+              icon="settings"
+              mode="contained"
+              onPress={() => {
+                this.props.navigation.navigate('Settings');
+              }}>
+              Settings
+            </Button>
+            <Button
+              style={{width: 115, height: 35}}
+              icon="logout"
+              mode="contained"
+              onPress={() => {
+                Alert.alert(
+                  'Are you sure you want to logout?',
+                  'All your posts will be saved!',
+                  [
+                    {text: 'Cancel', style: 'cancel'},
+                    {text: 'OK', onPress: () => logout()},
+                  ],
+                  {cancelable: false},
+                );
+              }}>
+              Logout
+            </Button>
+            <Button
+              style={{width: 180, height: 35}}
+              icon="trash-can-outline"
+              mode="contained"
+              onPress={() => {
+                Alert.alert(
+                  'Are you sure you want to delete your account?',
+                  "There's no turning back!",
+                  [
+                    {text: 'Cancel', style: 'cancel'},
+                    {text: 'OK', onPress: () => deleteAccount()},
+                  ],
+                  {cancelable: false},
+                );
+              }}>
+              Delete Account
+            </Button>
+          </View>
         </>
       );
     } else if (user.uid != this.state.user.uid) {
       return (
         <>
-          <Button
-            style={{
-              backgroundColor: theme.colors.primary,
-            }}
-            icon="logout"
-            mode="contained"
-            onPress={() => {
-              Fire.setFollowing(user, this.state.user, !this.state.following);
-              this.updateFollowState();
-            }}>
-            {this.state.following ? 'Unfollow' : 'Follow'}
-          </Button>
-          <Button
-            icon="logout"
-            mode="contained"
-            onPress={() => {
-              this.props.navigation.navigate('Chat', {
-                user: {
-                  uid: this.state.user.uid,
-                  photoURL: this.state.user.photoURL,
-                  email: this.state.user.email,
-                  displayName: this.state.user.displayName,
-                },
-              });
-            }}>
-            Message
-          </Button>
+          <View style={{backgroundColor: 'white', flexDirection: 'row'}}>
+            <Button
+              style={{
+                backgroundColor: theme.colors.primary,
+                width: 207,
+              }}
+              icon="logout"
+              mode="contained"
+              onPress={() => {
+                Fire.setFollowing(user, this.state.user, !this.state.following);
+                this.updateFollowState();
+              }}>
+              {this.state.following ? 'Unfollow' : 'Follow'}
+            </Button>
+            <Button
+              style={{backgroundColor: theme.colors.primary, width: 207}}
+              icon="logout"
+              mode="contained"
+              onPress={() => {
+                this.props.navigation.navigate('Chat', {
+                  user: {
+                    uid: this.state.user.uid,
+                    photoURL: this.state.user.photoURL,
+                    email: this.state.user.email,
+                    displayName: this.state.user.displayName,
+                  },
+                });
+              }}>
+              Message
+            </Button>
+          </View>
         </>
       );
     }
-  };
-
-  renderSectionOne = () => {
-    return (
-      <TouchableOpacity>
-        <View
-          style={[{width: width / 3}, {height: width / 3}, {marginBottom: 2}]}>
-          <PostFeed
-            user={this.state.user}
-            navigation={this.props.navigation}
-            onHeader={() => {
-              return this.renderHeader();
-            }}
-          />
-        </View>
-      </TouchableOpacity>
-    );
   };
 
   renderSection = () => {
@@ -308,16 +298,6 @@ class Profile extends Component {
 export default withNavigation(Profile);
 
 const styles = StyleSheet.create({
-  userPic: {
-    alignSelf: 'center',
-    width: 125,
-    height: 125,
-    marginTop: 20,
-    borderRadius: 75,
-    borderWidth: 1,
-    borderColor: 'black',
-  },
-
   userName: {
     alignSelf: 'center',
     fontSize: 25,

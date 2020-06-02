@@ -16,6 +16,7 @@ export default function Messages({navigation}) {
   const [loading, setLoading] = useState(true); // Set loading to true on component mount
   const [users, setUsers] = useState([]); // Initial empty array of users
   const {user} = useContext(AuthContext);
+  const {theme} = useContext(AuthContext);
 
   useEffect(() => {
     const subscriber = firestore()
@@ -63,7 +64,7 @@ export default function Messages({navigation}) {
   if (loading) {
     return (
       <View style={styles.loader}>
-        <ActivityIndicator animating={true} color={Colors.red800} />
+        <ActivityIndicator animating={true} color={theme.colors.primary} />
       </View>
     );
   }

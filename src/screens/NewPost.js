@@ -176,7 +176,7 @@ function NewPost({navigation}) {
           onChangeText={(text) => setTitle(text)}
         />
         {uploading ? (
-          <ProgressBar progress={0.5} color={Colors.red800} />
+          <ProgressBar progress={0.5} color={theme.colors.primary} />
         ) : (
           <Button
             mode="contained"
@@ -198,7 +198,7 @@ function NewPost({navigation}) {
         )}
       </View>
       <Snackbar
-        theme={DefaultTheme}
+        theme={{colors: {accent: theme.colors.primary}}}
         duration={2000}
         visible={visible}
         onDismiss={() => {
@@ -214,7 +214,7 @@ function NewPost({navigation}) {
         Posted!
       </Snackbar>
       <Snackbar
-        theme={DefaultTheme}
+        theme={{colors: {accent: theme.colors.primary}}}
         duration={4000}
         visible={capWarnVisible}
         onDismiss={() => {
@@ -230,7 +230,7 @@ function NewPost({navigation}) {
       </Snackbar>
       <Portal>
         <Dialog
-          theme={DefaultTheme}
+          style={{backgroundColor: 'white'}}
           visible={postDialogVisible}
           onDismiss={() => {
             setPostDialogVisible(false);
@@ -254,7 +254,7 @@ function NewPost({navigation}) {
       <ActivityIndicator
         size="large"
         animating={uploading}
-        color={Colors.red800}
+        color={theme.colors.primary}
       />
     </View>
   );

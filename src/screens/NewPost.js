@@ -1,5 +1,5 @@
 import {Image, View, Text, TextInput} from 'react-native';
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useContext} from 'react';
 import ImagePicker from 'react-native-image-crop-picker';
 import {
   Dialog,
@@ -8,10 +8,12 @@ import {
   Paragraph,
   ProgressBar,
   ActivityIndicator,
-  Colors,
   Snackbar,
+  DefaultTheme,
 } from 'react-native-paper';
 import {useUpload} from '../util';
+import VideoMedia from '../presentation/VideoMedia';
+import {GlobalContext} from '../navigation/ContextProvider';
 
 function NewPost({navigation}) {
   const [image, setImage] = useState(null);
@@ -22,6 +24,8 @@ function NewPost({navigation}) {
   const [capWarnVisible, setCapWarnVisible] = useState(false);
   const [prompt, setPrompt] = useState(true);
   const [{success, uploading}, monitorUpload] = useUpload();
+  const [isVideo, setVideo] = useState(false);
+  const {theme} = useContext(GlobalContext);
 
   const uploadFile = () => {
     if (response) {
@@ -44,14 +48,32 @@ function NewPost({navigation}) {
     ImagePicker.openCamera({
       width: 1000,
       height: 1000,
-      cropping: true,
-      forceJpg: true,
-      mediaType: 'photo',
       maxFiles: 1,
+      forceJpg: true,
     })
       .then((image) => {
         setResponse(image);
         setImage({uri: image.path});
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
+  const takeVideo = () => {
+    ImagePicker.openCamera({
+      width: 1000,
+      height: 1000,
+      maxFiles: 1,
+      mediaType: 'video',
+      compressVideoPreset: 'HighestQuality',
+    })
+      .then((image) => {
+        setResponse(image);
+        setImage({uri: image.path});
+        if (image.mime == 'video/mp4') {
+          setVideo(true);
+        }
       })
       .catch((error) => {
         console.log(error);
@@ -62,52 +84,88 @@ function NewPost({navigation}) {
     ImagePicker.openPicker({
       width: 1000,
       height: 1000,
-      cropping: true,
-      forceJpg: true,
-      mediaType: 'photo',
       maxFiles: 1,
+      forceJpg: true,
+      compressVideoPreset: 'HighestQuality',
     })
       .then((image) => {
         setResponse(image);
         setImage({uri: image.path});
+        if (image.mime == 'video/mp4') {
+          setVideo(true);
+        }
       })
       .catch((error) => {
         console.log(error);
       });
   };
 
+  const postView = () => {
+    if (image) {
+      return (
+        <>
+          {isVideo ? (
+            <VideoMedia source={image.uri} />
+          ) : (
+            <Image source={image} style={{width: '100%', height: 300}} />
+          )}
+          <Button
+            icon="trash-can"
+            mode="contained"
+            onPress={() => setImage(null)}
+            style={{
+              alignItems: 'center',
+              padding: 10,
+              margin: 30,
+            }}>
+            Clear Media
+          </Button>
+        </>
+      );
+    } else {
+      return (
+        <>
+          <Button
+            icon="video"
+            mode="contained"
+            onPress={() => takeVideo()}
+            style={{
+              alignItems: 'center',
+              padding: 10,
+              margin: 30,
+            }}>
+            Take Video
+          </Button>
+          <Button
+            icon="camera"
+            mode="contained"
+            onPress={() => takeImage()}
+            style={{
+              alignItems: 'center',
+              padding: 10,
+              margin: 30,
+            }}>
+            Take Photo
+          </Button>
+          <Button
+            icon="camera"
+            mode="contained"
+            onPress={() => selectImage()}
+            style={{
+              alignItems: 'center',
+              padding: 10,
+              margin: 30,
+            }}>
+            Open from Camera Roll
+          </Button>
+        </>
+      );
+    }
+  };
+
   return (
     <View style={{flex: 1, marginTop: 60}}>
-      <View>
-        {image ? (
-          <Image source={image} style={{width: '100%', height: 300}} />
-        ) : (
-          <>
-            <Button
-              icon="camera"
-              mode="contained"
-              onPress={() => takeImage()}
-              style={{
-                alignItems: 'center',
-                padding: 10,
-                margin: 30,
-              }}>
-              Take Photo
-            </Button>
-            <Button
-              icon="camera"
-              mode="contained"
-              onPress={() => selectImage()}
-              style={{
-                alignItems: 'center',
-                padding: 10,
-                margin: 30,
-              }}>
-              Open from Camera Roll
-            </Button>
-          </>
-        )}
-      </View>
+      <View>{postView()}</View>
       <View style={{marginTop: 20, alignItems: 'center'}}>
         <Text>Post Details</Text>
         <TextInput
@@ -119,7 +177,7 @@ function NewPost({navigation}) {
           onChangeText={(text) => setTitle(text)}
         />
         {uploading ? (
-          <ProgressBar progress={0.5} color={Colors.red800} />
+          <ProgressBar progress={0.5} color={theme.colors.primary} />
         ) : (
           <Button
             mode="contained"
@@ -141,6 +199,8 @@ function NewPost({navigation}) {
         )}
       </View>
       <Snackbar
+        theme={DefaultTheme}
+        //theme={{colors: {accent: theme.colors.primary}}}
         duration={2000}
         visible={visible}
         onDismiss={() => {
@@ -156,6 +216,8 @@ function NewPost({navigation}) {
         Posted!
       </Snackbar>
       <Snackbar
+        theme={DefaultTheme}
+        //theme={{colors: {accent: theme.colors.primary}}}
         duration={4000}
         visible={capWarnVisible}
         onDismiss={() => {
@@ -171,6 +233,7 @@ function NewPost({navigation}) {
       </Snackbar>
       <Portal>
         <Dialog
+          style={{backgroundColor: 'white'}}
           visible={postDialogVisible}
           onDismiss={() => {
             setPostDialogVisible(false);
@@ -194,7 +257,7 @@ function NewPost({navigation}) {
       <ActivityIndicator
         size="large"
         animating={uploading}
-        color={Colors.red800}
+        color={theme.colors.primary}
       />
     </View>
   );

@@ -1,11 +1,11 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, {useState, useEffect, useRef} from 'react';
-import {FlatList} from 'react-native';
+import {FlatList, Text} from 'react-native';
 import {Post} from '../presentation';
 import {ActivityIndicator} from 'react-native';
 import firestore from '@react-native-firebase/firestore';
 
-function useIsMountedRef() {
+function useIsMountedRef(props) {
   const isMountedRef = useRef(null);
   useEffect(() => {
     isMountedRef.current = true;
@@ -48,6 +48,19 @@ function PostFeed(props) {
     }
   };
 
+  // Render Header
+  const renderHeader = () => {
+    try {
+      if (props.onHeader) {
+        return props.onHeader();
+      } else {
+        return <Text>Posts</Text>;
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   if (loading) {
     return <ActivityIndicator />;
   }
@@ -56,6 +69,7 @@ function PostFeed(props) {
     <FlatList
       data={posts}
       renderItem={renderItem}
+      ListHeaderComponent={renderHeader}
       keyExtractor={(item, index) => index.toString()}
     />
   );

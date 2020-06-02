@@ -1,14 +1,5 @@
 import React from 'react';
-import {
-  StyleSheet,
-  View,
-  TextInput,
-  Text,
-  Animated,
-  Dimensions,
-  TouchableOpacity,
-  ScrollView,
-} from 'react-native';
+import {StyleSheet, View} from 'react-native';
 import PropTypes from 'prop-types';
 import {connectSearchBox} from 'react-instantsearch-native';
 import {Searchbar} from 'react-native-paper';

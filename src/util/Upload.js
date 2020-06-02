@@ -1,16 +1,15 @@
 import {useState, useCallback, useContext} from 'react';
 import storage from '@react-native-firebase/storage';
 import {Firebase} from './Fire.js';
-import {AuthContext} from '../navigation/AuthProvider';
+import {GlobalContext} from '../navigation/ContextProvider';
 import firestore from '@react-native-firebase/firestore';
-import {Alert} from 'react-native';
 
 export const useUpload = () => {
   const [progress, setProgress] = useState(0);
   const [uploading, setUploading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState(null);
-  const {user} = useContext(AuthContext);
+  const {user} = useContext(GlobalContext);
 
   const monitorUpload = useCallback((response, title) => {
     console.log('Post Triggered');

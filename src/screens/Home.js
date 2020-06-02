@@ -1,35 +1,41 @@
-import React, {useState} from 'react';
-import {View, Text, StyleSheet, Button} from 'react-native';
-import config from '../config';
+import React, {useEffect, useContext, useState} from 'react';
+import {View} from 'react-native';
 import {PostFeed} from '../containers';
+import firestore from '@react-native-firebase/firestore';
+import {GlobalContext} from '../navigation/ContextProvider';
+import {Switch} from 'react-native-paper';
+import {Button} from 'react-native-paper';
 
 export default function Home({navigation}) {
-  const [renderer, setRerender] = useState(false);
+  const [toggle, setToggle] = useState(false);
+  const {user} = useContext(GlobalContext);
+  const [following, setFollowing] = useState([]);
+  useEffect(() => {
+    const subscriber = firestore()
+      .doc(`users/${user.uid}`)
+      .onSnapshot((documentSnapshot) => {
+        if (documentSnapshot.data() && documentSnapshot.data()._following) {
+          setFollowing(documentSnapshot.data()._following);
+        }
+      });
+    return () => subscriber();
+  }, []);
+
   return (
-    <View style={{flex: 1, width: 100 + '%', height: 100 + '%'}}>
-      <View style={styles.nav}>
-        <Text style={{fontSize: 20}}>MaskerAid</Text>
-      </View>
-      <Button
-        title="Refresh"
-        onPress={() => {
-          setRerender(!renderer);
+    <>
+      <Switch
+        value={toggle}
+        onValueChange={() => {
+          setToggle(!toggle);
         }}
       />
-      <PostFeed refresh={renderer} />
-    </View>
+      <View style={{flex: 1, width: 100 + '%', height: 100 + '%'}}>
+        <PostFeed
+          feedType={toggle}
+          following={following}
+          navigation={navigation}
+        />
+      </View>
+    </>
   );
 }
-
-const styles = StyleSheet.create({
-  nav: {
-    width: `${100}%`,
-    height: 56,
-    marginTop: 20,
-    backgroundColor: 'rgb(250, 250, 250)',
-    borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: config.styleConstants.borderColor,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-});

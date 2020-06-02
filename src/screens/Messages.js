@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useContext} from 'react';
 import {
   FlatList,
   View,
@@ -8,16 +8,18 @@ import {
   RefreshControl,
 } from 'react-native';
 import firestore from '@react-native-firebase/firestore';
+import {GlobalContext} from '../navigation/ContextProvider';
 import {ListItem} from 'react-native-elements';
 import {ActivityIndicator, Colors} from 'react-native-paper';
 
-export default function UserList({route, navigation}) {
+export default function Messages({navigation}) {
   const [loading, setLoading] = useState(true); // Set loading to true on component mount
   const [users, setUsers] = useState([]); // Initial empty array of users
+  const {user, theme} = useContext(GlobalContext);
 
   useEffect(() => {
     const subscriber = firestore()
-      .collection(`users/${route.params.user.uid}/${route.params.listType}`)
+      .collection(`users/${user.uid}/messages`)
       .onSnapshot((querySnapshot) => {
         const users = [];
         querySnapshot.forEach((documentSnapshot) => {
@@ -38,7 +40,7 @@ export default function UserList({route, navigation}) {
   const renderItem = ({item}) => (
     <TouchableOpacity
       onPress={() => {
-        navigation.navigate('ViewProfile', {user: item});
+        navigation.navigate('Chat', {user: item});
       }}>
       <ListItem
         title={item.displayName}
@@ -54,18 +56,14 @@ export default function UserList({route, navigation}) {
 
   const listEmpty = () => (
     <View style={styles.container}>
-      <Text style={styles.noMessagesText}>
-        {route.params.listType == 'followers'
-          ? 'This user has no followers'
-          : 'This user is not following anyone'}
-      </Text>
+      <Text style={styles.noMessagesText}>No Messages :(</Text>
     </View>
   );
 
   if (loading) {
     return (
       <View style={styles.loader}>
-        <ActivityIndicator animating={true} color={Colors.red800} />
+        <ActivityIndicator animating={true} color={theme.colors.primary} />
       </View>
     );
   }

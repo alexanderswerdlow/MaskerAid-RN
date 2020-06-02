@@ -33,3 +33,4 @@ run `firebase login` to login to your firebase account
 
 - `firebase firestore:delete --all-collections -y`
     - Delete's every firestore collection. Use with caution.
+- `algolia deleteindicespattern -a 'V6KRQS64EW' -k '1811eb11a0974a46ed235ed40cb866f1' -r '(posts)|(users)' -x true`

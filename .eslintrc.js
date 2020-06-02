@@ -13,7 +13,8 @@ module.exports = {
   },
   rules: {
     'no-unused-vars': 'warn',
-    'react/prop-types': 'warn',
+    'react/prop-types': 'off',
     'react/display-name': 'warn',
+    'max-len': ['error', {code: 120}],
   },
 };

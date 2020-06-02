@@ -5,10 +5,13 @@ import {createStackNavigator} from '@react-navigation/stack';
 import HomeScreen from '../screens/Home';
 import ViewProfileScreen from '../screens/Profile';
 import NewPostScreen from '../screens/NewPost';
+import MessagesScreen from '../screens/Messages';
+import ChatScreen from '../screens/Chat';
 import SearchScreen from '../screens/Search';
-import CommentScreen from '../screens/CommentScreen';
-import {AuthContext} from '../navigation/AuthProvider';
+import UserListScreen from '../screens/UserList';
+import {GlobalContext} from '../navigation/ContextProvider';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import SettingsScreen from '../screens/Settings';
 
 const Tab = createBottomTabNavigator();
 
@@ -18,8 +21,17 @@ function MainStackScreen() {
   return (
     <MainStack.Navigator>
       <MainStack.Screen name="Home" component={HomeScreen} />
-      <MainStack.Screen name="ViewProfile" component={ViewProfileScreen} />
-      <MainStack.Screen name="CommentScreen" component={CommentScreen} />
+      <MainStack.Screen
+        name="ViewProfile"
+        options={{title: 'Profile'}}
+        component={ViewProfileScreen}
+      />
+      <MainStack.Screen
+        name="UserList"
+        options={{title: 'Followers/Following'}}
+        component={UserListScreen}
+      />
+      <MainStack.Screen name="Chat" component={ChatScreen} />
     </MainStack.Navigator>
   );
 }
@@ -31,32 +43,57 @@ function SearchStackScreen() {
     <SearchStack.Navigator>
       <SearchStack.Screen name="Search" component={SearchScreen} />
       <SearchStack.Screen
-        name="ViewSearchProfile"
+        name="ViewProfile"
         options={{title: 'Profile'}}
         component={ViewProfileScreen}
-      />{' '}
+      />
+      <SearchStack.Screen
+        name="UserList"
+        options={{title: 'Followers/Following'}}
+        component={UserListScreen}
+      />
+      <SearchStack.Screen name="Chat" component={ChatScreen} />
     </SearchStack.Navigator>
+  );
+}
+
+const MessagesStack = createStackNavigator();
+
+function MessagesStackScreen() {
+  const {theme} = React.useContext(GlobalContext);
+  return (
+    <MessagesStack.Navigator>
+      <MessagesStack.Screen name="Messages" component={MessagesScreen} />
+      <MessagesStack.Screen name="Chat" component={ChatScreen} />
+    </MessagesStack.Navigator>
   );
 }
 
 const ProfileStackScreen = createStackNavigator();
 
 function ProfileScreen() {
-  const {user} = React.useContext(AuthContext);
+  const {user} = React.useContext(GlobalContext);
   return (
     <ProfileStackScreen.Navigator>
       <ProfileStackScreen.Screen name="Profile">
         {(props) => <ViewProfileScreen {...props} user={user} />}
       </ProfileStackScreen.Screen>
+      <ProfileStackScreen.Screen name="Settings" component={SettingsScreen} />
+      <ProfileStackScreen.Screen
+        name="UserList"
+        options={{title: 'Followers/Following'}}
+        component={UserListScreen}
+      />
     </ProfileStackScreen.Navigator>
   );
 }
 
 export default function App() {
+  const {theme} = React.useContext(GlobalContext);
   return (
     <Tab.Navigator
       screenOptions={({route}) => ({
-        tabBarIcon: ({focused, color, size}) => {
+        tabBarIcon: ({color, size}) => {
           let iconName;
 
           if (route.name === 'Home') {
@@ -74,11 +111,13 @@ export default function App() {
         },
       })}
       tabBarOptions={{
-        activeTintColor: 'gray',
+        activeTintColor: theme.colors.primary,
         inactiveTintColor: 'gray',
+        activeBackgroundColor: 'white',
       }}>
       <Tab.Screen name="Home" component={MainStackScreen} />
       <Tab.Screen name="Post" component={NewPostScreen} />
+      <Tab.Screen name="Messages" component={MessagesStackScreen} />
       <Tab.Screen name="Search" component={SearchStackScreen} />
       <Tab.Screen name="Profile" component={ProfileScreen} />
     </Tab.Navigator>

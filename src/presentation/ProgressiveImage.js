@@ -23,6 +23,7 @@ class ProgressiveImage extends React.Component {
     Animated.timing(this.thumbnailAnimated, {
       toValue: 1,
       useNativeDriver: true,
+      duration: 425,
     }).start();
   };
 
@@ -30,6 +31,7 @@ class ProgressiveImage extends React.Component {
     Animated.timing(this.imageAnimated, {
       toValue: 1,
       useNativeDriver: true,
+      duration: 425,
     }).start();
   };
 

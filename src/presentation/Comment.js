@@ -57,7 +57,7 @@ export default function Comment(props) {
                 props.addLike(props.id, props.comment.like_count);
               }
             }}>
-            <Icon name={heart} style={{color: heartIconColor}} size={14} />
+            <Icon name={heart} style={{color: heartIconColor}} size={17} />
           </TouchableOpacity>
         </View>
       </View>

@@ -158,7 +158,7 @@ export default function Post(props) {
           onPress={() => {
             RootNavigation.navigate('Comments', {
               post: props.loc.id,
-              user: props.user,
+              user: user,
             });
           }}>
           <Icon name={'comment'} size={27} style={{padding: 5}} />

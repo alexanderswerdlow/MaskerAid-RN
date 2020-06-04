@@ -14,6 +14,7 @@ import {
 import {useUpload} from '../util';
 import VideoMedia from '../presentation/VideoMedia';
 import {GlobalContext} from '../navigation/ContextProvider';
+import { ScrollView } from 'react-native-gesture-handler';
 
 function NewPost({navigation}) {
   const [image, setImage] = useState(null);
@@ -125,6 +126,7 @@ function NewPost({navigation}) {
     } else {
       return (
         <>
+        <ScrollView>
           <Button
             icon="video"
             mode="contained"
@@ -158,6 +160,7 @@ function NewPost({navigation}) {
             }}>
             Open from Camera Roll
           </Button>
+          </ScrollView>
         </>
       );
     }
@@ -165,6 +168,7 @@ function NewPost({navigation}) {
 
   return (
     <View style={{flex: 1, marginTop: 60}}>
+      <ScrollView>
       <View>{postView()}</View>
       <View style={{marginTop: 20, alignItems: 'center'}}>
         <Text>Post Details</Text>
@@ -259,6 +263,7 @@ function NewPost({navigation}) {
         animating={uploading}
         color={theme.colors.primary}
       />
+      </ScrollView>
     </View>
   );
 }

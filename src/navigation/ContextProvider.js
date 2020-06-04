@@ -27,15 +27,15 @@ export const ContextProvider = ({children}) => {
 
   useEffect(() => {
     if (user) {
+      console.log('Run');
       const subscriber = firestore()
         .doc(`users/${user.uid}`)
-        .onSnapshot((documentSnapshot) => {
+        .get()
+        .then((documentSnapshot) => {
           if (documentSnapshot.exists && documentSnapshot.data().theme) {
             changeTheme(documentSnapshot.data().theme);
           }
         });
-      // Stop listening for updates when no longer required
-      return () => subscriber();
     }
   }, [user]);
 

@@ -7,7 +7,7 @@ import {
   TouchableOpacity,
   Platform,
 } from 'react-native';
-import {SlidersColorPicker} from 'react-native-color';
+import {HueSlider, SaturationSlider, LightnessSlider} from 'react-native-color';
 import tinycolor from 'tinycolor2';
 import {GlobalContext} from '../navigation/ContextProvider';
 import {withNavigation} from 'react-navigation';
@@ -16,28 +16,55 @@ class SettingsScreen extends React.Component {
   static contextType = GlobalContext;
   state = {
     modalVisible: false,
-    recents: ['#247ba0', '#70c1b3', '#b2dbbf', '#f3ffbd', '#ff1654'],
     color: tinycolor('#70c1b3').toHsl(),
   };
 
   componentDidMount = () => {
     const {theme} = this.context;
-    this.setState({color: theme.colors.primary});
+    this.setState({color: tinycolor(theme.colors.primary).toHsl(), count: 0});
+    this._unsubscribe = this.props.navigation.addListener('blur', () => {
+      this.updateProfile();
+    });
   };
 
-  updateHue = (h) => this.setState({color: {...this.state.color, h}});
-  updateSaturation = (s) => this.setState({color: {...this.state.color, s}});
-  updateLightness = (l) => this.setState({color: {...this.state.color, l}});
+  componentWillUnmount() {
+    this._unsubscribe();
+  }
+
+  updateProfile = async () => {
+    clearTimeout(this.sliderTimeoutId);
+    this.sliderTimeoutId = setTimeout(() => {
+      const {theme, changeTheme} = this.context;
+      changeTheme({
+        ...theme,
+        colors: {primary: tinycolor(this.state.color).toHexString()},
+        dark: false,
+      });
+    }, 40);
+  };
+
+  updateHue = (h) => {
+    this.setState({color: {...this.state.color, h}});
+    this.updateProfile();
+  };
+
+  updateSaturation = (s) => {
+    this.setState({color: {...this.state.color, s}});
+    this.updateProfile();
+  };
+  updateLightness = (l) => {
+    this.setState({color: {...this.state.color, l}});
+    this.updateProfile();
+  };
 
   render() {
-    const {theme, changeTheme} = this.context;
     const overlayTextColor = tinycolor(this.state.color).isDark()
       ? '#FAFAFA'
       : '#222';
     return (
       <View style={styles.container}>
         <ScrollView contentContainerStyle={styles.content}>
-          <Text style={styles.sectionText}>Background Color</Text>
+          <Text style={styles.sectionText}>Primary Theme COlor</Text>
           <TouchableOpacity
             onPress={() => this.setState({modalVisible: true})}
             style={[
@@ -49,34 +76,28 @@ class SettingsScreen extends React.Component {
             </Text>
           </TouchableOpacity>
 
-          <SlidersColorPicker
-            visible={this.state.modalVisible}
+          <Text style={styles.componentText}>{'<HueSlider/>'}</Text>
+          <HueSlider
+            style={styles.sliderRow}
+            gradientSteps={40}
+            value={this.state.color.h}
+            onValueChange={this.updateHue}
+          />
+          <Text style={styles.componentText}>{'<SaturationSlider/>'}</Text>
+          <SaturationSlider
+            style={styles.sliderRow}
+            gradientSteps={20}
+            value={this.state.color.s}
             color={this.state.color}
-            returnMode={'hex'}
-            onCancel={() => this.setState({modalVisible: false})}
-            onOk={(colorHex) => {
-              this.setState({
-                modalVisible: false,
-                color: tinycolor(colorHex).toHsl(),
-              });
-              this.setState({
-                recents: [
-                  colorHex,
-                  ...this.state.recents
-                    .filter((c) => c !== colorHex)
-                    .slice(0, 4),
-                ],
-              });
-              changeTheme({
-                ...theme,
-                colors: {primary: colorHex},
-                dark: false,
-              });
-            }}
-            swatches={this.state.recents}
-            swatchesLabel="RECENTS"
-            okLabel="Done"
-            cancelLabel="Cancel"
+            onValueChange={this.updateSaturation}
+          />
+          <Text style={styles.componentText}>{'<LightnessSlider/>'}</Text>
+          <LightnessSlider
+            style={styles.sliderRow}
+            gradientSteps={20}
+            value={this.state.color.l}
+            color={this.state.color}
+            onValueChange={this.updateLightness}
           />
         </ScrollView>
       </View>

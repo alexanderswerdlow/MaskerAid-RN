@@ -196,12 +196,12 @@ class Profile extends Component {
           <View style={{flexDirection: 'row'}}>
             <Button
               style={{width: screenWidth / 3.45, height: 35}}
-              icon="settings"
+              icon="brush"
               mode="contained"
               onPress={() => {
                 this.props.navigation.navigate('Settings');
               }}>
-              Settings
+              Theme
             </Button>
             <Button
               style={{width: screenWidth / 3.88, height: 35}}

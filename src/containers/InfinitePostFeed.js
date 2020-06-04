@@ -10,6 +10,7 @@ import {
 } from 'react-native';
 import firestore from '@react-native-firebase/firestore';
 const {height, width} = Dimensions.get('window');
+import {Switch} from 'react-native-paper';
 
 export default class InfinitePostFeed extends React.Component {
   constructor(props) {
@@ -22,12 +23,13 @@ export default class InfinitePostFeed extends React.Component {
       refreshing: false,
       user: props.user,
       updating: true,
+      isSwitchOn: false,
     };
   }
 
   update = (no_load) => {
     try {
-      this.retrieveData(false, no_load);
+      this.retrieveData(false, no_load, false);
     } catch (error) {
       console.log(error);
     }
@@ -54,7 +56,7 @@ export default class InfinitePostFeed extends React.Component {
   }
 
   // Retrieve Data
-  retrieveData = async (retrieveMore, no_load) => {
+  retrieveData = async (retrieveMore, no_load, follower_feed) => {
     try {
       if (!retrieveMore) {
         this.setState({
@@ -68,21 +70,48 @@ export default class InfinitePostFeed extends React.Component {
       // Cloud Firestore: Query
       let initialQuery;
 
-      if (!retrieveMore) {
-        initialQuery = await firestore()
-          .collection(
-            this.state.user ? `users/${this.state.user.uid}/posts` : 'posts',
-          )
-          .orderBy('post_date', 'desc')
-          .limit(this.state.limit);
+      if (
+        (follower_feed || this.state.isSwitchOn) &&
+        this.props.following &&
+        this.props.following.length > 0
+      ) {
+        console.log('here');
+        if (!retrieveMore) {
+          initialQuery = await firestore()
+            .collection(
+              this.state.user ? `users/${this.state.user.uid}/posts` : 'posts',
+            )
+            .where('user.uid', 'in', this.props.following)
+            .orderBy('post_date', 'desc')
+            .limit(this.state.limit);
+        } else {
+          initialQuery = await firestore()
+            .collection(
+              this.state.user ? `users/${this.state.user.uid}/posts` : 'posts',
+            )
+            .where('user.uid', 'in', this.props.following)
+            .orderBy('post_date', 'desc')
+            .startAfter(this.state.lastVisible)
+            .limit(this.state.limit);
+        }
       } else {
-        initialQuery = await firestore()
-          .collection(
-            this.state.user ? `users/${this.state.user.uid}/posts` : 'posts',
-          )
-          .orderBy('post_date', 'desc')
-          .startAfter(this.state.lastVisible)
-          .limit(this.state.limit);
+        console.log('down');
+        if (!retrieveMore) {
+          initialQuery = await firestore()
+            .collection(
+              this.state.user ? `users/${this.state.user.uid}/posts` : 'posts',
+            )
+            .orderBy('post_date', 'desc')
+            .limit(this.state.limit);
+        } else {
+          initialQuery = await firestore()
+            .collection(
+              this.state.user ? `users/${this.state.user.uid}/posts` : 'posts',
+            )
+            .orderBy('post_date', 'desc')
+            .startAfter(this.state.lastVisible)
+            .limit(this.state.limit);
+        }
       }
 
       // Cloud Firestore: Query Snapshot
@@ -129,7 +158,19 @@ export default class InfinitePostFeed extends React.Component {
 
   // Retrieve More Data
   retrieveMore = async () => {
-    this.retrieveData(true, false);
+    this.retrieveData(true, false, false);
+  };
+
+  _onToggleSwitch = () => {
+    this.setState({isSwitchOn: !this.state.isSwitchOn, lastVisible: null});
+    try {
+      this.setState({
+        documentData: [],
+      });
+      this.retrieveData(false, false, true);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   // Render Header
@@ -137,6 +178,13 @@ export default class InfinitePostFeed extends React.Component {
     try {
       if (this.props.onHeader) {
         return this.props.onHeader();
+      } else if (this.props.feedType == 'dynamic') {
+        return (
+          <Switch
+            value={this.state.isSwitchOn}
+            onValueChange={this._onToggleSwitch}
+          />
+        );
       } else {
         return <Text style={styles.headerText}>Posts</Text>;
       }

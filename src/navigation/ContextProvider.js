@@ -27,7 +27,6 @@ export const ContextProvider = ({children}) => {
 
   useEffect(() => {
     if (user) {
-      console.log('Run');
       const subscriber = firestore()
         .doc(`users/${user.uid}`)
         .get()

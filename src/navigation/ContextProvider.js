@@ -31,7 +31,6 @@ export const ContextProvider = ({children}) => {
         .doc(`users/${user.uid}`)
         .onSnapshot((documentSnapshot) => {
           if (documentSnapshot.exists && documentSnapshot.data().theme) {
-            console.log(documentSnapshot.data().theme);
             changeTheme(documentSnapshot.data().theme);
           }
         });
@@ -56,11 +55,16 @@ export const ContextProvider = ({children}) => {
         login: async () => {
           try {
             console.log('Signing In');
+            // Get the users ID token
             const {idToken} = await GoogleSignin.signIn();
+
+            // Create a Google credential with the token
             const googleCredential = auth.GoogleAuthProvider.credential(
               idToken,
             );
-            auth().signInWithCredential(googleCredential);
+
+            // Sign-in the user with the credential
+            return auth().signInWithCredential(googleCredential);
           } catch (error) {
             console.log(error);
             if (error.code === statusCodes.SIGN_IN_CANCELLED) {

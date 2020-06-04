@@ -21,7 +21,7 @@ export default function MaskerAid() {
     YellowBox.ignoreWarnings(['Animated:']);
     YellowBox.ignoreWarnings(['Warning: componentWill']);
     await firestore().settings({
-      persistence: false, // disable offline persistence
+      persistence: true, // disable offline persistence
     });
   }
 

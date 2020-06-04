@@ -1,5 +1,12 @@
 import React, {useState} from 'react';
-import {View, StyleSheet, Dimensions, TextInput, Button} from 'react-native';
+import {
+  View,
+  StyleSheet,
+  Dimensions,
+  TextInput,
+  Button,
+  KeyboardAvoidingView,
+} from 'react-native';
 import config from '../config';
 import CommentFeed from '../containers/CommentFeed';
 import firestore from '@react-native-firebase/firestore';
@@ -13,46 +20,52 @@ export default function Comment(props) {
 
   return (
     <View style={{flex: 1, width: 100 + '%', height: 100 + '%'}}>
-      <CommentFeed
-        id={props.route.params.post}
-        currentUserID={props.route.params.user.uid}
-      />
-      <View
-        style={{
-          flexDirection: 'row',
-          width: w.width,
-          alignItems: 'center',
-          justifyContent: 'center',
-        }}>
-        <TextInput
-          style={styles.TextInput}
-          onChangeText={(text) => setNewComment(text)}
-          value={newComment}
+      <KeyboardAvoidingView
+        style={{flex: 1, flexDirection: 'column', justifyContent: 'center'}}
+        behavior="padding"
+        enabled
+        keyboardVerticalOffset={100}>
+        <CommentFeed
+          id={props.route.params.post}
+          currentUserID={props.route.params.user.uid}
         />
-        <Button
-          title={'Add'}
-          style={{alignItems: 'center'}}
-          onPress={() => {
-            if (newComment.length > 0) {
-              console.log(props.route.params.user);
-              commentsCollection
-                .add({
-                  user: props.route.params.user,
-                  text: newComment,
-                  like_count: 0,
-                  comment_date: firestore.FieldValue.serverTimestamp(),
-                  likedUsers: [],
-                })
-                .then(() => {
-                  console.log('Comment Added!');
-                });
-              setNewComment('');
-            } else {
-              alert('Comments must be at least 1 character.');
-            }
-          }}
-        />
-      </View>
+        <View
+          style={{
+            flexDirection: 'row',
+            width: w.width,
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}>
+          <TextInput
+            style={styles.TextInput}
+            onChangeText={(text) => setNewComment(text)}
+            value={newComment}
+          />
+          <Button
+            title={'Add'}
+            style={{alignItems: 'center'}}
+            onPress={() => {
+              if (newComment.length > 0) {
+                console.log(props.route.params.user);
+                commentsCollection
+                  .add({
+                    user: props.route.params.user,
+                    text: newComment,
+                    like_count: 0,
+                    comment_date: firestore.FieldValue.serverTimestamp(),
+                    likedUsers: [],
+                  })
+                  .then(() => {
+                    console.log('Comment Added!');
+                  });
+                setNewComment('');
+              } else {
+                alert('Comments must be at least 1 character.');
+              }
+            }}
+          />
+        </View>
+      </KeyboardAvoidingView>
     </View>
   );
 }

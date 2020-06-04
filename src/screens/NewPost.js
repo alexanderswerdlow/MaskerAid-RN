@@ -1,4 +1,4 @@
-import {Image, View, Text, TextInput} from 'react-native';
+import {Image, View, Text, KeyboardAvoidingView} from 'react-native';
 import React, {useState, useEffect, useContext} from 'react';
 import ImagePicker from 'react-native-image-crop-picker';
 import {
@@ -10,6 +10,7 @@ import {
   ActivityIndicator,
   Snackbar,
   DefaultTheme,
+  TextInput,
 } from 'react-native-paper';
 import {useUpload} from '../util';
 import VideoMedia from '../presentation/VideoMedia';
@@ -194,13 +195,22 @@ function NewPost({navigation}) {
   };
 
   return (
-    <View style={{flex: 1, marginTop: 60}}>
-
+    <KeyboardAvoidingView
+      style={{
+        marginTop: 60,
+        flex: 1,
+        flexDirection: 'column',
+        justifyContent: 'center',
+      }}
+      behavior="padding"
+      enabled
+      keyboardVerticalOffset={75}>
       <ScrollView>
         <View>{postView()}</View>
         <View style={{marginTop: 20, alignItems: 'center'}}>
-          <Text>Post Details</Text>
+          <Text>Post Caption</Text>
           <TextInput
+            mode="outlined"
             placeholder="Enter a caption (Required)"
             style={{margin: 20, width: 300}}
             value={title}
@@ -211,69 +221,6 @@ function NewPost({navigation}) {
           {uploading ? (
             <ProgressBar progress={0.5} color={theme.colors.primary} />
           ) : (
-          <Button
-            mode="contained"
-            disabled={image == null}
-            onPress={() => {
-              if (title != '') {
-                setPostDialogVisible(true);
-              } else {
-                setCapWarnVisible(true);
-              }
-            }}
-            style={{
-              alignItems: 'center',
-              padding: 10,
-              margin: 30,
-            }}>
-            Add Post
-          </Button>
-        )}
-      </View>
-      <Snackbar
-        theme={DefaultTheme}
-        duration={2000}
-        visible={visible}
-        onDismiss={() => {
-          setVisible(false);
-        }}
-        action={{
-          label: 'Go Home',
-          onPress: () => {
-            setVisible(false);
-            navigation.navigate('Home');
-          },
-        }}>
-        Posted!
-      </Snackbar>
-      <Snackbar
-        theme={DefaultTheme}
-        duration={4000}
-        visible={capWarnVisible}
-        onDismiss={() => {
-          setCapWarnVisible(false);
-        }}
-        action={{
-          label: 'Dismiss',
-          onPress: () => {
-            setCapWarnVisible(false);
-          },
-        }}>
-        You must enter a caption!
-      </Snackbar>
-      <Portal>
-        <Dialog
-          style={{backgroundColor: 'white'}}
-          visible={postDialogVisible}
-          onDismiss={() => {
-            setPostDialogVisible(false);
-          }}>
-          <Dialog.Title>Are you sure you want to post?</Dialog.Title>
-          <Dialog.Content>
-            <Paragraph>Is this a photo of a mask?</Paragraph>
-          </Dialog.Content>
-          <Dialog.Actions>
-            <Button onPress={() => setPostDialogVisible(false)}>Cancel</Button>
             <Button
               mode="contained"
               disabled={image == null}
@@ -295,7 +242,6 @@ function NewPost({navigation}) {
         </View>
         <Snackbar
           theme={DefaultTheme}
-          //theme={{colors: {accent: theme.colors.primary}}}
           duration={2000}
           visible={visible}
           onDismiss={() => {
@@ -312,7 +258,6 @@ function NewPost({navigation}) {
         </Snackbar>
         <Snackbar
           theme={DefaultTheme}
-          //theme={{colors: {accent: theme.colors.primary}}}
           duration={4000}
           visible={capWarnVisible}
           onDismiss={() => {
@@ -357,7 +302,7 @@ function NewPost({navigation}) {
           color={theme.colors.primary}
         />
       </ScrollView>
-    </View>
+    </KeyboardAvoidingView>
   );
 }
 

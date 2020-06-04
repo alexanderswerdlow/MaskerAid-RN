@@ -1,14 +1,5 @@
 import React, {useState} from 'react';
-import {
-  View,
-  Text,
-  Image,
-  StyleSheet,
-  Dimensions,
-  TextInput,
-  Button,
-  TouchableOpacity,
-} from 'react-native';
+import {View, StyleSheet, Dimensions, TextInput, Button} from 'react-native';
 import config from '../config';
 import CommentFeed from '../containers/CommentFeed';
 import firestore from '@react-native-firebase/firestore';
@@ -46,12 +37,7 @@ export default function Comment(props) {
               console.log(props.route.params.user);
               commentsCollection
                 .add({
-                  user: {
-                    photoURL: props.route.params.user.photoURL,
-                    displayName: props.route.params.user.displayName,
-                    email: props.route.params.user.email,
-                    uid: props.route.params.user.uid,
-                  },
+                  user: props.route.params.user,
                   text: newComment,
                   like_count: 0,
                   comment_date: firestore.FieldValue.serverTimestamp(),

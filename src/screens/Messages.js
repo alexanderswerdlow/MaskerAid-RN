@@ -23,7 +23,6 @@ export default function Messages({navigation}) {
       .onSnapshot((querySnapshot) => {
         const users = [];
         querySnapshot.forEach((documentSnapshot) => {
-          console.log(documentSnapshot.id);
           users.push({
             ...documentSnapshot.data(),
             key: documentSnapshot.id,

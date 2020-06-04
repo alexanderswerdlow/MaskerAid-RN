@@ -146,7 +146,6 @@ class Profile extends Component {
             <View style={{alignItems: 'center'}}>
               <TouchableOpacity
                 onPress={() => {
-                  console.log(this.state.user);
                   RootNavigation.navigate('UserList', {
                     user: this.state.user,
                     listType: 'followers',

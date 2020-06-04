@@ -51,6 +51,7 @@ function NewPost({navigation}) {
       height: 1000,
       maxFiles: 1,
       forceJpg: true,
+      cropping: true,
     })
       .then((image) => {
         setResponse(image);
@@ -87,7 +88,7 @@ function NewPost({navigation}) {
       height: 1000,
       maxFiles: 1,
       forceJpg: true,
-      compressVideoPreset: 'HighestQuality',
+      cropping: true,
     })
       .then((image) => {
         setResponse(image);
@@ -168,6 +169,7 @@ function NewPost({navigation}) {
 
   return (
     <View style={{flex: 1, marginTop: 60}}>
+
       <ScrollView>
         <View>{postView()}</View>
         <View style={{marginTop: 20, alignItems: 'center'}}>
@@ -183,6 +185,69 @@ function NewPost({navigation}) {
           {uploading ? (
             <ProgressBar progress={0.5} color={theme.colors.primary} />
           ) : (
+          <Button
+            mode="contained"
+            disabled={image == null}
+            onPress={() => {
+              if (title != '') {
+                setPostDialogVisible(true);
+              } else {
+                setCapWarnVisible(true);
+              }
+            }}
+            style={{
+              alignItems: 'center',
+              padding: 10,
+              margin: 30,
+            }}>
+            Add Post
+          </Button>
+        )}
+      </View>
+      <Snackbar
+        theme={DefaultTheme}
+        duration={2000}
+        visible={visible}
+        onDismiss={() => {
+          setVisible(false);
+        }}
+        action={{
+          label: 'Go Home',
+          onPress: () => {
+            setVisible(false);
+            navigation.navigate('Home');
+          },
+        }}>
+        Posted!
+      </Snackbar>
+      <Snackbar
+        theme={DefaultTheme}
+        duration={4000}
+        visible={capWarnVisible}
+        onDismiss={() => {
+          setCapWarnVisible(false);
+        }}
+        action={{
+          label: 'Dismiss',
+          onPress: () => {
+            setCapWarnVisible(false);
+          },
+        }}>
+        You must enter a caption!
+      </Snackbar>
+      <Portal>
+        <Dialog
+          style={{backgroundColor: 'white'}}
+          visible={postDialogVisible}
+          onDismiss={() => {
+            setPostDialogVisible(false);
+          }}>
+          <Dialog.Title>Are you sure you want to post?</Dialog.Title>
+          <Dialog.Content>
+            <Paragraph>Is this a photo of a mask?</Paragraph>
+          </Dialog.Content>
+          <Dialog.Actions>
+            <Button onPress={() => setPostDialogVisible(false)}>Cancel</Button>
             <Button
               mode="contained"
               disabled={image == null}

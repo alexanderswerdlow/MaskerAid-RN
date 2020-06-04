@@ -15,6 +15,9 @@ import Fire from '../util/Fire';
 import {GlobalContext} from '../navigation/ContextProvider';
 import firestore from '@react-native-firebase/firestore';
 import * as RootNavigation from '../navigation/RootNavigation.js';
+import {Dimensions} from 'react-native';
+
+const screenWidth = Dimensions.get('window').width;
 
 class Profile extends Component {
   static data = PostFeed;
@@ -192,7 +195,7 @@ class Profile extends Component {
         <>
           <View style={{flexDirection: 'row'}}>
             <Button
-              style={{width: 120, height: 35}}
+              style={{width: screenWidth / 3.45, height: 35}}
               icon="settings"
               mode="contained"
               onPress={() => {
@@ -201,7 +204,7 @@ class Profile extends Component {
               Settings
             </Button>
             <Button
-              style={{width: 115, height: 35}}
+              style={{width: screenWidth / 3.88, height: 35}}
               icon="logout"
               mode="contained"
               onPress={() => {
@@ -218,7 +221,7 @@ class Profile extends Component {
               Logout
             </Button>
             <Button
-              style={{width: 180, height: 35}}
+              style={{width: screenWidth / 2.19, height: 35}}
               icon="trash-can-outline"
               mode="contained"
               onPress={() => {
@@ -244,7 +247,7 @@ class Profile extends Component {
             <Button
               style={{
                 backgroundColor: theme.colors.primary,
-                width: 207,
+                width: screenWidth / 2,
               }}
               icon="logout"
               mode="contained"
@@ -255,7 +258,10 @@ class Profile extends Component {
               {this.state.following ? 'Unfollow' : 'Follow'}
             </Button>
             <Button
-              style={{backgroundColor: theme.colors.primary, width: 207}}
+              style={{
+                backgroundColor: theme.colors.primary,
+                width: screenWidth / 2,
+              }}
               icon="logout"
               mode="contained"
               onPress={() => {

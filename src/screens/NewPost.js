@@ -14,6 +14,7 @@ import {
 import {useUpload} from '../util';
 import VideoMedia from '../presentation/VideoMedia';
 import {GlobalContext} from '../navigation/ContextProvider';
+import {ScrollView} from 'react-native-gesture-handler';
 
 function NewPost({navigation}) {
   const [image, setImage] = useState(null);
@@ -194,20 +195,22 @@ function NewPost({navigation}) {
 
   return (
     <View style={{flex: 1, marginTop: 60}}>
-      <View>{postView()}</View>
-      <View style={{marginTop: 20, alignItems: 'center'}}>
-        <Text>Post Details</Text>
-        <TextInput
-          placeholder="Enter a caption (Required)"
-          style={{margin: 20, width: 300}}
-          value={title}
-          defaultValue="Default Value"
-          clearButtonMode="while-editing"
-          onChangeText={(text) => setTitle(text)}
-        />
-        {uploading ? (
-          <ProgressBar progress={0.5} color={theme.colors.primary} />
-        ) : (
+
+      <ScrollView>
+        <View>{postView()}</View>
+        <View style={{marginTop: 20, alignItems: 'center'}}>
+          <Text>Post Details</Text>
+          <TextInput
+            placeholder="Enter a caption (Required)"
+            style={{margin: 20, width: 300}}
+            value={title}
+            defaultValue="Default Value"
+            clearButtonMode="while-editing"
+            onChangeText={(text) => setTitle(text)}
+          />
+          {uploading ? (
+            <ProgressBar progress={0.5} color={theme.colors.primary} />
+          ) : (
           <Button
             mode="contained"
             disabled={image == null}
@@ -272,20 +275,88 @@ function NewPost({navigation}) {
           <Dialog.Actions>
             <Button onPress={() => setPostDialogVisible(false)}>Cancel</Button>
             <Button
+              mode="contained"
+              disabled={image == null}
               onPress={() => {
-                uploadFile();
-                setPostDialogVisible(false);
+                if (title != '') {
+                  setPostDialogVisible(true);
+                } else {
+                  setCapWarnVisible(true);
+                }
+              }}
+              style={{
+                alignItems: 'center',
+                padding: 10,
+                margin: 30,
               }}>
-              Yes!
+              Add Post
             </Button>
-          </Dialog.Actions>
-        </Dialog>
-      </Portal>
-      <ActivityIndicator
-        size="large"
-        animating={uploading}
-        color={theme.colors.primary}
-      />
+          )}
+        </View>
+        <Snackbar
+          theme={DefaultTheme}
+          //theme={{colors: {accent: theme.colors.primary}}}
+          duration={2000}
+          visible={visible}
+          onDismiss={() => {
+            setVisible(false);
+          }}
+          action={{
+            label: 'Go Home',
+            onPress: () => {
+              setVisible(false);
+              navigation.navigate('Home');
+            },
+          }}>
+          Posted!
+        </Snackbar>
+        <Snackbar
+          theme={DefaultTheme}
+          //theme={{colors: {accent: theme.colors.primary}}}
+          duration={4000}
+          visible={capWarnVisible}
+          onDismiss={() => {
+            setCapWarnVisible(false);
+          }}
+          action={{
+            label: 'Dismiss',
+            onPress: () => {
+              setCapWarnVisible(false);
+            },
+          }}>
+          You must enter a caption!
+        </Snackbar>
+        <Portal>
+          <Dialog
+            style={{backgroundColor: 'white'}}
+            visible={postDialogVisible}
+            onDismiss={() => {
+              setPostDialogVisible(false);
+            }}>
+            <Dialog.Title>Are you sure you want to post?</Dialog.Title>
+            <Dialog.Content>
+              <Paragraph>Is this a photo of a mask?</Paragraph>
+            </Dialog.Content>
+            <Dialog.Actions>
+              <Button onPress={() => setPostDialogVisible(false)}>
+                Cancel
+              </Button>
+              <Button
+                onPress={() => {
+                  uploadFile();
+                  setPostDialogVisible(false);
+                }}>
+                Yes!
+              </Button>
+            </Dialog.Actions>
+          </Dialog>
+        </Portal>
+        <ActivityIndicator
+          size="large"
+          animating={uploading}
+          color={theme.colors.primary}
+        />
+      </ScrollView>
     </View>
   );
 }

@@ -138,9 +138,6 @@ export default function Post(props) {
             <Text style={styles.username}>{props.user.displayName}</Text>
           </TouchableOpacity>
         </View>
-        <View>
-          <Text style={styles.dotmenu}>...</Text>
-        </View>
       </View>
       <DoubleTap onDoubleTap={() => likePhoto()} activeOpacity={0.7}>
         {postMedia()}

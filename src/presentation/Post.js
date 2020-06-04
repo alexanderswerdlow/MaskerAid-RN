@@ -64,14 +64,12 @@ export default function Post(props) {
       }
     });
     return () => subscriber();
-  }, []);
+  }, [props.loc]);
 
   useEffect(() => {
     if (!_isMounted.current) {
       return;
     }
-    console.log(props.loc.id);
-
     const ref = storage().ref(`posts/${props.loc.id}`);
 
     ref
@@ -83,7 +81,7 @@ export default function Post(props) {
 
     if (!isVideo) {
       storage()
-        .ref(`posts/thumb_${props.loc.id}`)
+        .ref(`posts/${props.loc.id}_400x400`)
         .getDownloadURL()
         .then(function (url) {
           setThumbnail(url);
@@ -97,7 +95,7 @@ export default function Post(props) {
         setImage(url);
       })
       .catch(function () {});
-  }, []);
+  }, [props.loc]);
 
   const likePhoto = () => {
     setLiked(!liked);
@@ -158,7 +156,12 @@ export default function Post(props) {
           onPress={() => {
             RootNavigation.navigate('Comments', {
               post: props.loc.id,
-              user: user,
+              user: {
+                uid: user.uid,
+                email: user.email,
+                displayName: user.displayName,
+                photoURL: user.photoURL,
+              },
             });
           }}>
           <Icon name={'comment'} size={27} style={{padding: 5}} />
@@ -220,6 +223,7 @@ export default function Post(props) {
               onPress={() => {
                 Fire.deletePost(props.loc.id, user, isVideo);
                 setDialogVisible(false);
+                props.onDelete(props.index);
               }}>
               Delete
             </Button>

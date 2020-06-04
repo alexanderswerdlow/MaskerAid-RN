@@ -50,6 +50,7 @@ function NewPost({navigation}) {
       height: 1000,
       maxFiles: 1,
       forceJpg: true,
+      cropping: true,
     })
       .then((image) => {
         setResponse(image);
@@ -86,7 +87,7 @@ function NewPost({navigation}) {
       height: 1000,
       maxFiles: 1,
       forceJpg: true,
-      compressVideoPreset: 'HighestQuality',
+      cropping: true,
     })
       .then((image) => {
         setResponse(image);
@@ -200,7 +201,6 @@ function NewPost({navigation}) {
       </View>
       <Snackbar
         theme={DefaultTheme}
-        //theme={{colors: {accent: theme.colors.primary}}}
         duration={2000}
         visible={visible}
         onDismiss={() => {
@@ -217,7 +217,6 @@ function NewPost({navigation}) {
       </Snackbar>
       <Snackbar
         theme={DefaultTheme}
-        //theme={{colors: {accent: theme.colors.primary}}}
         duration={4000}
         visible={capWarnVisible}
         onDismiss={() => {

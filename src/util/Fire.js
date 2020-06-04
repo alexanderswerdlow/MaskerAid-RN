@@ -148,7 +148,7 @@ export const Firebase = {
 
     if (!isVideo) {
       try {
-        var thumbStorageRef = storage().ref(`posts/thumb_${post_id}`);
+        var thumbStorageRef = storage().ref(`posts/${post_id}_400x400`);
         await thumbStorageRef.delete();
       } catch (e) {
         console.log('delete media failed', e);

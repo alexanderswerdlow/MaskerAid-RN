@@ -4,7 +4,6 @@ import {PostFeed} from '../containers';
 import firestore from '@react-native-firebase/firestore';
 import {GlobalContext} from '../navigation/ContextProvider';
 import {Switch} from 'react-native-paper';
-import {Button} from 'react-native-paper';
 
 export default function Home({navigation}) {
   const [toggle, setToggle] = useState(false);

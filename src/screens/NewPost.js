@@ -101,6 +101,23 @@ function NewPost({navigation}) {
       });
   };
 
+  const selectVideo = () => {
+    ImagePicker.openPicker({
+      maxFiles: 1,
+      mediaType: 'video',
+    })
+      .then((image) => {
+        setResponse(image);
+        setImage({uri: image.path});
+        if (image.mime == 'video/mp4') {
+          setVideo(true);
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
   const postView = () => {
     if (image) {
       return (
@@ -127,6 +144,17 @@ function NewPost({navigation}) {
       return (
         <>
           <Button
+            icon="camera"
+            mode="contained"
+            onPress={() => takeImage()}
+            style={{
+              alignItems: 'center',
+              padding: 10,
+              margin: 30,
+            }}>
+            Take Photo
+          </Button>
+          <Button
             icon="video"
             mode="contained"
             onPress={() => takeVideo()}
@@ -140,24 +168,24 @@ function NewPost({navigation}) {
           <Button
             icon="camera"
             mode="contained"
-            onPress={() => takeImage()}
-            style={{
-              alignItems: 'center',
-              padding: 10,
-              margin: 30,
-            }}>
-            Take Photo
-          </Button>
-          <Button
-            icon="camera"
-            mode="contained"
             onPress={() => selectImage()}
             style={{
               alignItems: 'center',
               padding: 10,
               margin: 30,
             }}>
-            Open from Camera Roll
+            Open Photo from Camera Roll
+          </Button>
+          <Button
+            icon="video"
+            mode="contained"
+            onPress={() => selectVideo()}
+            style={{
+              alignItems: 'center',
+              padding: 10,
+              margin: 30,
+            }}>
+            Open Video from Camera Roll
           </Button>
         </>
       );

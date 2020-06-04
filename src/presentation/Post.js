@@ -81,7 +81,7 @@ export default function Post(props) {
 
     if (!isVideo) {
       storage()
-        .ref(`posts/thumb_${props.loc.id}`)
+        .ref(`posts/${props.loc.id}_400x400`)
         .getDownloadURL()
         .then(function (url) {
           setThumbnail(url);
@@ -156,7 +156,12 @@ export default function Post(props) {
           onPress={() => {
             RootNavigation.navigate('Comments', {
               post: props.loc.id,
-              user: user,
+              user: {
+                uid: user.uid,
+                email: user.email,
+                displayName: user.displayName,
+                photoURL: user.photoURL,
+              },
             });
           }}>
           <Icon name={'comment'} size={27} style={{padding: 5}} />

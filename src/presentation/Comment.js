@@ -1,15 +1,6 @@
 import React, {useEffect, useState} from 'react';
-import {
-  View,
-  Text,
-  Image,
-  StyleSheet,
-  Dimensions,
-  TouchableOpacity,
-} from 'react-native';
-import config from '../config';
+import {View, Text, Image, StyleSheet, TouchableOpacity} from 'react-native';
 import Icon from 'react-native-vector-icons/AntDesign';
-import * as RootNavigation from '../navigation/RootNavigation.js';
 
 export default function Comment(props) {
   const [heart, setHeart] = useState('hearto');

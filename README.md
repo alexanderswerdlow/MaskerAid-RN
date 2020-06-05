@@ -2,15 +2,24 @@
 
 A mobile application for sharing mask designs as well as finding insipartion from others!
 
+# Requirements
+
+- [Xcode](https://developer.apple.com/xcode/)
+- Terminal
+
 # Setup (macOS)
 
-Download Xcode.
+Extract the tarball.
 
-On terminal run the commands:
+On terminal, cd into the MaskerAid directory.
 
-`git clone https://github.com/garylhua/MaskerAid.git`
+Run the commands
 
-`cd MaskerAid && npm install && cd ios/ && pod install`
+`npm install`
+
+`cd ios`
+
+`pod install`
 
 open `ios/MaskerAid.xcworkspace` (not .xcodeproj) and config the [licenses](https://reactnative.dev/docs/running-on-device)
 
@@ -27,6 +36,8 @@ nan error: `npm i -g nan`
 need to install firebase cli: `npm install -g firebase-tools`
 
 run `firebase login` to login to your firebase account
+
+If you get error message `command not found: pod`, run the command `sudo gem install cocoapods`.
 
 # Common Commands
 

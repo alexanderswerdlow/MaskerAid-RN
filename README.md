@@ -1,13 +1,25 @@
 # MaskerAid
-An app for sharing masks
+
+A mobile application for sharing mask designs as well as finding insipartion from others!
+
+# Requirements
+
+- [Xcode](https://developer.apple.com/xcode/)
+- Terminal
 
 # Setup (macOS)
 
-`git clone https://github.com/garylhua/MaskerAid.git`
+Extract the tarball.
 
+On terminal, cd into the MaskerAid directory.
 
+Run the commands
 
-`cd MaskerAid && npm install && cd ios/ && pod install`
+`npm install`
+
+`cd ios`
+
+`pod install`
 
 open `ios/MaskerAid.xcworkspace` (not .xcodeproj) and config the [licenses](https://reactnative.dev/docs/running-on-device)
 
@@ -25,6 +37,8 @@ need to install firebase cli: `npm install -g firebase-tools`
 
 run `firebase login` to login to your firebase account
 
+If you get error message `command not found: pod`, run the command `sudo gem install cocoapods`.
+
 # Common Commands
 
 - `cd ios && pod install`
@@ -32,5 +46,6 @@ run `firebase login` to login to your firebase account
 - `npx pod-install ios`
 
 - `firebase firestore:delete --all-collections -y`
-    - Delete's every firestore collection. Use with caution.
+    -> Delete's every firestore collection. Use with caution.
+    
 - `algolia deleteindicespattern -a 'V6KRQS64EW' -k '1811eb11a0974a46ed235ed40cb866f1' -r '(posts)|(users)' -x true`

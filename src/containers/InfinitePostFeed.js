@@ -75,7 +75,6 @@ export default class InfinitePostFeed extends React.Component {
         this.props.following &&
         this.props.following.length > 0
       ) {
-        console.log('here');
         if (!retrieveMore) {
           initialQuery = await firestore()
             .collection(
@@ -95,7 +94,6 @@ export default class InfinitePostFeed extends React.Component {
             .limit(this.state.limit);
         }
       } else {
-        console.log('down');
         if (!retrieveMore) {
           initialQuery = await firestore()
             .collection(
@@ -217,11 +215,8 @@ export default class InfinitePostFeed extends React.Component {
   };
 
   onDelete = (index) => {
-    console.log('delete: ' + index);
     var array = [...this.state.documentData];
-    console.log(array);
     array.splice(index, 1);
-    console.log(array);
     this.setState({
       documentData: array,
       limit: this.state.limit - 1,

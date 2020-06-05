@@ -1,6 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import {View, Text, Image, StyleSheet, TouchableOpacity} from 'react-native';
 import Icon from 'react-native-vector-icons/AntDesign';
+import * as RootNavigation from '../navigation/RootNavigation.js';
 
 export default function Comment(props) {
   const [heart, setHeart] = useState('hearto');
@@ -26,18 +27,26 @@ export default function Comment(props) {
           />
           <View style={styles.caption}>
             <View>
-              <Text>
-                <Text style={{fontWeight: 'bold'}}>
-                  {props.user.displayName}{' '}
+              <TouchableOpacity
+                onPress={() => {
+                  RootNavigation.navigate('ViewProfile', {
+                    user: props.user,
+                  });
+                }}>
+                <Text>
+                  <Text style={{fontWeight: 'bold'}}>
+                    {props.user.displayName}{' '}
+                  </Text>
+                  {props.comment.text}
                 </Text>
-                {props.comment.text}
-              </Text>
+              </TouchableOpacity>
             </View>
             <Text style={{fontWeight: 'bold'}}>
               {props.comment.like_count} Likes
             </Text>
           </View>
         </View>
+
         <View
           style={{flexDirection: 'row', alignItems: 'center', marginLeft: 10}}>
           <TouchableOpacity

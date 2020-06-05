@@ -20,6 +20,7 @@ export default function MaskerAid() {
     YellowBox.ignoreWarnings(['Require cycle:']);
     YellowBox.ignoreWarnings(['Animated:']);
     YellowBox.ignoreWarnings(['Warning: componentWill']);
+    YellowBox.ignoreWarnings(['Sending']);
     await firestore().settings({
       persistence: true, // disable offline persistence
     });

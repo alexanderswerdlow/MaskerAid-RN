@@ -1,11 +1,13 @@
 # MaskerAid
-An app for sharing masks
+A mobile application for sharing mask designs as well as finding insipartion from others!
 
 # Setup (macOS)
 
+Download Xcode.
+
+On terminal run the commands:
+
 `git clone https://github.com/garylhua/MaskerAid.git`
-
-
 
 `cd MaskerAid && npm install && cd ios/ && pod install`
 

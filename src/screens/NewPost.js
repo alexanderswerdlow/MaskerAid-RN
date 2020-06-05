@@ -217,7 +217,8 @@ function NewPost({navigation}) {
           <TextInput
             mode="outlined"
             placeholder="Enter a caption (Required)"
-            style={{margin: 20, width: 300}}
+            style={{margin: 20, width: 300, color: 'green'}}
+            theme={DefaultTheme}
             value={title}
             defaultValue="Default Value"
             clearButtonMode="while-editing"

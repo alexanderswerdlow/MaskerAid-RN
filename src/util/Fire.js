@@ -48,23 +48,28 @@ export const Firebase = {
       `users/${self_user.uid}/following/${other_user.uid}`,
     );
 
-    batch.set(selfFollowingRef, {
-      uid: other_user.uid,
-      displayName: other_user.displayName,
-      email: other_user.email,
-      photoURL: other_user.photoURL,
-    });
-
     const otherFollowingRef = firestore().doc(
       `users/${other_user.uid}/followers/${self_user.uid}`,
     );
 
-    batch.set(otherFollowingRef, {
-      uid: self_user.uid,
-      displayName: self_user.displayName,
-      email: self_user.email,
-      photoURL: self_user.photoURL,
-    });
+    if (val) {
+      batch.set(selfFollowingRef, {
+        uid: other_user.uid,
+        displayName: other_user.displayName,
+        email: other_user.email,
+        photoURL: other_user.photoURL,
+      });
+
+      batch.set(otherFollowingRef, {
+        uid: self_user.uid,
+        displayName: self_user.displayName,
+        email: self_user.email,
+        photoURL: self_user.photoURL,
+      });
+    } else {
+      batch.delete(selfFollowingRef);
+      batch.delete(otherFollowingRef);
+    }
 
     batch.commit();
 

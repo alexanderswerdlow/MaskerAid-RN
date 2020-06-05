@@ -34,7 +34,7 @@ export default class InfinitePostFeed extends React.Component {
 
   update = (no_load) => {
     try {
-      this.retrieveData(false, no_load, false);
+      this.retrieveData(false, no_load);
     } catch (error) {
       console.log(error);
     }
@@ -60,7 +60,7 @@ export default class InfinitePostFeed extends React.Component {
   }
 
   // Retrieve Data
-  retrieveData = async (retrieveMore, no_load, follower_feed) => {
+  retrieveData = async (retrieveMore, no_load) => {
     try {
       if (!retrieveMore) {
         this.setState({
@@ -73,7 +73,6 @@ export default class InfinitePostFeed extends React.Component {
       }
       // Cloud Firestore: Query
       let initialQuery;
-
       if (
         this.state.isSwitchOn &&
         this.props.following &&
@@ -178,7 +177,7 @@ export default class InfinitePostFeed extends React.Component {
   };
 
   toggleFeed = () => {
-    this.retrieveData(false, false, !this.state.isSwitchOn);
+    this.retrieveData(false, false, this.state.isSwitchOn);
   };
 
   // Render Header

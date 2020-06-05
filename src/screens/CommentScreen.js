@@ -46,7 +46,6 @@ export default function Comment(props) {
             style={{alignItems: 'center'}}
             onPress={() => {
               if (newComment.length > 0) {
-                console.log(props.route.params.user);
                 commentsCollection
                   .add({
                     user: props.route.params.user,

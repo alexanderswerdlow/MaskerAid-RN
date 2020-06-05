@@ -188,24 +188,28 @@ export default class InfinitePostFeed extends React.Component {
         return this.props.onHeader();
       } else if (this.props.feedType == 'dynamic') {
         const {theme} = this.context;
-
         return (
           <>
-            <View style={{flexDirection: 'row', justifyContent: 'flex-end'}}>
-              <Switch
-                style={{padding: 10}}
-                value={this.state.isSwitchOn}
-                onValueChange={this._onToggleSwitch}
-              />
-              <Tooltip
-                width={300}
-                popover={<Text>View Posts Only From Users You Follow</Text>}>
-                <Ionicons
-                  name="ios-person"
-                  size={50}
-                  color={theme.colors.primary}
+            <View
+              style={{flexDirection: 'row', justifyContent: 'space-between'}}>
+              <Text style={styles.headerText}>Posts</Text>
+              <View style={{flexDirection: 'row'}}>
+                <Switch
+                  style={{marginTop: 10, marginRight: 10}}
+                  value={this.state.isSwitchOn}
+                  onValueChange={this._onToggleSwitch}
                 />
-              </Tooltip>
+                <Tooltip
+                  width={280}
+                  popover={<Text>View Posts Only From Users You Follow</Text>}>
+                  <Ionicons
+                    style={{marginTop: 3, marginRight: 10}}
+                    name="ios-person"
+                    size={43}
+                    color={theme.colors.primary}
+                  />
+                </Tooltip>
+              </View>
             </View>
           </>
         );
@@ -304,6 +308,7 @@ const styles = StyleSheet.create({
     color: '#000',
     marginLeft: 12,
     marginBottom: 12,
+    marginTop: 7,
   },
   itemContainer: {
     height: 80,

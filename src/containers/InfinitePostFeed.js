@@ -11,8 +11,13 @@ import {
 import firestore from '@react-native-firebase/firestore';
 const {height, width} = Dimensions.get('window');
 import {Switch} from 'react-native-paper';
+import {Tooltip} from 'react-native-elements';
+import Ionicons from 'react-native-vector-icons/Ionicons';
+import {GlobalContext} from '../navigation/ContextProvider';
 
 export default class InfinitePostFeed extends React.Component {
+  static contextType = GlobalContext;
+
   constructor(props) {
     super(props);
     this.state = {
@@ -47,7 +52,6 @@ export default class InfinitePostFeed extends React.Component {
     this._unsubscribe = this.props.navigation.addListener('focus', () => {
       this.setState({updating: true});
       this.update(true);
-      this.setState({updating: false});
     });
   };
 
@@ -71,7 +75,7 @@ export default class InfinitePostFeed extends React.Component {
       let initialQuery;
 
       if (
-        (follower_feed || this.state.isSwitchOn) &&
+        this.state.isSwitchOn &&
         this.props.following &&
         this.props.following.length > 0
       ) {
@@ -160,15 +164,21 @@ export default class InfinitePostFeed extends React.Component {
   };
 
   _onToggleSwitch = () => {
-    this.setState({isSwitchOn: !this.state.isSwitchOn, lastVisible: null});
     try {
-      this.setState({
-        documentData: [],
-      });
-      this.retrieveData(false, false, true);
+      this.setState(
+        {
+          documentData: [],
+          isSwitchOn: !this.state.isSwitchOn,
+        },
+        this.toggleFeed,
+      );
     } catch (error) {
       console.log(error);
     }
+  };
+
+  toggleFeed = () => {
+    this.retrieveData(false, false, !this.state.isSwitchOn);
   };
 
   // Render Header
@@ -177,11 +187,27 @@ export default class InfinitePostFeed extends React.Component {
       if (this.props.onHeader) {
         return this.props.onHeader();
       } else if (this.props.feedType == 'dynamic') {
+        const {theme} = this.context;
+
         return (
-          <Switch
-            value={this.state.isSwitchOn}
-            onValueChange={this._onToggleSwitch}
-          />
+          <>
+            <View style={{flexDirection: 'row', justifyContent: 'flex-end'}}>
+              <Switch
+                style={{padding: 10}}
+                value={this.state.isSwitchOn}
+                onValueChange={this._onToggleSwitch}
+              />
+              <Tooltip
+                width={300}
+                popover={<Text>View Posts Only From Users You Follow</Text>}>
+                <Ionicons
+                  name="ios-person"
+                  size={50}
+                  color={theme.colors.primary}
+                />
+              </Tooltip>
+            </View>
+          </>
         );
       } else {
         return <Text style={styles.headerText}>Posts</Text>;

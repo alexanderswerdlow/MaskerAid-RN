@@ -19,12 +19,19 @@ export default function Comment(props) {
     <View style={{flex: 1, width: 100 + '%'}}>
       <View style={styles.userCaption}>
         <View style={{flexDirection: 'row', alignItems: 'center', flex: 1}}>
-          <Image
-            style={styles.userPic}
-            source={{
-              uri: props.user.photoURL,
-            }}
-          />
+          <TouchableOpacity
+            onPress={() => {
+              RootNavigation.navigate('ViewProfile', {
+                user: props.user,
+              });
+            }}>
+            <Image
+              style={styles.userPic}
+              source={{
+                uri: props.user.photoURL,
+              }}
+            />
+          </TouchableOpacity>
           <View style={styles.caption}>
             <View>
               <TouchableOpacity

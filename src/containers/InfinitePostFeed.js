@@ -307,8 +307,8 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     color: '#000',
     marginLeft: 12,
-    marginBottom: 12,
     marginTop: 7,
+    marginBottom: 5,
   },
   itemContainer: {
     height: 80,

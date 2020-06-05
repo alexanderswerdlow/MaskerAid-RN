@@ -28,7 +28,7 @@ const InfiniteHits = ({hits, hasMore, refine, searchType}) => (
     onEndReached={() => hasMore && refine()}
     renderItem={({item}) => {
       if (searchType == 'users') {
-        //Hack to ensure we don't get into an undefined state
+        //ensure we don't get into an undefined state
         if (!item.user) {
           return (
             <View style={styles.item}>
@@ -46,9 +46,6 @@ const InfiniteHits = ({hits, hasMore, refine, searchType}) => (
           );
         }
       } else {
-        //Hack to ensure we don't get into an undefined state
-        //If the toggle switches instantly but the data persists
-        //we don't want to try render with that invalid data
         if (item.user) {
           return (
             <Post

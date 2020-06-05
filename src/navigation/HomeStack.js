@@ -88,6 +88,11 @@ function ProfileScreen() {
         options={{title: 'Followers/Following'}}
         component={UserListScreen}
       />
+      <ProfileStackScreen.Screen
+        name="ViewProfile"
+        options={{title: 'Profile'}}
+        component={ViewProfileScreen}
+      />
     </ProfileStackScreen.Navigator>
   );
 }

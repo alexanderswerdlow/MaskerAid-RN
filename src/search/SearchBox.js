@@ -2,7 +2,7 @@ import React from 'react';
 import {StyleSheet, View} from 'react-native';
 import PropTypes from 'prop-types';
 import {connectSearchBox} from 'react-instantsearch-native';
-import {Searchbar} from 'react-native-paper';
+import {Searchbar, DefaultTheme} from 'react-native-paper';
 
 const styles = StyleSheet.create({
   container: {
@@ -29,6 +29,7 @@ const SearchBox = ({currentRefinement, refine}) => (
       placeholder="Search"
       onChangeText={(value) => refine(value)}
       value={currentRefinement}
+      theme={DefaultTheme}
     />
   </View>
 );

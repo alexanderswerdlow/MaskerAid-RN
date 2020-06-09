@@ -2,26 +2,37 @@
 
 A mobile application for sharing mask designs as well as finding insipartion from others!
 
-# Requirements
+## Requirements
 
-- [Xcode](https://developer.apple.com/xcode/)
-- Terminal
+- [Xcode](https://developer.apple.com/xcode/), Brew, Node, Watchman
 
-# Setup (macOS)
+Note: The app is cross-platform, but was primarily tested on iOS. Therefore, we request that it is evaluated on iOS and, as a consequence, setup must occur on macOS (Xcode is needed to deploy to iOS devices)
 
-Extract the tarball.
+To install:
 
-On terminal, cd into the MaskerAid directory.
+- Install Brew: `/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"`
+- Install Node: `brew install node`
 
-Run the commands
+- Install Watchman: `brew install watchman`
+- Install Xcode from the [macOS App Store](https://itunes.apple.com/us/app/xcode/id497799835?mt=12)
+- Verify that Xcode Command line Tools Are installed: `xcode-select --install`
+- Install CocoaPods: `sudo gem install cocoapods`
 
-`npm install`
+## Setup (macOS)
 
-`cd ios`
+Extract the tarball and `cd MaskerAid` (we know you already did that because you're reading this message)
 
-`pod install`
+Run the commands:
 
-open `ios/MaskerAid.xcworkspace` (not .xcodeproj) and config the [licenses](https://reactnative.dev/docs/running-on-device)
+- `yarn install`
+
+- `cd iOS && pod install`
+
+- open `MaskerAid.xcworkspace` (not .xcodeproj) and config the [licenses](https://reactnative.dev/docs/running-on-device)
+
+Note: You must have an Apple account, and non-paid developer accounts have a limited number of certificates that can be used to deploy applications at a single time.
+
+- You must
 
 # Troubleshooting
 

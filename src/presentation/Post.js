@@ -17,10 +17,10 @@ import ProgressiveImage from './ProgressiveImage';
 import DoubleTap from './DoubleTap';
 import Fire from '../util/Fire';
 import {Dialog, Portal, Button, Paragraph} from 'react-native-paper';
-import * as RootNavigation from '../navigation/RootNavigation.js';
 import PropTypes from 'prop-types';
 import firestore from '@react-native-firebase/firestore';
 import VideoMedia from './VideoMedia';
+import {useNavigation} from '@react-navigation/native';
 
 export default function Post(props) {
   const w = Dimensions.get('window');
@@ -35,6 +35,7 @@ export default function Post(props) {
   const heartIconID = liked ? 'heart' : 'hearto';
   const [muted, setMuted] = useState(false);
   const _isMounted = useRef(true);
+  const navigation = useNavigation();
 
   useEffect(() => {
     return () => {
@@ -97,9 +98,17 @@ export default function Post(props) {
       .catch(function () {});
   }, [props.loc]);
 
+  React.useEffect(() => {
+    const unsubscribe = navigation.addListener('blur', () => {
+      setMuted(true);
+    });
+
+    return unsubscribe;
+  }, [navigation]);
+
   const likePhoto = () => {
     setLiked(!liked);
-    Fire.likePost(props.loc.id, props.user.uid, user.uid, like_count, liked);
+    Fire.likePost(props.loc.id, props.user.uid, user.uid, liked);
   };
 
   const postMedia = () => {
@@ -123,7 +132,7 @@ export default function Post(props) {
         <View style={{flexDirection: 'row', alignItems: 'center'}}>
           <TouchableOpacity
             onPress={() => {
-              RootNavigation.navigate('ViewProfile', {
+              navigation.push('ViewProfile', {
                 user: props.user,
               });
             }}>
@@ -131,7 +140,7 @@ export default function Post(props) {
           </TouchableOpacity>
           <TouchableOpacity
             onPress={() => {
-              RootNavigation.navigate('ViewProfile', {
+              navigation.push('ViewProfile', {
                 user: props.user,
               });
             }}>
@@ -151,7 +160,7 @@ export default function Post(props) {
         />
         <TouchableOpacity
           onPress={() => {
-            RootNavigation.navigate('Comments', {
+            navigation.push('Comments', {
               post: props.loc.id,
               user: {
                 uid: user.uid,
@@ -220,7 +229,9 @@ export default function Post(props) {
               onPress={() => {
                 Fire.deletePost(props.loc.id, user, isVideo);
                 setDialogVisible(false);
-                props.onDelete(props.index);
+                if (props.index) {
+                  props.onDelete(props.index);
+                }
               }}>
               Delete
             </Button>

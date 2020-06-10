@@ -14,6 +14,9 @@ function useIsMountedRef(props) {
   return isMountedRef;
 }
 
+/*
+Depreciated PostFeed Component. See InfinitePostFeed.js
+*/
 function PostFeed(props) {
   const [loading, setLoading] = useState(true);
   const [posts, setPosts] = useState([]);

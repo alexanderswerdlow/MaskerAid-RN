@@ -10,7 +10,7 @@ import {
 import firestore from '@react-native-firebase/firestore';
 import {GlobalContext} from '../navigation/ContextProvider';
 import {ListItem} from 'react-native-elements';
-import {ActivityIndicator, Colors} from 'react-native-paper';
+import {ActivityIndicator} from 'react-native-paper';
 
 export default function Messages({navigation}) {
   const [loading, setLoading] = useState(true); // Set loading to true on component mount
@@ -21,14 +21,16 @@ export default function Messages({navigation}) {
     const subscriber = firestore()
       .collection(`users/${user.uid}/messages`)
       .onSnapshot((querySnapshot) => {
-        const users = [];
-        querySnapshot.forEach((documentSnapshot) => {
-          users.push({
-            ...documentSnapshot.data(),
-            key: documentSnapshot.id,
+        if (querySnapshot) {
+          const users = [];
+          querySnapshot.forEach((documentSnapshot) => {
+            users.push({
+              ...documentSnapshot.data(),
+              key: documentSnapshot.id,
+            });
           });
-        });
-        setUsers(users);
+          setUsers(users);
+        }
         setLoading(false);
       });
 

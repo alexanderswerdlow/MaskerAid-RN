@@ -40,21 +40,14 @@ export default function CommentFeed(props) {
     return () => subscriber();
   }, []);
 
-  const addLike = (commentID, likeCount) => {
+  const changeLike = (commentID, addLike) => {
     firestore()
       .doc(`posts/${props.id}/comments/${commentID}`)
       .update({
-        likedUsers: firestore.FieldValue.arrayUnion(props.currentUserID),
-        like_count: likeCount + 1,
-      });
-  };
-
-  const removeLike = (commentID, likeCount) => {
-    firestore()
-      .doc(`posts/${props.id}/comments/${commentID}`)
-      .update({
-        likedUsers: firestore.FieldValue.arrayRemove(props.currentUserID),
-        like_count: likeCount - 1,
+        likedUsers: addLike
+          ? firestore.FieldValue.arrayUnion(props.currentUserID)
+          : firestore.FieldValue.arrayRemove(props.currentUserID),
+        like_count: firestore.FieldValue.increment(addLike ? 1 : -1),
       });
   };
 
@@ -69,8 +62,7 @@ export default function CommentFeed(props) {
           comment={item.comment}
           user={item.user}
           liked={liked}
-          addLike={addLike}
-          removeLike={removeLike}
+          changeLike={changeLike}
           id={item.ref.id}
         />
       );

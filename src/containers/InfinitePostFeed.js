@@ -1,19 +1,15 @@
 /* eslint-disable react-hooks/exhaustive-deps */
+/* eslint-disable prettier/prettier */
 import React from 'react';
-import {FlatList, Text, View} from 'react-native';
-import {Post} from '../presentation';
-import {
-  ActivityIndicator,
-  StyleSheet,
-  Dimensions,
-  RefreshControl,
-} from 'react-native';
+import { FlatList, Text, View, Alert } from 'react-native';
+import { Post } from '../presentation';
+import { ActivityIndicator, StyleSheet, Dimensions, RefreshControl } from 'react-native';
 import firestore from '@react-native-firebase/firestore';
-const {height, width} = Dimensions.get('window');
-import {Switch} from 'react-native-paper';
-import {Tooltip} from 'react-native-elements';
+import { Switch } from 'react-native-paper';
+import { Tooltip } from 'react-native-elements';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import {GlobalContext} from '../navigation/ContextProvider';
+import { GlobalContext } from '../navigation/ContextProvider';
+const { height, width } = Dimensions.get('window');
 
 export default class InfinitePostFeed extends React.Component {
   static contextType = GlobalContext;
@@ -32,36 +28,37 @@ export default class InfinitePostFeed extends React.Component {
     };
   }
 
-  update = (no_load) => {
-    try {
-      this.retrieveData(false, no_load);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  onRefresh = () => {
-    this.setState({
-      documentData: [],
-    });
-    this.update(false);
-  };
-
-  // Component Did Mount
   componentDidMount = () => {
     this._unsubscribe = this.props.navigation.addListener('focus', () => {
-      this.setState({updating: true});
-      this.update(true);
+      this.setState({ updating: true });
+      this.retrieveData(false, true);
     });
   };
 
   componentWillUnmount() {
-    this._unsubscribe();
+    this._unsubscribe(); // Unsubscribe listener on unmount
   }
+
+  // On pull-to-refresh (manual)
+  onRefresh = () => {
+    this.setState({ documentData: [] }); // Clear all posts
+    this.retrieveData(false, false);
+  };
+
+  // Retrieve More Data (lazy-loading)
+  retrieveMore = async () => {
+    this.retrieveData(true, false); // Incrementally update array
+  };
+
+  // Called when switching feed  types
+  toggleFeed = () => {
+    this.retrieveData(false, false);
+  };
 
   // Retrieve Data
   retrieveData = async (retrieveMore, no_load) => {
     try {
+
       if (!retrieveMore) {
         this.setState({
           loading: no_load ? false : true,
@@ -71,53 +68,32 @@ export default class InfinitePostFeed extends React.Component {
           refreshing: true,
         });
       }
-      // Cloud Firestore: Query
-      let initialQuery;
-      if (
-        this.state.isSwitchOn &&
-        this.props.following &&
-        this.props.following.length > 0
-      ) {
+
+      // Base firestore query
+      let postQuery = firestore().collection(this.state.user ? `users/${this.state.user.uid}/posts` : 'posts')
+
+      // If feed type is following only and valid
+      if (this.state.isSwitchOn && this.props.following && this.props.following.length > 0) {
+        postQuery = postQuery.where('user.uid', 'in', this.props.following).orderBy('post_date', 'desc');
         if (!retrieveMore) {
-          initialQuery = await firestore()
-            .collection(
-              this.state.user ? `users/${this.state.user.uid}/posts` : 'posts',
-            )
-            .where('user.uid', 'in', this.props.following)
-            .orderBy('post_date', 'desc')
-            .limit(this.state.limit);
+          postQuery = postQuery.limit(this.state.limit);
         } else {
-          initialQuery = await firestore()
-            .collection(
-              this.state.user ? `users/${this.state.user.uid}/posts` : 'posts',
-            )
-            .where('user.uid', 'in', this.props.following)
-            .orderBy('post_date', 'desc')
-            .startAfter(this.state.lastVisible)
-            .limit(this.state.limit);
+          postQuery = postQuery.startAfter(this.state.lastVisible).limit(this.state.limit);
         }
+      } else if (this.state.isSwitchOn) { // If feed type is following only and doesn't follow anyone
+        Alert.alert("You aren't following anyone yet");
+        this.setState({ isSwitchOn: false });
       } else {
+        postQuery = postQuery.orderBy('post_date', 'desc');
         if (!retrieveMore) {
-          initialQuery = await firestore()
-            .collection(
-              this.state.user ? `users/${this.state.user.uid}/posts` : 'posts',
-            )
-            .orderBy('post_date', 'desc')
-            .limit(this.state.limit);
+          postQuery = postQuery.limit(this.state.limit);
         } else {
-          initialQuery = await firestore()
-            .collection(
-              this.state.user ? `users/${this.state.user.uid}/posts` : 'posts',
-            )
-            .orderBy('post_date', 'desc')
-            .startAfter(this.state.lastVisible)
-            .limit(this.state.limit);
+          postQuery = postQuery.startAfter(this.state.lastVisible).limit(this.state.limit);
         }
       }
 
-      // Cloud Firestore: Query Snapshot
-      let documentSnapshots = await initialQuery.get();
-      // Cloud Firestore: Document Data
+      let documentSnapshots = await postQuery.get(); // Make DB Call
+
       let documentData = [];
       documentSnapshots.forEach((postSnapshot) => {
         documentData.push({
@@ -128,7 +104,9 @@ export default class InfinitePostFeed extends React.Component {
         });
       });
 
-      if (documentData.length == 0) {
+      this.setState({ updating: false });
+
+      if (documentData.length == 0) { // Empty posts feed
         this.setState({
           loading: false,
         });
@@ -137,7 +115,6 @@ export default class InfinitePostFeed extends React.Component {
 
       // Cloud Firestore: Last Visible Document (Document ID To Start From For Proceeding Queries)
       let lastVisible = documentData[documentData.length - 1].key;
-      // Set State
 
       if (!retrieveMore) {
         this.setState({
@@ -157,11 +134,6 @@ export default class InfinitePostFeed extends React.Component {
     }
   };
 
-  // Retrieve More Data
-  retrieveMore = async () => {
-    this.retrieveData(true, false, false);
-  };
-
   _onToggleSwitch = () => {
     try {
       this.setState(
@@ -176,25 +148,21 @@ export default class InfinitePostFeed extends React.Component {
     }
   };
 
-  toggleFeed = () => {
-    this.retrieveData(false, false, this.state.isSwitchOn);
-  };
-
   // Render Header
   renderHeader = () => {
     try {
       if (this.props.onHeader) {
         return this.props.onHeader();
       } else if (this.props.feedType == 'dynamic') {
-        const {theme} = this.context;
+        const { theme } = this.context;
         return (
           <>
             <View
-              style={{flexDirection: 'row', justifyContent: 'space-between'}}>
+              style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
               <Text style={styles.headerText}>Posts</Text>
-              <View style={{flexDirection: 'row'}}>
+              <View style={{ flexDirection: 'row' }}>
                 <Switch
-                  style={{marginTop: 10, marginRight: 10}}
+                  style={{ marginTop: 10, marginRight: 10 }}
                   value={this.state.isSwitchOn}
                   onValueChange={this._onToggleSwitch}
                 />
@@ -202,7 +170,7 @@ export default class InfinitePostFeed extends React.Component {
                   width={280}
                   popover={<Text>View Posts Only From Users You Follow</Text>}>
                   <Ionicons
-                    style={{marginTop: 3, marginRight: 10}}
+                    style={{ marginTop: 3, marginRight: 10 }}
                     name="ios-person"
                     size={43}
                     color={theme.colors.primary}
@@ -258,6 +226,7 @@ export default class InfinitePostFeed extends React.Component {
         post={item.post}
         user={item.user}
         loc={item.ref}
+        index={index}
         onDelete={() => {
           this.onDelete(index);
         }}
@@ -270,7 +239,7 @@ export default class InfinitePostFeed extends React.Component {
       <FlatList
         // Data
         data={this.state.documentData}
-        renderItem={({item, index}) => this._renderItem(item, index)} //Passing as object from here.
+        renderItem={({ item, index }) => this._renderItem(item, index)} //Passing as object from here.
         // Item Key
         keyExtractor={(item, index) => String(index)}
         // Header (Title)

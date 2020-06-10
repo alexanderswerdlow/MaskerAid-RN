@@ -24,7 +24,7 @@ export default function Comment(props) {
         <View style={{flexDirection: 'row', alignItems: 'center', flex: 1}}>
           <TouchableOpacity
             onPress={() => {
-              navigation.navigate('ViewProfile', {
+              navigation.push('ViewProfile', {
                 user: props.user,
               });
             }}>
@@ -39,7 +39,7 @@ export default function Comment(props) {
             <View>
               <TouchableOpacity
                 onPress={() => {
-                  navigation.navigate('ViewProfile', {
+                  navigation.push('ViewProfile', {
                     user: props.user,
                   });
                 }}>

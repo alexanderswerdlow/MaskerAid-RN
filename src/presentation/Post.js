@@ -132,7 +132,7 @@ export default function Post(props) {
         <View style={{flexDirection: 'row', alignItems: 'center'}}>
           <TouchableOpacity
             onPress={() => {
-              navigation.navigate('ViewProfile', {
+              navigation.push('ViewProfile', {
                 user: props.user,
               });
             }}>
@@ -140,7 +140,7 @@ export default function Post(props) {
           </TouchableOpacity>
           <TouchableOpacity
             onPress={() => {
-              navigation.navigate('ViewProfile', {
+              navigation.push('ViewProfile', {
                 user: props.user,
               });
             }}>
@@ -160,7 +160,7 @@ export default function Post(props) {
         />
         <TouchableOpacity
           onPress={() => {
-            navigation.navigate('Comments', {
+            navigation.push('Comments', {
               post: props.loc.id,
               user: {
                 uid: user.uid,

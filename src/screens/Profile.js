@@ -14,7 +14,6 @@ import {Button} from 'react-native-paper';
 import Fire from '../util/Fire';
 import {GlobalContext} from '../navigation/ContextProvider';
 import firestore from '@react-native-firebase/firestore';
-import * as RootNavigation from '../navigation/RootNavigation.js';
 import {Dimensions} from 'react-native';
 
 const screenWidth = Dimensions.get('window').width;
@@ -87,7 +86,7 @@ class Profile extends Component {
   }
 
   componentWillUnmount() {
-    this.unsubscribe && this.unsubscribe();
+    this.unsubscribe();
   }
 
   segmentClicked = (index) => {
@@ -132,7 +131,7 @@ class Profile extends Component {
             <View style={{alignItems: 'center'}}>
               <TouchableOpacity
                 onPress={() => {
-                  RootNavigation.navigate('UserList', {
+                  this.props.navigation.push('UserList', {
                     user: this.state.user,
                     listType: 'following',
                   });
@@ -146,7 +145,7 @@ class Profile extends Component {
             <View style={{alignItems: 'center'}}>
               <TouchableOpacity
                 onPress={() => {
-                  RootNavigation.navigate('UserList', {
+                  this.props.navigation.push('UserList', {
                     user: this.state.user,
                     listType: 'followers',
                   });

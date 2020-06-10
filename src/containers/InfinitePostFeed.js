@@ -226,6 +226,7 @@ export default class InfinitePostFeed extends React.Component {
         post={item.post}
         user={item.user}
         loc={item.ref}
+        index={index}
         onDelete={() => {
           this.onDelete(index);
         }}

@@ -83,6 +83,7 @@ function ProfileScreen() {
         {(props) => <ViewProfileScreen {...props} user={user} />}
       </ProfileStackScreen.Screen>
       <ProfileStackScreen.Screen name="Settings" component={SettingsScreen} />
+      <ProfileStackScreen.Screen name="Comments" component={CommentScreen} />
       <ProfileStackScreen.Screen
         name="UserList"
         options={{title: 'Followers/Following'}}

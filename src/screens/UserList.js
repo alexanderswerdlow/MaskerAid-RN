@@ -37,7 +37,7 @@ export default function UserList({route, navigation}) {
   const renderItem = ({item}) => (
     <TouchableOpacity
       onPress={() => {
-        navigation.navigate('ViewProfile', {user: item});
+        navigation.push('ViewProfile', {user: item});
       }}>
       <ListItem
         title={item.displayName}

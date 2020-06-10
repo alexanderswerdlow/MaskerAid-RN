@@ -202,7 +202,6 @@ function NewPost({navigation}) {
   return (
     <KeyboardAvoidingView
       style={{
-        marginTop: 60,
         flex: 1,
         flexDirection: 'column',
         justifyContent: 'center',

@@ -1,5 +1,5 @@
 /* eslint-disable prettier/prettier */
-import firestore from '@react-native-firebase/firestore';
+import frs from '@react-native-firebase/firestore';
 import storage from '@react-native-firebase/storage';
 
 export const Firebase = {
@@ -16,7 +16,7 @@ export const Firebase = {
     if (self_user.uid == other_user.uid) {
       return false;
     }
-    firestore()
+    frs()
       .collection('users')
       .where('uid', '==', self_user.uid)
       .where('_following', 'array-contains', other_user.uid)
@@ -34,24 +34,21 @@ export const Firebase = {
       return;
     }
 
-    const batch = firestore().batch();
-    const querySnapshot = firestore().doc(`users/${self_user.uid}`);
-    const otherQuerySnapshot = firestore().doc(`users/${other_user.uid}`);
+    const batch = frs().batch();
+    const selfRef = frs().doc(`users/${self_user.uid}`);
+    const otherRef = frs().doc(`users/${other_user.uid}`);
+    const selfFollowingRef = frs().doc(`users/${self_user.uid}/following/${other_user.uid}`);
+    const otherFollowingRef = frs().doc(`users/${other_user.uid}/followers/${self_user.uid}`);
 
-    batch.update(querySnapshot, {
-      _following: follow
-        ? firestore.FieldValue.arrayUnion(other_user.uid)
-        : firestore.FieldValue.arrayRemove(other_user.uid),
+    batch.update(selfRef, {
+      _following: follow ? frs.FieldValue.arrayUnion(other_user.uid) : frs.FieldValue.arrayRemove(other_user.uid),
+      following_count: frs.FieldValue.increment(follow ? 1 : -1)
     });
 
-    batch.update(otherQuerySnapshot, {
-      _followers: follow
-        ? firestore.FieldValue.arrayUnion(self_user.uid)
-        : firestore.FieldValue.arrayRemove(self_user.uid),
+    batch.update(otherRef, {
+      _followers: follow ? frs.FieldValue.arrayUnion(self_user.uid) : frs.FieldValue.arrayRemove(self_user.uid),
+      follower_count: frs.FieldValue.increment(follow ? 1 : -1)
     });
-
-    const selfFollowingRef = firestore().doc(`users/${self_user.uid}/following/${other_user.uid}`);
-    const otherFollowingRef = firestore().doc(`users/${other_user.uid}/followers/${self_user.uid}`);
 
     if (follow) {
       batch.set(selfFollowingRef, Firebase.sanitizeUser(other_user));
@@ -62,29 +59,6 @@ export const Firebase = {
     }
 
     batch.commit();
-
-    const following_count_ref = firestore().doc(`users/${self_user.uid}`);
-    const follower_count_ref = firestore().doc(`users/${other_user.uid}`);
-    try {
-      await firestore().runTransaction(async (transaction) => {
-        const followingCountData = await transaction.get(following_count_ref);
-        const followerCountData = await transaction.get(follower_count_ref);
-
-        transaction.update(following_count_ref, {
-          following_count: followingCountData.exists
-            ? followingCountData.data().following_count + (follow ? 1 : -1)
-            : 1,
-        });
-
-        transaction.update(follower_count_ref, {
-          follower_count: followerCountData.exists
-            ? followerCountData.data().follower_count + (follow ? 1 : -1)
-            : 1,
-        });
-      });
-    } catch (e) {
-      console.log('Follow Transaction failed', e);
-    }
   },
   uploadFileToFireBase: (response, user, loc) => {
     const storageRef = storage().ref(`posts/${loc}`);
@@ -96,40 +70,25 @@ export const Firebase = {
     var d = new Date();
 
     var post = {
-      post_date: firestore.FieldValue.serverTimestamp(),
+      post_date: frs.FieldValue.serverTimestamp(),
       post_day: d.getDate(),
       text: `${post_data}`,
       like_count: 0,
       user: Firebase.sanitizeUser(p_user),
     };
 
-    const batch = firestore().batch(); // Create batched write
+    const batch = frs().batch(); // Create batched write
     batch.set(loc, post); // Write post object to loc reference
-    const postsRef = firestore().collection('posts').doc(loc.id); // Create new reference using the loc reference ID
+    const postsRef = frs().collection('posts').doc(loc.id); // Create new reference using the loc reference ID
     batch.set(postsRef, post); // Write post object to postsRef reference
+    const post_count_ref = frs().doc(`users/${p_user.uid}`);
+    batch.update(post_count_ref, { post_count: frs.FieldValue.increment(1) })
     try {
       await batch.commit(); // Atomically write to both locations
+      console.log('Firestore Post Success');
     } catch (err) {
       console.log('Failed to write post');
       return;
-    }
-
-    console.log('Firestore Post Success');
-
-    const post_count_ref = firestore().doc(`users/${p_user.uid}`);
-    try {
-      await firestore().runTransaction(async (transaction) => {
-        return transaction.get(post_count_ref).then(function (postCountData) {
-          if (!postCountData.exists) {
-            transaction.set(post_count_ref, { post_count: 1 });
-          } else {
-            var new_post_count = postCountData.data().post_count + 1;
-            transaction.update(post_count_ref, { post_count: new_post_count });
-          }
-        });
-      });
-    } catch (e) {
-      console.log('Post Transaction failed', e);
     }
   },
   deletePost: async (post_id, user, isVideo) => {
@@ -150,12 +109,14 @@ export const Firebase = {
       console.log('Delete media failed', e);
     }
 
-    const usersQuerySnapshot = firestore().doc(`users/${user.uid}/posts/${post_id}`);
-    const postsQuerySnapshot = firestore().collection('posts').doc(post_id);
-    const batch = firestore().batch();
+    const usersQuerySnapshot = frs().doc(`users/${user.uid}/posts/${post_id}`);
+    const postsQuerySnapshot = frs().doc(`posts/${post_id}`);
+    const postCountRef = frs().doc(`users/${user.uid}`);
+    const batch = frs().batch();
 
     batch.delete(usersQuerySnapshot);
     batch.delete(postsQuerySnapshot);
+    batch.update(postCountRef, { post_count: frs.FieldValue.increment(-1) })
 
     try {
       await batch.commit();
@@ -164,47 +125,20 @@ export const Firebase = {
       return;
     }
 
-    const post_count_ref = firestore().doc(`users/${user.uid}`);
-    try {
-      await firestore().runTransaction(async (transaction) => {
-        return transaction.get(post_count_ref).then(function (postCountData) {
-          if (!postCountData.exists || postCountData.data() == 0) {
-            transaction.set(post_count_ref, { post_count: 0 });
-          } else {
-            var new_post_count = postCountData.data().post_count - 1;
-            new_post_count = new_post_count < 0 ? 0 : new_post_count;
-            transaction.update(post_count_ref, { post_count: new_post_count });
-          }
-        });
-      });
-    } catch (e) {
-      console.log('transaction failed', e);
-    }
   },
-  likePost: (post_id, post_user_id, user_id, like_count, liked) => {
-    let new_like_count = 1;
-    if (like_count == 0) {
-      new_like_count = 1;
-    } else if (like_count > 0 || liked) {
-      new_like_count = liked ? like_count - 1 : like_count + 1;
-    }
-
-    const batch = firestore().batch();
-    const userRef = firestore().doc(`users/${post_user_id}/posts/${post_id}`);
+  likePost: async (post_id, post_user_id, user_id, liked) => {
+    const batch = frs().batch();
+    const userRef = frs().doc(`users/${post_user_id}/posts/${post_id}`);
     batch.update(userRef, {
-      like_count: new_like_count,
-      like_users: !liked
-        ? firestore.FieldValue.arrayUnion(user_id)
-        : firestore.FieldValue.arrayRemove(user_id),
+      like_count: frs.FieldValue.increment(liked ? -1 : 1),
+      like_users: !liked ? frs.FieldValue.arrayUnion(user_id) : frs.FieldValue.arrayRemove(user_id),
     });
-    const postsRef = firestore().collection('posts').doc(post_id);
+    const postsRef = frs().collection('posts').doc(post_id);
     batch.update(postsRef, {
-      like_count: new_like_count,
-      like_users: !liked
-        ? firestore.FieldValue.arrayUnion(user_id)
-        : firestore.FieldValue.arrayRemove(user_id),
+      like_count: frs.FieldValue.increment(liked ? -1 : 1),
+      like_users: !liked ? frs.FieldValue.arrayUnion(user_id) : frs.FieldValue.arrayRemove(user_id),
     });
-    batch.commit();
+    await batch.commit();
   },
 };
 

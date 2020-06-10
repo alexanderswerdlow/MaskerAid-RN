@@ -61,11 +61,7 @@ export default function Comment(props) {
           style={{flexDirection: 'row', alignItems: 'center', marginLeft: 10}}>
           <TouchableOpacity
             onPress={() => {
-              if (props.liked) {
-                props.removeLike(props.id, props.comment.like_count);
-              } else {
-                props.addLike(props.id, props.comment.like_count);
-              }
+              props.changeLike(props.id, !props.liked);
             }}>
             <Icon name={heart} style={{color: heartIconColor}} size={27} />
           </TouchableOpacity>

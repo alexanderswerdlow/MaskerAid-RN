@@ -1,6 +1,7 @@
 import React, {useState} from 'react';
 import {
   View,
+  Platform,
   StyleSheet,
   Dimensions,
   TextInput,
@@ -22,9 +23,9 @@ export default function Comment(props) {
     <View style={{flex: 1, width: 100 + '%', height: 100 + '%'}}>
       <KeyboardAvoidingView
         style={{flex: 1, flexDirection: 'column', justifyContent: 'center'}}
-        behavior="padding"
         enabled
-        keyboardVerticalOffset={100}>
+        behavior={Platform.OS === 'ios' ? 'padding' : null}
+        keyboardVerticalOffset={Platform.OS === 'ios' ? 90 : 0}>
         <CommentFeed
           id={props.route.params.post}
           currentUserID={props.route.params.user.uid}

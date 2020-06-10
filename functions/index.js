@@ -103,6 +103,12 @@ exports.onPostUpdate = functions.firestore
     const index = client.initIndex('posts');
 
     if (!change.after.data()) {
+      firebase_tools.firestore.delete(`posts/${postId}/`, {
+        project: process.env.GCLOUD_PROJECT,
+        recursive: true,
+        yes: true,
+        token: functions.config().fb.token,
+      });
       return index.deleteObject(context.params.postId, (err) => {
         if (err) throw err;
         console.log('Post Removed from Algolia Index', postId);

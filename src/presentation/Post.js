@@ -108,7 +108,7 @@ export default function Post(props) {
 
   const likePhoto = () => {
     setLiked(!liked);
-    Fire.likePost(props.loc.id, props.user.uid, user.uid, like_count, liked);
+    Fire.likePost(props.loc.id, props.user.uid, user.uid, liked);
   };
 
   const postMedia = () => {

@@ -7,10 +7,16 @@ import InfiniteHits from '../search/InfiniteHits';
 import {ToggleButton, Title} from 'react-native-paper';
 import {connectStateResults} from 'react-instantsearch-native';
 import {GlobalContext} from '../navigation/ContextProvider';
+import {createNullCache} from '@algolia/cache-common';
 
 const searchClient = algoliasearch(
   'V6KRQS64EW',
   'b97a806d8df3bc6cc32a451e85cd0807',
+  {
+    // Disable caching to get the most recent results
+    responsesCache: createNullCache(),
+    requestsCache: createNullCache(),
+  },
 );
 
 const styles = StyleSheet.create({

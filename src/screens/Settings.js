@@ -40,7 +40,7 @@ class SettingsScreen extends React.Component {
         colors: {primary: tinycolor(this.state.color).toHexString()},
         dark: false,
       });
-    }, 40);
+    }, 150);
   };
 
   updateHue = (h) => {

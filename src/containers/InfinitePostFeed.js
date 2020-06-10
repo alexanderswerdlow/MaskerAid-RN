@@ -104,6 +104,8 @@ export default class InfinitePostFeed extends React.Component {
         });
       });
 
+      this.setState({ updating: false });
+
       if (documentData.length == 0) { // Empty posts feed
         this.setState({
           loading: false,

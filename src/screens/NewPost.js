@@ -1,4 +1,14 @@
 import {
+  Dialog,
+  Portal,
+  Button,
+  Paragraph,
+  ProgressBar,
+  ActivityIndicator,
+  DefaultTheme,
+  TextInput,
+} from 'react-native-paper';
+import {
   Image,
   View,
   Text,
@@ -7,17 +17,7 @@ import {
 } from 'react-native';
 import React, {useState, useEffect, useContext} from 'react';
 import ImagePicker from 'react-native-image-crop-picker';
-import {
-  Dialog,
-  Portal,
-  Button,
-  Paragraph,
-  ProgressBar,
-  ActivityIndicator,
-  Snackbar,
-  DefaultTheme,
-  TextInput,
-} from 'react-native-paper';
+import Snackbar from 'react-native-snackbar';
 import {useUpload} from '../util';
 import VideoMedia from '../presentation/VideoMedia';
 import {GlobalContext} from '../navigation/ContextProvider';
@@ -26,9 +26,7 @@ function NewPost({navigation}) {
   const [image, setImage] = useState(null);
   const [title, setTitle] = useState('');
   const [response, setResponse] = useState(null);
-  const [visible, setVisible] = useState(false);
   const [postDialogVisible, setPostDialogVisible] = useState(false);
-  const [capWarnVisible, setCapWarnVisible] = useState(false);
   const [prompt, setPrompt] = useState(true);
   const [{success, uploading}, monitorUpload] = useUpload();
   const [isVideo, setVideo] = useState(false);
@@ -44,10 +42,20 @@ function NewPost({navigation}) {
 
   useEffect(() => {
     if (success && prompt) {
-      setVisible(true);
       setPrompt(false);
       setImage(null);
       setTitle('');
+      Snackbar.show({
+        text: 'Posted!',
+        duration: Snackbar.LENGTH_LONG,
+        action: {
+          text: 'Go Home',
+          textColor: theme.colors.primary,
+          onPress: () => {
+            navigation.navigate('Home');
+          },
+        },
+      });
     }
   });
 
@@ -74,7 +82,7 @@ function NewPost({navigation}) {
       height: 1000,
       maxFiles: 1,
       mediaType: 'video',
-      compressVideoPreset: 'HighestQuality',
+      compressVideoPreset: 'MediumQuality',
     })
       .then((image) => {
         setResponse(image);
@@ -112,6 +120,7 @@ function NewPost({navigation}) {
     ImagePicker.openPicker({
       maxFiles: 1,
       mediaType: 'video',
+      compressVideoPreset: 'MediumQuality',
     })
       .then((image) => {
         setResponse(image);
@@ -234,7 +243,15 @@ function NewPost({navigation}) {
                 if (title != '') {
                   setPostDialogVisible(true);
                 } else {
-                  setCapWarnVisible(true);
+                  Snackbar.show({
+                    text: 'You must enter a caption!',
+                    duration: Snackbar.LENGTH_LONG,
+                    action: {
+                      text: 'Dismiss',
+                      textColor: theme.colors.primary,
+                      onPress: () => {},
+                    },
+                  });
                 }
               }}
               style={{
@@ -246,37 +263,6 @@ function NewPost({navigation}) {
             </Button>
           )}
         </View>
-        <Snackbar
-          theme={DefaultTheme}
-          duration={2000}
-          visible={visible}
-          onDismiss={() => {
-            setVisible(false);
-          }}
-          action={{
-            label: 'Go Home',
-            onPress: () => {
-              setVisible(false);
-              navigation.navigate('Home');
-            },
-          }}>
-          Posted!
-        </Snackbar>
-        <Snackbar
-          theme={DefaultTheme}
-          duration={4000}
-          visible={capWarnVisible}
-          onDismiss={() => {
-            setCapWarnVisible(false);
-          }}
-          action={{
-            label: 'Dismiss',
-            onPress: () => {
-              setCapWarnVisible(false);
-            },
-          }}>
-          You must enter a caption!
-        </Snackbar>
         <Portal>
           <Dialog
             style={{backgroundColor: 'white'}}

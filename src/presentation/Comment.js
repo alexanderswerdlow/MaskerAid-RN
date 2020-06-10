@@ -1,11 +1,13 @@
 import React, {useEffect, useState} from 'react';
 import {View, Text, Image, StyleSheet, TouchableOpacity} from 'react-native';
 import Icon from 'react-native-vector-icons/AntDesign';
-import * as RootNavigation from '../navigation/RootNavigation.js';
+import {useNavigation} from '@react-navigation/native';
 
 export default function Comment(props) {
   const [heart, setHeart] = useState('hearto');
   const [heartIconColor, setHeartIconColor] = useState('rgb(0,0,0)');
+  const navigation = useNavigation();
+
   useEffect(() => {
     if (props.liked) {
       setHeart('heart');
@@ -15,13 +17,14 @@ export default function Comment(props) {
       setHeartIconColor('rgb(0,0,0)');
     }
   });
+
   return (
     <View style={{flex: 1, width: 100 + '%'}}>
       <View style={styles.userCaption}>
         <View style={{flexDirection: 'row', alignItems: 'center', flex: 1}}>
           <TouchableOpacity
             onPress={() => {
-              RootNavigation.navigate('ViewProfile', {
+              navigation.navigate('ViewProfile', {
                 user: props.user,
               });
             }}>
@@ -36,7 +39,7 @@ export default function Comment(props) {
             <View>
               <TouchableOpacity
                 onPress={() => {
-                  RootNavigation.navigate('ViewProfile', {
+                  navigation.navigate('ViewProfile', {
                     user: props.user,
                   });
                 }}>
@@ -64,7 +67,7 @@ export default function Comment(props) {
                 props.addLike(props.id, props.comment.like_count);
               }
             }}>
-            <Icon name={heart} style={{color: heartIconColor}} size={17} />
+            <Icon name={heart} style={{color: heartIconColor}} size={27} />
           </TouchableOpacity>
         </View>
       </View>

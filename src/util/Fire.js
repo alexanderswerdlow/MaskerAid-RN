@@ -134,13 +134,6 @@ export const Firebase = {
   },
   deletePost: async (post_id, user, isVideo) => {
 
-    try {
-      var storageRef = storage().ref(`posts/${post_id}`);
-      await storageRef.delete();
-    } catch (e) {
-      console.log('Delete media failed', e);
-    }
-
     if (!isVideo) {
       try {
         var thumbStorageRef = storage().ref(`posts/${post_id}_400x400`);
@@ -150,13 +143,26 @@ export const Firebase = {
       }
     }
 
+    try {
+      var storageRef = storage().ref(`posts/${post_id}`);
+      await storageRef.delete();
+    } catch (e) {
+      console.log('Delete media failed', e);
+    }
+
     const usersQuerySnapshot = firestore().doc(`users/${user.uid}/posts/${post_id}`);
     const postsQuerySnapshot = firestore().collection('posts').doc(post_id);
     const batch = firestore().batch();
 
     batch.delete(usersQuerySnapshot);
     batch.delete(postsQuerySnapshot);
-    batch.commit();
+
+    try {
+      await batch.commit();
+    } catch (e) {
+      console.log('Delete post failed', e);
+      return;
+    }
 
     const post_count_ref = firestore().doc(`users/${user.uid}`);
     try {

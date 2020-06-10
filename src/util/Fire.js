@@ -29,6 +29,7 @@ export const Firebase = {
       });
   },
   setFollowing: async (self_user, other_user, follow) => {
+    
     //Cannot follow/unfollow yourself
     if (self_user.uid == other_user.uid) {
       return;

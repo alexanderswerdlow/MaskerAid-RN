@@ -2,7 +2,15 @@
 
 A mobile application for sharing mask designs as well as finding inspiration from others!
 
-[toc]
+#### Table of Contents
+
+* [Requirements](#requirements)
+* [Setup (macOS)](#setup--macos-)
+  * [Device Deployment](#device-deployment)
+  * [Release Build](#release-build)
+* [Troubleshooting](#troubleshooting)
+* [Common Commands](#common-commands)
+* [Code Overview](#code-overview)
 
 ## Requirements
 
@@ -94,3 +102,35 @@ Deploying the app (via simulator or a physical device), will automatically open 
     - Deletes every Firestore collection. Use with caution.
 - `algolia deleteindicespattern -a 'V6KRQS64EW' -k '1811eb11a0974a46ed235ed40cb866f1' -r '(posts)|(users)' -x true`
     - Requires Algolia CLI. Deletes All Indices. Use with caution.
+- `firebase deploy --only firestore:rules`
+    - Deploy Firestore Security Rules (from `/functions`)
+- `firebase deploy --only functions`
+    - Deploy Cloud Functions (from `/functions`)
+
+
+
+## Code Overview
+
+- `/functions`
+  - Contains all code for *Cloud Functions*
+    - Image Compression, Algolia Indexing, Account Deletion, etc.
+  - Contains Firestore Security Rules & Pre-defined Indexes
+    - Allows for Firestore security controls and complex queries used in the home feed.
+- `/src/config`
+  - Contains Client IDs to interface with Firebase
+- `/src/containers`
+  - Contains Post Feed and Comment Feed Components
+- `/src/images`
+  - App Images and Logos
+- `/src/navigation`
+  - Contains all *React Navigation* and general routing logic between screens/views
+- `/src/presentation`
+  - Contains smaller viewable components
+    - Post component, video component, image component, etc.
+- `/src/screens`
+  - Contains all high-level screen components/functions used from `/src/navigation`
+- `/src/search`
+  - Contains search specific components that interface with *Algolia InstantSearch*
+- `/src/util`
+  - Contains 'backend' logic for more complex queries/operations
+    - Following/Unfollowing, Liking Posts, Uploading/Deleting Posts, etc.

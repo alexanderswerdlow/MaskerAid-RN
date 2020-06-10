@@ -1,0 +1,40 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+  
+  	function signedIn() {
+      return request.auth.uid != null;
+    }
+    
+    function messageAllowed(userid, otheruserid){
+    	return request.data.user._id == request.auth.uid && messageReadAllowed(userid, otheruserid);
+    }
+    
+  	function messageReadAllowed(userid, otheruserid){
+    	return userid == request.auth.uid || otheruserid == request.auth.uid;
+    }
+    
+    match /users/{userId} {
+      allow read, write: if signedIn();
+    }
+
+    match /users/{userId}/posts/{document=**} {
+      allow write, read: if signedIn();
+    }
+    
+    match /posts/{document=**} {
+      allow write: if signedIn() && request.resource.data.uid == request.auth.uid;
+      allow read: if signedIn();
+    }
+    
+    match /posts/{postId}/comments/{commentId} {
+      allow write: if signedIn() && request.resource.data.user.uid == request.auth.uid;
+      allow read: if signedIn();
+    }
+    
+    match /users/{userid}/messages/{otheruserid}/{document=**} {
+    	allow read, write: if signedIn();
+    }
+    
+  }
+}

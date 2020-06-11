@@ -51,8 +51,9 @@ Run the commands:
 
 Note: You must have an Apple account to deploy to a physical device.
 
-- To open the app in the Xcode simulator, simply click the *Run* button. [See Release Build first](#release-build)
+- To open the app in the Xcode simulator, simply click the *Run* button.
   - The default simulator device is the iPhone SE (2nd Gen). This can be changed if desired by clicking on the name and selecting another device
+  - If the app says "Loading X%" on startup, [See Release Build](#release-build) to switch to release mode.
 
 ### Device Deployment
 
@@ -66,9 +67,9 @@ For more thorough instructions, please see these [instructions](https://reactnat
 
 ### Release Build
 
-Deploying the app (via simulator or a physical device), will automatically open the React Native Bundler that is used for development (hot-reload). Do not close this window until the app loads. If desired, this window can be re-opened from the `MaskerAid` root folder by running `npm start`.
+Deploying the app (via simulator or a physical device), will automatically open the React Native Bundler that is used for development (hot-reload). Do not close this window until the app loads if in debug mode. If desired, this window can be re-opened from the `MaskerAid` root folder by running `npm start`.
 
-**Note:** By default, pressing the *Run* button in Xcode will compile the App in debug mode. This is ideal for development, but comes with a large performance penalty. The app functions fine in either mode, but it is recommended to use deploy with Release mode while testing. Follow the visual guide below to switch to release mode:
+**Note:** By default, pressing the *Run* button in Xcode will compile the App in release mode. Debug mode is ideal for development, but comes with a large performance penalty. The app functions fine in either mode, but it is recommended to use deploy with Release mode while testing. Follow the visual guide below to switch to modes or to check which mode is set:
 
 ![release-1](https://i.imgur.com/s0qVNHW.png)
 
@@ -103,9 +104,9 @@ Deploying the app (via simulator or a physical device), will automatically open 
 - `algolia deleteindicespattern -a 'V6KRQS64EW' -k '1811eb11a0974a46ed235ed40cb866f1' -r '(posts)|(users)' -x true`
     - Requires Algolia CLI. Deletes All Indices. Use with caution.
 - `firebase deploy --only firestore:rules`
-    - Deploy Firestore Security Rules (from `/functions`)
+    - Deploy Firestore Security Rules, Requires Firebase CLI
 - `firebase deploy --only functions`
-    - Deploy Cloud Functions (from `/functions`)
+    - Deploy Cloud Functions, Requires Firebase CLI
 
 
 
@@ -114,6 +115,7 @@ Deploying the app (via simulator or a physical device), will automatically open 
 - `/functions`
   - Contains all code for *Cloud Functions*
     - Image Compression, Algolia Indexing, Account Deletion, etc.
+- `/firestore.rules` , `firestore.indexes.json` and `/storage.rules`
   - Contains Firestore Security Rules & Pre-defined Indexes
     - Allows for Firestore security controls and complex queries used in the home feed.
 - `/src/config`

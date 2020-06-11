@@ -113,7 +113,7 @@ export default class InfinitePostFeed extends React.Component {
         return;
       }
 
-      // Cloud Firestore: Last Visible Document (Document ID To Start From For Proceeding Queries)
+      // Last Visible Document
       let lastVisible = documentData[documentData.length - 1].key;
 
       if (!retrieveMore) {
@@ -129,6 +129,7 @@ export default class InfinitePostFeed extends React.Component {
           refreshing: false,
         });
       }
+
     } catch (error) {
       console.log(error);
     }

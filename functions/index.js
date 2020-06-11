@@ -103,7 +103,7 @@ exports.onPostUpdate = functions.firestore
     const index = client.initIndex('posts');
 
     if (!change.after.data()) {
-      firebase_tools.firestore.delete(`posts/${postId}/`, {
+      firebase_tools.firestore.delete(`posts/${context.params.postId}/`, {
         project: process.env.GCLOUD_PROJECT,
         recursive: true,
         yes: true,
@@ -131,10 +131,10 @@ const os = require('os');
 const fs = require('fs');
 
 // Max height and width of the thumbnail in pixels.
-const THUMB_MAX_HEIGHT = 200;
-const THUMB_MAX_WIDTH = 200;
+const THUMB_MAX_HEIGHT = 400;
+const THUMB_MAX_WIDTH = 400;
 // Thumbnail prefix added to file names.
-const THUMB_PREFIX = 'thumb_';
+const THUMB_PREFIX = '_400x400';
 
 /**
  * When an image is uploaded in the Storage bucket We generate a thumbnail automatically using
@@ -151,7 +151,7 @@ exports.generateThumbnail = functions.storage
     const fileDir = path.dirname(filePath);
     const fileName = path.basename(filePath);
     const thumbFilePath = path.normalize(
-      path.join(fileDir, `${THUMB_PREFIX}${fileName}`),
+      path.join(fileDir, `${fileName}${THUMB_PREFIX}`),
     );
     const tempLocalFile = path.join(os.tmpdir(), filePath);
     const tempLocalDir = path.dirname(tempLocalFile);

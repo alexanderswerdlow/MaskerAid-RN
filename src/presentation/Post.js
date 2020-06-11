@@ -1,3 +1,4 @@
+import {Dialog, Portal, Button, Paragraph} from 'react-native-paper';
 import React, {useContext, useState, useEffect, useRef} from 'react';
 import {
   TouchableOpacity,
@@ -16,7 +17,6 @@ import storage from '@react-native-firebase/storage';
 import ProgressiveImage from './ProgressiveImage';
 import DoubleTap from './DoubleTap';
 import Fire from '../util/Fire';
-import {Dialog, Portal, Button, Paragraph} from 'react-native-paper';
 import PropTypes from 'prop-types';
 import firestore from '@react-native-firebase/firestore';
 import VideoMedia from './VideoMedia';
@@ -48,9 +48,14 @@ export default function Post(props) {
       return;
     }
 
+    // Retreive like count and liked state (per user)
     const subscriber = props.loc.onSnapshot((postSnapshot) => {
       if (postSnapshot.data()) {
-        set_like_count(postSnapshot.data().like_count);
+        set_like_count(
+          postSnapshot.data().like_count && postSnapshot.data().like_count >= 0
+            ? postSnapshot.data().like_count
+            : 0,
+        );
         firestore()
           .collection('posts')
           .where(firestore.FieldPath.documentId(), '==', props.loc.id)
@@ -67,6 +72,7 @@ export default function Post(props) {
     return () => subscriber();
   }, [props.loc]);
 
+  // Retieve Media + Thumbnail
   useEffect(() => {
     if (!_isMounted.current) {
       return;
@@ -76,6 +82,7 @@ export default function Post(props) {
     ref
       .getMetadata()
       .then(function (metadata) {
+        // Detect if image or video
         setVideo(metadata.contentType != 'image/jpeg');
       })
       .catch(function () {});
@@ -99,6 +106,7 @@ export default function Post(props) {
   }, [props.loc]);
 
   React.useEffect(() => {
+    // Mute on blur
     const unsubscribe = navigation.addListener('blur', () => {
       setMuted(true);
     });
@@ -111,6 +119,7 @@ export default function Post(props) {
     Fire.likePost(props.loc.id, props.user.uid, user.uid, liked);
   };
 
+  // Render media component
   const postMedia = () => {
     if (!isVideo) {
       return (

@@ -63,7 +63,6 @@ function SearchStackScreen() {
 const MessagesStack = createStackNavigator();
 
 function MessagesStackScreen() {
-  const {theme} = React.useContext(GlobalContext);
   return (
     <MessagesStack.Navigator>
       <MessagesStack.Screen name="Messages" component={MessagesScreen} />

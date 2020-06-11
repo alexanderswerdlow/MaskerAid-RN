@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useContext} from 'react';
 import {
   View,
   Platform,
@@ -11,6 +11,8 @@ import {
 import config from '../config';
 import CommentFeed from '../containers/CommentFeed';
 import firestore from '@react-native-firebase/firestore';
+import Snackbar from 'react-native-snackbar';
+import {GlobalContext} from '../navigation/ContextProvider';
 
 export default function Comment(props) {
   const w = Dimensions.get('window');
@@ -18,6 +20,7 @@ export default function Comment(props) {
     `posts/${props.route.params.post}/comments`,
   );
   const [newComment, setNewComment] = useState('');
+  const {theme} = useContext(GlobalContext);
 
   return (
     <View style={{flex: 1, width: 100 + '%', height: 100 + '%'}}>
@@ -60,7 +63,15 @@ export default function Comment(props) {
                   });
                 setNewComment('');
               } else {
-                alert('Comments must be at least 1 character.');
+                Snackbar.show({
+                  text: 'Comments must be at least 1 character',
+                  duration: Snackbar.LENGTH_LONG,
+                  action: {
+                    text: 'Go Home',
+                    textColor: theme.colors.primary,
+                    onPress: () => {},
+                  },
+                });
               }
             }}
           />

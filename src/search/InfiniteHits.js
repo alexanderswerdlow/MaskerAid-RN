@@ -28,7 +28,7 @@ const InfiniteHits = ({hits, hasMore, refine, searchType}) => (
     onEndReached={() => hasMore && refine()}
     renderItem={({item}) => {
       if (searchType == 'users') {
-        //ensure we don't get into an undefined state
+        // Ensure we don't get into an undefined state
         if (!item.user) {
           return (
             <View style={styles.item}>

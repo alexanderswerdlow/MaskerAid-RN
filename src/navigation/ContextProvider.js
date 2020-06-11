@@ -27,7 +27,7 @@ export const ContextProvider = ({children}) => {
 
   useEffect(() => {
     if (user) {
-      const subscriber = firestore()
+      firestore()
         .doc(`users/${user.uid}`)
         .get()
         .then((documentSnapshot) => {
@@ -96,6 +96,7 @@ export const ContextProvider = ({children}) => {
               auth().signOut();
             })
             .catch(async function () {
+              // If the user has not recently logged in, they must re-auth
               Alert.alert(
                 'You must re-authenticate before deleting your account',
                 'Your account will be permanately deleted',

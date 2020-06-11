@@ -1,7 +1,8 @@
-import {useState, useCallback, useContext} from 'react';
+/* eslint-disable prettier/prettier */
+import { useState, useCallback, useContext } from 'react';
 import storage from '@react-native-firebase/storage';
-import {Firebase} from './Fire.js';
-import {GlobalContext} from '../navigation/ContextProvider';
+import { Firebase } from './Fire.js';
+import { GlobalContext } from '../navigation/ContextProvider';
 import firestore from '@react-native-firebase/firestore';
 
 export const useUpload = () => {
@@ -9,25 +10,18 @@ export const useUpload = () => {
   const [uploading, setUploading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState(null);
-  const {user} = useContext(GlobalContext);
+  const { user } = useContext(GlobalContext);
 
   const monitorUpload = useCallback((response, title) => {
     console.log('Post Triggered');
+
     setUploading(true);
     setSuccess(false);
     setProgress(0);
     setError(null);
-    const userPostsRef = firestore()
-      .collection('users')
-      .doc(user.uid)
-      .collection('posts')
-      .doc();
 
-    const uploadTask = Firebase.uploadFileToFireBase(
-      response,
-      user,
-      userPostsRef.id,
-    );
+    const userPostsRef = firestore().collection('users').doc(user.uid).collection('posts').doc();
+    const uploadTask = Firebase.uploadFileToFireBase(response, user, userPostsRef.id);
 
     uploadTask.on(
       storage.TaskEvent.STATE_CHANGED,
@@ -36,9 +30,7 @@ export const useUpload = () => {
         console.log('Image Upload: ' + percent + '% done');
         setProgress(percent);
       },
-      (error) => {
-        setError(error);
-      },
+      (error) => { setError(error); },
       function () {
         console.log('Image Upload complete!');
         Firebase.post(title, user, userPostsRef).then(() => {
@@ -57,5 +49,6 @@ export const useUpload = () => {
     error,
   };
 
+  // Report upload state back to NewPost screen
   return [state, monitorUpload];
 };

@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 import React, {useCallback, useState, useEffect, useContext} from 'react';
 import {GiftedChat} from 'react-native-gifted-chat';
 import {ActivityIndicator} from 'react-native';
@@ -22,10 +23,9 @@ export default function Chat(props) {
         email: user.email,
         displayName: user.displayName,
       });
+
     const subscriber = firestore()
-      .collection(
-        `users/${user.uid}/messages/${props.route.params.user.uid}/messages`,
-      )
+      .collection(`users/${user.uid}/messages/${props.route.params.user.uid}/messages`)
       .orderBy('createdAt', 'desc')
       .onSnapshot((querySnapshot) => {
         const messages = [];
@@ -45,10 +45,7 @@ export default function Chat(props) {
 
   const onSend = useCallback((newMessages) => {
     setMessages((prevMessages) => [...newMessages, ...prevMessages]);
-
-    const temp = newMessages[0];
-    const createdAt = Date.parse(temp.createdAt);
-    newMessages[0].createdAt = createdAt;
+    newMessages[0].createdAt = Date.parse(newMessages[0].createdAt);
     newMessages[0].user.avatar = user.photoURL;
     const batch = firestore().batch();
     const loc = firestore()
@@ -66,8 +63,8 @@ export default function Chat(props) {
       .doc(user.uid)
       .collection('messages')
       .doc(loc.id);
-    batch.set(postsRef, JSON.parse(JSON.stringify(newMessages[0])));
-    batch.commit();
+    batch.set(postsRef, newMessages[0]);
+    batch.commit(); // Write message to both users profile's
   }, []);
 
   if (loading) {

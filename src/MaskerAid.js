@@ -1,9 +1,9 @@
+import {ActivityIndicator} from 'react-native-paper';
 import 'react-native-gesture-handler';
 import AuthStack from './navigation/AuthStack';
 import HomeStack from './navigation/HomeStack';
 import {GlobalContext} from './navigation/ContextProvider';
 import React, {useState, useContext, useEffect} from 'react';
-import {ActivityIndicator, Colors} from 'react-native-paper';
 import auth from '@react-native-firebase/auth';
 import {NavigationContainer} from '@react-navigation/native';
 import {StyleSheet, SafeAreaView, YellowBox} from 'react-native';
@@ -15,6 +15,7 @@ export default function MaskerAid() {
   const {user, setUser} = useContext(GlobalContext);
   const {theme} = useContext(GlobalContext);
 
+  // Disable specific warnings that are harmless
   async function bootstrap() {
     YellowBox.ignoreWarnings(["Can't perform a React state"]);
     YellowBox.ignoreWarnings(['Require cycle:']);
@@ -48,6 +49,7 @@ export default function MaskerAid() {
     );
   }
 
+  // Switch stacks based on login state
   return (
     <SafeAreaView style={styles.container}>
       <NavigationContainer ref={navigationRef}>

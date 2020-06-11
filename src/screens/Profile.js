@@ -25,26 +25,21 @@ class Profile extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      activeIndex: 1,
       user: this.props.user
-        ? {
-            uid: this.props.user.uid,
-            email: this.props.user.email,
-            displayName: this.props.user.displayName,
-            photoURL: this.props.user.photoURL,
-          }
+        ? Fire.sanitizeUser(this.props.user)
         : this.props.route.params.user,
       selfProfile: this.props.user ? true : false,
       following: false,
       followerCount: 0,
       followingCount: 0,
       postCount: 0,
-      numColumns: 3,
     };
   }
 
   updateFollowState = () => {
     const {user} = this.context;
+
+    // Retrieve following state
     firestore()
       .collection('users')
       .where('uid', '==', user.uid)
@@ -61,25 +56,32 @@ class Profile extends Component {
   };
 
   componentDidMount() {
+    // If this isn't the own user's profile
     if (!this.state.selfProfile) {
       this.updateFollowState();
     }
 
+    // Retrieve follower/following count
     this.unsubscribe = firestore()
       .collection('users')
       .doc(this.state.user.uid)
       .onSnapshot((snapshot) => {
         if (snapshot.data()) {
           this.setState({
-            followerCount: snapshot.data().follower_count
-              ? snapshot.data().follower_count
-              : 0,
-            followingCount: snapshot.data().following_count
-              ? snapshot.data().following_count
-              : 0,
-            postCount: snapshot.data().post_count
-              ? snapshot.data().post_count
-              : 0,
+            followerCount:
+              snapshot.data().follower_count &&
+              snapshot.data().follower_count >= 0
+                ? snapshot.data().follower_count
+                : 0,
+            followingCount:
+              snapshot.data().following_count &&
+              snapshot.data().following_count >= 0
+                ? snapshot.data().following_count
+                : 0,
+            postCount:
+              snapshot.data().post_count && snapshot.data().post_count >= 0
+                ? snapshot.data().post_count
+                : 0,
           });
         }
       });
@@ -88,12 +90,6 @@ class Profile extends Component {
   componentWillUnmount() {
     this.unsubscribe();
   }
-
-  segmentClicked = (index) => {
-    this.setState({
-      activeIndex: index,
-    });
-  };
 
   renderHeader = () => {
     const {theme} = this.context;

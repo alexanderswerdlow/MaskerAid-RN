@@ -2,6 +2,7 @@
 Author: Yamill Vallecillo
 Source taken from: https://github.com/yamill/react-native-inviewport
  */
+
 'use strict';
 
 import React, {Component} from 'react';

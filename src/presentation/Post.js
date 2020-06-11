@@ -31,6 +31,7 @@ export default function Post(props) {
   const [dialogVisible, setDialogVisible] = useState(false);
   const [like_count, set_like_count] = useState(0);
   const [isVideo, setVideo] = useState(false);
+  const [time, setTime] = useState('');
   const heartIconColor = liked ? 'rgb(252,61,57)' : null;
   const heartIconID = liked ? 'heart' : 'hearto';
   const [muted, setMuted] = useState(false);
@@ -56,6 +57,9 @@ export default function Post(props) {
             ? postSnapshot.data().like_count
             : 0,
         );
+        if (postSnapshot.data().post_date !== undefined) {
+          setTime(Fire.timeAgo(postSnapshot.data().post_date.toDate()));
+        }
         firestore()
           .collection('posts')
           .where(firestore.FieldPath.documentId(), '==', props.loc.id)
@@ -201,6 +205,7 @@ export default function Post(props) {
             }}
           />
         )}
+        <Text style={{marginLeft: 'auto'}}>{time}</Text>
       </View>
       <View style={styles.commentBar}>
         <View style={{flexDirection: 'row'}}>
@@ -238,7 +243,7 @@ export default function Post(props) {
               onPress={() => {
                 Fire.deletePost(props.loc.id, user, isVideo);
                 setDialogVisible(false);
-                if (props.index) {
+                if (props.index !== undefined) {
                   props.onDelete(props.index);
                 }
               }}>
@@ -295,6 +300,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     alignItems: 'center',
     backgroundColor: 'white',
+    display: 'flex',
   },
 
   commentBar: {

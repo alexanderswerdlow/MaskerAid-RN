@@ -1,10 +1,6 @@
 module.exports = {
   root: true,
-  extends: [
-    'eslint:recommended',
-    'plugin:react/recommended',
-    'plugin:prettier/recommended',
-  ],
+  extends: ['eslint:recommended', 'plugin:react/recommended', 'plugin:prettier/recommended'],
   plugins: ['react-hooks'],
   parser: 'babel-eslint',
   env: {
@@ -16,5 +12,11 @@ module.exports = {
     'react/prop-types': 'off',
     'react/display-name': 'warn',
     'max-len': ['error', {code: 120}],
+  },
+  settings: {
+    react: {
+      pragma: 'React',
+      version: 'detect',
+    },
   },
 };

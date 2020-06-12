@@ -1,12 +1,5 @@
 import React, {Component} from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  Image,
-  Alert,
-  TouchableOpacity,
-} from 'react-native';
+import {View, Text, StyleSheet, Image, Alert, TouchableOpacity} from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {withNavigation} from 'react-navigation';
 import {PostFeed} from '../containers';
@@ -25,9 +18,7 @@ class Profile extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      user: this.props.user
-        ? Fire.sanitizeUser(this.props.user)
-        : this.props.route.params.user,
+      user: this.props.user ? Fire.sanitizeUser(this.props.user) : this.props.route.params.user,
       selfProfile: this.props.user ? true : false,
       following: false,
       followerCount: 0,
@@ -69,19 +60,14 @@ class Profile extends Component {
         if (snapshot.data()) {
           this.setState({
             followerCount:
-              snapshot.data().follower_count &&
-              snapshot.data().follower_count >= 0
+              snapshot.data().follower_count && snapshot.data().follower_count >= 0
                 ? snapshot.data().follower_count
                 : 0,
             followingCount:
-              snapshot.data().following_count &&
-              snapshot.data().following_count >= 0
+              snapshot.data().following_count && snapshot.data().following_count >= 0
                 ? snapshot.data().following_count
                 : 0,
-            postCount:
-              snapshot.data().post_count && snapshot.data().post_count >= 0
-                ? snapshot.data().post_count
-                : 0,
+            postCount: snapshot.data().post_count && snapshot.data().post_count >= 0 ? snapshot.data().post_count : 0,
           });
         }
       });
@@ -132,9 +118,7 @@ class Profile extends Component {
                     listType: 'following',
                   });
                 }}>
-                <Text style={styles.userStatus}>
-                  {this.state.followingCount}
-                </Text>
+                <Text style={styles.userStatus}>{this.state.followingCount}</Text>
                 <Text>Following</Text>
               </TouchableOpacity>
             </View>
@@ -146,9 +130,7 @@ class Profile extends Component {
                     listType: 'followers',
                   });
                 }}>
-                <Text style={styles.userStatus}>
-                  {this.state.followerCount}
-                </Text>
+                <Text style={styles.userStatus}>{this.state.followerCount}</Text>
                 <Text>Followers</Text>
               </TouchableOpacity>
             </View>
@@ -164,11 +146,7 @@ class Profile extends Component {
               alignItems: 'center',
               justifyContent: 'center',
             }}>
-            <Ionicons
-              name={'ios-list'}
-              size={30}
-              style={{color: theme.colors.primary}}
-            />
+            <Ionicons name={'ios-list'} size={30} style={{color: theme.colors.primary}} />
             <Text
               style={{
                 marginLeft: 10,

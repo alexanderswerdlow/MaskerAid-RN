@@ -1,13 +1,5 @@
 import React, {useState, useContext} from 'react';
-import {
-  View,
-  Platform,
-  StyleSheet,
-  Dimensions,
-  TextInput,
-  Button,
-  KeyboardAvoidingView,
-} from 'react-native';
+import {View, Platform, StyleSheet, Dimensions, TextInput, Button, KeyboardAvoidingView} from 'react-native';
 import config from '../config';
 import CommentFeed from '../containers/CommentFeed';
 import firestore from '@react-native-firebase/firestore';
@@ -16,9 +8,7 @@ import {GlobalContext} from '../navigation/ContextProvider';
 
 export default function Comment(props) {
   const w = Dimensions.get('window');
-  const commentsCollection = firestore().collection(
-    `posts/${props.route.params.post}/comments`,
-  );
+  const commentsCollection = firestore().collection(`posts/${props.route.params.post}/comments`);
   const [newComment, setNewComment] = useState('');
   const {theme} = useContext(GlobalContext);
 
@@ -29,10 +19,7 @@ export default function Comment(props) {
         enabled
         behavior={Platform.OS === 'ios' ? 'padding' : null}
         keyboardVerticalOffset={Platform.OS === 'ios' ? 90 : 0}>
-        <CommentFeed
-          id={props.route.params.post}
-          currentUserID={props.route.params.user.uid}
-        />
+        <CommentFeed id={props.route.params.post} currentUserID={props.route.params.user.uid} />
         <View
           style={{
             flexDirection: 'row',
@@ -40,11 +27,7 @@ export default function Comment(props) {
             alignItems: 'center',
             justifyContent: 'center',
           }}>
-          <TextInput
-            style={styles.TextInput}
-            onChangeText={(text) => setNewComment(text)}
-            value={newComment}
-          />
+          <TextInput style={styles.TextInput} onChangeText={(text) => setNewComment(text)} value={newComment} />
           <Button
             title={'Add'}
             style={{alignItems: 'center'}}

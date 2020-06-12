@@ -77,11 +77,7 @@ export default class VideoPlayer extends Component {
       <View style={styles.container}>
         <InViewPort onChange={this.handlePlaying}>
           {this.Media()}
-          <ActivityIndicator
-            animating
-            size="large"
-            style={[styles.indicator, {opacity: this.state.opacity}]}
-          />
+          <ActivityIndicator animating size="large" style={[styles.indicator, {opacity: this.state.opacity}]} />
         </InViewPort>
       </View>
     );

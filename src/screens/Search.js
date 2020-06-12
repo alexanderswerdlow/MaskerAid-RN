@@ -9,15 +9,11 @@ import {connectStateResults} from 'react-instantsearch-native';
 import {GlobalContext} from '../navigation/ContextProvider';
 import {createNullCache} from '@algolia/cache-common';
 
-const searchClient = algoliasearch(
-  'V6KRQS64EW',
-  'b97a806d8df3bc6cc32a451e85cd0807',
-  {
-    // Disable caching to get the most recent results
-    responsesCache: createNullCache(),
-    requestsCache: createNullCache(),
-  },
-);
+const searchClient = algoliasearch('V6KRQS64EW', 'b97a806d8df3bc6cc32a451e85cd0807', {
+  // Disable caching to get the most recent results
+  responsesCache: createNullCache(),
+  requestsCache: createNullCache(),
+});
 
 const styles = StyleSheet.create({
   safe: {
@@ -34,20 +30,12 @@ const SearchNotice = (props) => {
   if (props.query) {
     return <Title>No results have been found for: {props.query}</Title>;
   } else {
-    return (
-      <Title style={{marginLeft: 30, marginTop: 15}}>
-        No query was entered
-      </Title>
-    );
+    return <Title style={{marginLeft: 30, marginTop: 15}}>No query was entered</Title>;
   }
 };
 
 const Results = connectStateResults(({searchState, searchResults, children}) =>
-  searchResults && searchResults.nbHits !== 0 ? (
-    children
-  ) : (
-    <SearchNotice query={searchState.query} />
-  ),
+  searchResults && searchResults.nbHits !== 0 ? children : <SearchNotice query={searchState.query} />,
 );
 
 class Search extends React.Component {
@@ -71,10 +59,7 @@ class Search extends React.Component {
       <SafeAreaView style={styles.safe}>
         <StatusBar barStyle="light-content" />
         <View style={styles.container}>
-          <InstantSearch
-            searchClient={searchClient}
-            indexName={this.state.value}
-            root={this.root}>
+          <InstantSearch searchClient={searchClient} indexName={this.state.value} root={this.root}>
             <SearchBox />
             <ToggleButton.Row
               style={{marginLeft: 30}}
@@ -84,16 +69,8 @@ class Search extends React.Component {
                 }
               }}
               value={this.state.value}>
-              <ToggleButton
-                color={theme.colors.primary}
-                icon="account-circle"
-                value="users"
-              />
-              <ToggleButton
-                color={theme.colors.primary}
-                icon="note"
-                value="posts"
-              />
+              <ToggleButton color={theme.colors.primary} icon="account-circle" value="users" />
+              <ToggleButton color={theme.colors.primary} icon="note" value="posts" />
             </ToggleButton.Row>
             <Results>
               <InfiniteHits searchType={this.state.value} />

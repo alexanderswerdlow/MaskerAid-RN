@@ -1,12 +1,5 @@
 import React from 'react';
-import {
-  StyleSheet,
-  Text,
-  View,
-  ScrollView,
-  TouchableOpacity,
-  Platform,
-} from 'react-native';
+import {StyleSheet, Text, View, ScrollView, TouchableOpacity, Platform} from 'react-native';
 import {HueSlider, SaturationSlider, LightnessSlider} from 'react-native-color';
 import tinycolor from 'tinycolor2';
 import {GlobalContext} from '../navigation/ContextProvider';
@@ -58,19 +51,14 @@ class SettingsScreen extends React.Component {
   };
 
   render() {
-    const overlayTextColor = tinycolor(this.state.color).isDark()
-      ? '#FAFAFA'
-      : '#222';
+    const overlayTextColor = tinycolor(this.state.color).isDark() ? '#FAFAFA' : '#222';
     return (
       <View style={styles.container}>
         <ScrollView contentContainerStyle={styles.content}>
           <Text style={styles.sectionText}>Primary Theme COlor</Text>
           <TouchableOpacity
             onPress={() => this.setState({modalVisible: true})}
-            style={[
-              styles.colorPreview,
-              {backgroundColor: tinycolor(this.state.color).toHslString()},
-            ]}>
+            style={[styles.colorPreview, {backgroundColor: tinycolor(this.state.color).toHslString()}]}>
             <Text style={[styles.colorString, {color: overlayTextColor}]}>
               {tinycolor(this.state.color).toHexString()}
             </Text>

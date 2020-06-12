@@ -1,12 +1,5 @@
 import React, {useState, useEffect, useContext} from 'react';
-import {
-  FlatList,
-  View,
-  Text,
-  TouchableOpacity,
-  StyleSheet,
-  RefreshControl,
-} from 'react-native';
+import {FlatList, View, Text, TouchableOpacity, StyleSheet, RefreshControl} from 'react-native';
 import firestore from '@react-native-firebase/firestore';
 import {GlobalContext} from '../navigation/ContextProvider';
 import {ListItem} from 'react-native-elements';

@@ -44,21 +44,16 @@ export default function Comment(props) {
                   });
                 }}>
                 <Text>
-                  <Text style={{fontWeight: 'bold'}}>
-                    {props.user.displayName}{' '}
-                  </Text>
+                  <Text style={{fontWeight: 'bold'}}>{props.user.displayName} </Text>
                   {props.comment.text}
                 </Text>
               </TouchableOpacity>
             </View>
-            <Text style={{fontWeight: 'bold'}}>
-              {props.comment.like_count} Likes
-            </Text>
+            <Text style={{fontWeight: 'bold'}}>{props.comment.like_count} Likes</Text>
           </View>
         </View>
 
-        <View
-          style={{flexDirection: 'row', alignItems: 'center', marginLeft: 10}}>
+        <View style={{flexDirection: 'row', alignItems: 'center', marginLeft: 10}}>
           <TouchableOpacity
             onPress={() => {
               props.changeLike(props.id, !props.liked);

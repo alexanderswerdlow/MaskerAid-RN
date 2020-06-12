@@ -61,8 +61,7 @@ const slides = [
   },
   {
     key: 5,
-    title:
-      'Step 4: You are done! You can follow and like mask content from other users as well!',
+    title: 'Step 4: You are done! You can follow and like mask content from other users as well!',
     text:
       'Following another user will make sure their content will appear on your home feed.\nAdditionally, you can directly message users privately if you would like to reach out or just talk with friends!\n\nWe hope you enjoy MaskerAid and are staying safe in these uncertain times.',
     image: require('../images/180.png'),

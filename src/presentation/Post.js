@@ -1,13 +1,6 @@
 import {Dialog, Portal, Button, Paragraph} from 'react-native-paper';
 import React, {useContext, useState, useEffect, useRef} from 'react';
-import {
-  TouchableOpacity,
-  View,
-  Text,
-  Image,
-  StyleSheet,
-  Dimensions,
-} from 'react-native';
+import {TouchableOpacity, View, Text, Image, StyleSheet, Dimensions} from 'react-native';
 import config from '../config';
 import Icon from 'react-native-vector-icons/Fontisto';
 import IconAntDesign from 'react-native-vector-icons/AntDesign';
@@ -53,9 +46,7 @@ export default function Post(props) {
     const subscriber = props.loc.onSnapshot((postSnapshot) => {
       if (postSnapshot.data()) {
         set_like_count(
-          postSnapshot.data().like_count && postSnapshot.data().like_count >= 0
-            ? postSnapshot.data().like_count
-            : 0,
+          postSnapshot.data().like_count && postSnapshot.data().like_count >= 0 ? postSnapshot.data().like_count : 0,
         );
         if (postSnapshot.data().post_date !== undefined) {
           setTime(Fire.timeAgo(postSnapshot.data().post_date.toDate()));
@@ -224,13 +215,9 @@ export default function Post(props) {
           onDismiss={() => {
             setDialogVisible(false);
           }}>
-          <Dialog.Title>
-            Are you sure you want to delete your post?
-          </Dialog.Title>
+          <Dialog.Title>Are you sure you want to delete your post?</Dialog.Title>
           <Dialog.Content>
-            <Paragraph>
-              There&apos;s no way to retrieve it once deleted!
-            </Paragraph>
+            <Paragraph>There&apos;s no way to retrieve it once deleted!</Paragraph>
           </Dialog.Content>
           <Dialog.Actions>
             <Button

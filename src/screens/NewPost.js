@@ -8,13 +8,7 @@ import {
   DefaultTheme,
   TextInput,
 } from 'react-native-paper';
-import {
-  Image,
-  View,
-  Text,
-  KeyboardAvoidingView,
-  ScrollView,
-} from 'react-native';
+import {Image, View, Text, KeyboardAvoidingView, ScrollView} from 'react-native';
 import React, {useState, useEffect, useContext} from 'react';
 import ImagePicker from 'react-native-image-crop-picker';
 import Snackbar from 'react-native-snackbar';
@@ -138,11 +132,7 @@ function NewPost({navigation}) {
     if (image) {
       return (
         <>
-          {isVideo ? (
-            <VideoMedia source={image.uri} />
-          ) : (
-            <Image source={image} style={{width: '100%', height: 300}} />
-          )}
+          {isVideo ? <VideoMedia source={image.uri} /> : <Image source={image} style={{width: '100%', height: 300}} />}
           <Button
             icon="trash-can"
             mode="contained"
@@ -274,9 +264,7 @@ function NewPost({navigation}) {
               <Paragraph>Is this a photo of a mask?</Paragraph>
             </Dialog.Content>
             <Dialog.Actions>
-              <Button onPress={() => setPostDialogVisible(false)}>
-                Cancel
-              </Button>
+              <Button onPress={() => setPostDialogVisible(false)}>Cancel</Button>
               <Button
                 onPress={() => {
                   uploadFile();
@@ -287,11 +275,7 @@ function NewPost({navigation}) {
             </Dialog.Actions>
           </Dialog>
         </Portal>
-        <ActivityIndicator
-          size="large"
-          animating={uploading}
-          color={theme.colors.primary}
-        />
+        <ActivityIndicator size="large" animating={uploading} color={theme.colors.primary} />
       </ScrollView>
     </KeyboardAvoidingView>
   );

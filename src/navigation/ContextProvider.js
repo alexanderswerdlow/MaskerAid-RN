@@ -39,8 +39,7 @@ export const ContextProvider = ({children}) => {
   }, [user]);
 
   GoogleSignin.configure({
-    webClientId:
-      Platform.OS === 'ios' ? config.webClientIdIos : config.webClientIdAndroid,
+    webClientId: Platform.OS === 'ios' ? config.webClientIdIos : config.webClientIdAndroid,
     offlineAccess: true,
   });
 
@@ -58,9 +57,7 @@ export const ContextProvider = ({children}) => {
             const {idToken} = await GoogleSignin.signIn();
 
             // Create a Google credential with the token
-            const googleCredential = auth.GoogleAuthProvider.credential(
-              idToken,
-            );
+            const googleCredential = auth.GoogleAuthProvider.credential(idToken);
 
             // Sign-in the user with the credential
             return auth().signInWithCredential(googleCredential);
@@ -105,9 +102,7 @@ export const ContextProvider = ({children}) => {
                     text: 'OK',
                     onPress: async () => {
                       const {idToken} = await GoogleSignin.signIn();
-                      const googleCredential = auth.GoogleAuthProvider.credential(
-                        idToken,
-                      );
+                      const googleCredential = auth.GoogleAuthProvider.credential(idToken);
                       await auth().signInWithCredential(googleCredential);
                       var user = auth().currentUser;
                       user.delete().then(function () {

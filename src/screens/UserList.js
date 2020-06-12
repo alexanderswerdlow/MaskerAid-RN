@@ -1,12 +1,5 @@
 import React, {useState, useEffect} from 'react';
-import {
-  FlatList,
-  View,
-  Text,
-  TouchableOpacity,
-  StyleSheet,
-  RefreshControl,
-} from 'react-native';
+import {FlatList, View, Text, TouchableOpacity, StyleSheet, RefreshControl} from 'react-native';
 import firestore from '@react-native-firebase/firestore';
 import {ListItem} from 'react-native-elements';
 import {ActivityIndicator, Colors} from 'react-native-paper';
@@ -54,9 +47,7 @@ export default function UserList({route, navigation}) {
   const listEmpty = () => (
     <View style={styles.container}>
       <Text style={styles.noMessagesText}>
-        {route.params.listType == 'followers'
-          ? 'This user has no followers'
-          : 'This user is not following anyone'}
+        {route.params.listType == 'followers' ? 'This user has no followers' : 'This user is not following anyone'}
       </Text>
     </View>
   );

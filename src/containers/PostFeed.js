@@ -5,7 +5,7 @@ import {Post} from '../presentation';
 import {ActivityIndicator} from 'react-native';
 import firestore from '@react-native-firebase/firestore';
 
-function useIsMountedRef(props) {
+function useIsMountedRef() {
   const isMountedRef = useRef(null);
   useEffect(() => {
     isMountedRef.current = true;

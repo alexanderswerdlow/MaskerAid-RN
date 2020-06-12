@@ -1,15 +1,14 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-/* eslint-disable prettier/prettier */
 import React from 'react';
-import { FlatList, Text, View, Alert } from 'react-native';
-import { Post } from '../presentation';
-import { ActivityIndicator, StyleSheet, Dimensions, RefreshControl } from 'react-native';
+import {FlatList, Text, View, Alert} from 'react-native';
+import {Post} from '../presentation';
+import {ActivityIndicator, StyleSheet, Dimensions, RefreshControl} from 'react-native';
 import firestore from '@react-native-firebase/firestore';
-import { Switch } from 'react-native-paper';
-import { Tooltip } from 'react-native-elements';
+import {Switch} from 'react-native-paper';
+import {Tooltip} from 'react-native-elements';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import { GlobalContext } from '../navigation/ContextProvider';
-const { height, width } = Dimensions.get('window');
+import {GlobalContext} from '../navigation/ContextProvider';
+const {height, width} = Dimensions.get('window');
 
 export default class InfinitePostFeed extends React.Component {
   static contextType = GlobalContext;
@@ -30,7 +29,7 @@ export default class InfinitePostFeed extends React.Component {
 
   componentDidMount = () => {
     this._unsubscribe = this.props.navigation.addListener('focus', () => {
-      this.setState({ updating: true });
+      this.setState({updating: true});
       this.retrieveData(false, true);
     });
   };
@@ -41,7 +40,7 @@ export default class InfinitePostFeed extends React.Component {
 
   // On pull-to-refresh (manual)
   onRefresh = () => {
-    this.setState({ documentData: [] }); // Clear all posts
+    this.setState({documentData: []}); // Clear all posts
     this.retrieveData(false, false);
   };
 
@@ -58,7 +57,6 @@ export default class InfinitePostFeed extends React.Component {
   // Retrieve Data
   retrieveData = async (retrieveMore, no_load) => {
     try {
-
       if (!retrieveMore) {
         this.setState({
           loading: no_load ? false : true,
@@ -70,7 +68,7 @@ export default class InfinitePostFeed extends React.Component {
       }
 
       // Base firestore query
-      let postQuery = firestore().collection(this.state.user ? `users/${this.state.user.uid}/posts` : 'posts')
+      let postQuery = firestore().collection(this.state.user ? `users/${this.state.user.uid}/posts` : 'posts');
 
       // If feed type is following only and valid
       if (this.state.isSwitchOn && this.props.following && this.props.following.length > 0) {
@@ -80,9 +78,10 @@ export default class InfinitePostFeed extends React.Component {
         } else {
           postQuery = postQuery.startAfter(this.state.lastVisible).limit(this.state.limit);
         }
-      } else if (this.state.isSwitchOn) { // If feed type is following only and doesn't follow anyone
+      } else if (this.state.isSwitchOn) {
+        // If feed type is following only and doesn't follow anyone
         Alert.alert("You aren't following anyone yet");
-        this.setState({ isSwitchOn: false });
+        this.setState({isSwitchOn: false});
       } else {
         postQuery = postQuery.orderBy('post_date', 'desc');
         if (!retrieveMore) {
@@ -104,9 +103,10 @@ export default class InfinitePostFeed extends React.Component {
         });
       });
 
-      this.setState({ updating: false });
+      this.setState({updating: false});
 
-      if (documentData.length == 0) { // Empty posts feed
+      if (documentData.length == 0) {
+        // Empty posts feed
         this.setState({
           loading: false,
         });
@@ -129,7 +129,6 @@ export default class InfinitePostFeed extends React.Component {
           refreshing: false,
         });
       }
-
     } catch (error) {
       console.log(error);
     }
@@ -155,23 +154,20 @@ export default class InfinitePostFeed extends React.Component {
       if (this.props.onHeader) {
         return this.props.onHeader();
       } else if (this.props.feedType == 'dynamic') {
-        const { theme } = this.context;
+        const {theme} = this.context;
         return (
           <>
-            <View
-              style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+            <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
               <Text style={styles.headerText}>Posts</Text>
-              <View style={{ flexDirection: 'row' }}>
+              <View style={{flexDirection: 'row'}}>
                 <Switch
-                  style={{ marginTop: 10, marginRight: 10 }}
+                  style={{marginTop: 10, marginRight: 10}}
                   value={this.state.isSwitchOn}
                   onValueChange={this._onToggleSwitch}
                 />
-                <Tooltip
-                  width={280}
-                  popover={<Text>View Posts Only From Users You Follow</Text>}>
+                <Tooltip width={280} popover={<Text>View Posts Only From Users You Follow</Text>}>
                   <Ionicons
-                    style={{ marginTop: 3, marginRight: 10 }}
+                    style={{marginTop: 3, marginRight: 10}}
                     name="ios-person"
                     size={43}
                     color={theme.colors.primary}
@@ -205,9 +201,7 @@ export default class InfinitePostFeed extends React.Component {
   listEmpty = () => {
     return (
       <View style={styles.ccontainer}>
-        {!this.state.updating && (
-          <Text style={styles.noMessagesText}>No Posts :(</Text>
-        )}
+        {!this.state.updating && <Text style={styles.noMessagesText}>No Posts :(</Text>}
       </View>
     );
   };
@@ -240,7 +234,7 @@ export default class InfinitePostFeed extends React.Component {
       <FlatList
         // Data
         data={this.state.documentData}
-        renderItem={({ item, index }) => this._renderItem(item, index)} //Passing as object from here.
+        renderItem={({item, index}) => this._renderItem(item, index)} //Passing as object from here.
         // Item Key
         keyExtractor={(item, index) => String(index)}
         // Header (Title)
@@ -248,12 +242,7 @@ export default class InfinitePostFeed extends React.Component {
         // Footer (Activity Indicator)
         ListFooterComponent={this.renderFooter}
         ListEmptyComponent={this.listEmpty}
-        refreshControl={
-          <RefreshControl
-            onRefresh={this.onRefresh}
-            refreshing={this.state.loading}
-          />
-        }
+        refreshControl={<RefreshControl onRefresh={this.onRefresh} refreshing={this.state.loading} />}
         // On End Reached (Takes a function)
         onEndReached={this.retrieveMore}
         // How Close To The End Of List Until Next Data Request Is Made

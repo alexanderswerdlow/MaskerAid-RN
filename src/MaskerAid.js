@@ -52,9 +52,7 @@ export default function MaskerAid() {
   // Switch stacks based on login state
   return (
     <SafeAreaView style={styles.container}>
-      <NavigationContainer ref={navigationRef}>
-        {user ? <HomeStack /> : <AuthStack />}
-      </NavigationContainer>
+      <NavigationContainer ref={navigationRef}>{user ? <HomeStack /> : <AuthStack />}</NavigationContainer>
     </SafeAreaView>
   );
 }

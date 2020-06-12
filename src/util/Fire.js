@@ -1,4 +1,3 @@
-/* eslint-disable prettier/prettier */
 import frs from '@react-native-firebase/firestore';
 import storage from '@react-native-firebase/storage';
 
@@ -29,7 +28,6 @@ export const Firebase = {
       });
   },
   setFollowing: async (self_user, other_user, follow) => {
-
     //Cannot follow/unfollow yourself
     if (self_user.uid == other_user.uid) {
       return;
@@ -43,12 +41,12 @@ export const Firebase = {
 
     batch.update(selfRef, {
       _following: follow ? frs.FieldValue.arrayUnion(other_user.uid) : frs.FieldValue.arrayRemove(other_user.uid),
-      following_count: frs.FieldValue.increment(follow ? 1 : -1)
+      following_count: frs.FieldValue.increment(follow ? 1 : -1),
     });
 
     batch.update(otherRef, {
       _followers: follow ? frs.FieldValue.arrayUnion(self_user.uid) : frs.FieldValue.arrayRemove(self_user.uid),
-      follower_count: frs.FieldValue.increment(follow ? 1 : -1)
+      follower_count: frs.FieldValue.increment(follow ? 1 : -1),
     });
 
     if (follow) {
@@ -83,7 +81,7 @@ export const Firebase = {
     const postsRef = frs().collection('posts').doc(loc.id); // Create new reference using the loc reference ID
     batch.set(postsRef, post); // Write post object to postsRef reference
     const post_count_ref = frs().doc(`users/${p_user.uid}`);
-    batch.update(post_count_ref, { post_count: frs.FieldValue.increment(1) })
+    batch.update(post_count_ref, {post_count: frs.FieldValue.increment(1)});
     try {
       await batch.commit(); // Atomically write to both locations
       console.log('Firestore Post Success');
@@ -93,7 +91,6 @@ export const Firebase = {
     }
   },
   deletePost: async (post_id, user, isVideo) => {
-
     if (!isVideo) {
       try {
         var thumbStorageRef = storage().ref(`posts/${post_id}_400x400`);
@@ -117,7 +114,7 @@ export const Firebase = {
 
     batch.delete(usersQuerySnapshot);
     batch.delete(postsQuerySnapshot);
-    batch.update(postCountRef, { post_count: frs.FieldValue.increment(-1) })
+    batch.update(postCountRef, {post_count: frs.FieldValue.increment(-1)});
 
     try {
       await batch.commit();
@@ -125,7 +122,6 @@ export const Firebase = {
       console.log('Delete post failed', e);
       return;
     }
-
   },
   likePost: async (post_id, post_user_id, user_id, liked) => {
     const batch = frs().batch();
@@ -161,8 +157,9 @@ export const Firebase = {
       month: 'about a month',
       months: '%d months',
       year: 'about a year',
-      years: '%d years'
+      years: '%d years',
     };
+
     var seconds = Math.floor((new Date() - parseInt(timeAgo.getTime())) / 1000),
       separator = locales.separator || ' ',
       words = locales.prefix + separator,
@@ -172,7 +169,7 @@ export const Firebase = {
         month: seconds / 2592000,
         day: seconds / 86400,
         hour: seconds / 3600,
-        minute: seconds / 60
+        minute: seconds / 60,
       };
 
     var distance = locales.seconds;
@@ -193,7 +190,7 @@ export const Firebase = {
     words += distance + separator + locales.sufix;
 
     return words.trim();
-  }
+  },
 };
 
 export default Firebase;

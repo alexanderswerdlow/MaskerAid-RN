@@ -22,16 +22,8 @@ function MainStackScreen() {
   return (
     <MainStack.Navigator>
       <MainStack.Screen name="Home" component={HomeScreen} />
-      <MainStack.Screen
-        name="ViewProfile"
-        options={{title: 'Profile'}}
-        component={ViewProfileScreen}
-      />
-      <MainStack.Screen
-        name="UserList"
-        options={{title: 'Followers/Following'}}
-        component={UserListScreen}
-      />
+      <MainStack.Screen name="ViewProfile" options={{title: 'Profile'}} component={ViewProfileScreen} />
+      <MainStack.Screen name="UserList" options={{title: 'Followers/Following'}} component={UserListScreen} />
       <MainStack.Screen name="Chat" component={ChatScreen} />
       <MainStack.Screen name="Comments" component={CommentScreen} />
     </MainStack.Navigator>
@@ -44,16 +36,8 @@ function SearchStackScreen() {
   return (
     <SearchStack.Navigator>
       <SearchStack.Screen name="Search" component={SearchScreen} />
-      <SearchStack.Screen
-        name="ViewProfile"
-        options={{title: 'Profile'}}
-        component={ViewProfileScreen}
-      />
-      <SearchStack.Screen
-        name="UserList"
-        options={{title: 'Followers/Following'}}
-        component={UserListScreen}
-      />
+      <SearchStack.Screen name="ViewProfile" options={{title: 'Profile'}} component={ViewProfileScreen} />
+      <SearchStack.Screen name="UserList" options={{title: 'Followers/Following'}} component={UserListScreen} />
       <SearchStack.Screen name="Chat" component={ChatScreen} />
       <SearchStack.Screen name="Comment" component={CommentScreen} />
     </SearchStack.Navigator>
@@ -83,16 +67,8 @@ function ProfileScreen() {
       </ProfileStackScreen.Screen>
       <ProfileStackScreen.Screen name="Settings" component={SettingsScreen} />
       <ProfileStackScreen.Screen name="Comments" component={CommentScreen} />
-      <ProfileStackScreen.Screen
-        name="UserList"
-        options={{title: 'Followers/Following'}}
-        component={UserListScreen}
-      />
-      <ProfileStackScreen.Screen
-        name="ViewProfile"
-        options={{title: 'Profile'}}
-        component={ViewProfileScreen}
-      />
+      <ProfileStackScreen.Screen name="UserList" options={{title: 'Followers/Following'}} component={UserListScreen} />
+      <ProfileStackScreen.Screen name="ViewProfile" options={{title: 'Profile'}} component={ViewProfileScreen} />
     </ProfileStackScreen.Navigator>
   );
 }

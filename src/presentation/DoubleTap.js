@@ -24,10 +24,6 @@ export default class DoubleTap extends React.Component {
   };
 
   render() {
-    return (
-      <TouchableWithoutFeedback onPress={this.handleDoubleTap}>
-        {this.props.children}
-      </TouchableWithoutFeedback>
-    );
+    return <TouchableWithoutFeedback onPress={this.handleDoubleTap}>{this.props.children}</TouchableWithoutFeedback>;
   }
 }

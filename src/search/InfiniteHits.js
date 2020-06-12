@@ -38,22 +38,14 @@ const InfiniteHits = ({hits, hasMore, refine, searchType}) => (
                     user: item,
                   });
                 }}>
-                <Text>
-                  {JSON.parse(JSON.stringify(item.displayName).slice(0, 100))}
-                </Text>
+                <Text>{JSON.parse(JSON.stringify(item.displayName).slice(0, 100))}</Text>
               </TouchableOpacity>
             </View>
           );
         }
       } else {
         if (item.user) {
-          return (
-            <Post
-              post={item}
-              user={item.user}
-              loc={firestore().collection('posts').doc(item.objectID)}
-            />
-          );
+          return <Post post={item} user={item.user} loc={firestore().collection('posts').doc(item.objectID)} />;
         }
       }
     }}

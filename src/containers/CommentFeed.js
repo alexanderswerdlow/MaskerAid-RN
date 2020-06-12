@@ -4,7 +4,7 @@ import {FlatList} from 'react-native';
 import {ActivityIndicator} from 'react-native';
 import firestore from '@react-native-firebase/firestore';
 
-function useIsMountedRef(props) {
+function useIsMountedRef() {
   const isMountedRef = useRef(null);
   useEffect(() => {
     isMountedRef.current = true;
@@ -57,15 +57,7 @@ export default function CommentFeed(props) {
       if (item.comment.likedUsers.includes(props.currentUserID)) {
         liked = true;
       }
-      return (
-        <Comment
-          comment={item.comment}
-          user={item.user}
-          liked={liked}
-          changeLike={changeLike}
-          id={item.ref.id}
-        />
-      );
+      return <Comment comment={item.comment} user={item.user} liked={liked} changeLike={changeLike} id={item.ref.id} />;
     }
   };
 
@@ -73,11 +65,5 @@ export default function CommentFeed(props) {
     return <ActivityIndicator />;
   }
 
-  return (
-    <FlatList
-      data={comments}
-      renderItem={renderItem}
-      keyExtractor={(item, index) => index.toString()}
-    />
-  );
+  return <FlatList data={comments} renderItem={renderItem} keyExtractor={(item, index) => index.toString()} />;
 }

@@ -19,7 +19,9 @@ A mobile application for sharing mask designs as well as finding inspiration fro
 | ------------------------------------------------- | ----------------------------------------------- | --------------------------------- | ----------------------------------------------- |
 | ![tutorial+auth](Documentation/tutorial+auth.gif) | ![upload_image](Documentation/upload_image.gif) | ![theme](Documentation/theme.gif) | ![upload_video](Documentation/upload_video.gif) |
 
-![direct_messaging](Documentation/commenting.gif)
+![direct_messaging](Documentation/direct_messaging.gif)
+
+![commenting](Documentation/commenting.gif)
 
 *Note: Searching, Sign out/Account Deletion, and profile tab not shown above*
 

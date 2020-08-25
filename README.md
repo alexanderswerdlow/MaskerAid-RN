@@ -4,6 +4,7 @@ A mobile application for sharing mask designs as well as finding inspiration fro
 
 #### Table of Contents
 
+* [Preview](#preview)
 * [Requirements](#requirements)
 * [Setup (macOS)](#setup--macos-)
   * [Device Deployment](#device-deployment)
@@ -11,6 +12,16 @@ A mobile application for sharing mask designs as well as finding inspiration fro
 * [Troubleshooting](#troubleshooting)
 * [Common Commands](#common-commands)
 * [Code Overview](#code-overview)
+
+## Preview
+
+| Tutorial & Authentication                         | Upload Image                                    | Theming                           | Upload Video                                    |
+| ------------------------------------------------- | ----------------------------------------------- | --------------------------------- | ----------------------------------------------- |
+| ![tutorial+auth](Documentation/tutorial+auth.gif) | ![upload_image](Documentation/upload_image.gif) | ![theme](Documentation/theme.gif) | ![upload_video](Documentation/upload_video.gif) |
+
+![direct_messaging](Documentation/commenting.gif)
+
+*Note: Searching, Sign out/Account Deletion, and profile tab not shown above*
 
 ## Requirements
 

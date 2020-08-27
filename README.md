@@ -17,11 +17,11 @@ A mobile application for sharing mask designs as well as finding inspiration fro
 
 | Tutorial & Authentication                         | Upload Image                                    | Theming                           | Upload Video                                    |
 | ------------------------------------------------- | ----------------------------------------------- | --------------------------------- | ----------------------------------------------- |
-| ![tutorial+auth](Documentation/tutorial+auth.gif) | ![upload_image](Documentation/upload_image.gif) | ![theme](Documentation/theme.gif) | ![upload_video](Documentation/upload_video.gif) |
+| ![tutorial+auth](demos/tutorial+auth.gif) | ![upload_image](demos/upload_image.gif) | ![theme](demos/theme.gif) | ![upload_video](demos/upload_video.gif) |
 
-![direct_messaging](Documentation/direct_messaging.gif)
-
-![commenting](Documentation/commenting.gif)
+| Direct Messaging                                        | Commenting                                  |
+| ------------------------------------------------------- | ------------------------------------------- |
+| ![direct_messaging](demos/direct_messaging.gif) | ![commenting](demos/commenting.gif) |
 
 *Note: Searching, Sign out/Account Deletion, and profile tab not shown above*
 

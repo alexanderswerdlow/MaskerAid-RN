@@ -1,6 +1,6 @@
 # MaskerAid
 
-A mobile application for sharing mask designs as well as finding inspiration from others!
+A mobile application for sharing mask designs as well as finding inspiration from others' designs!
 
 #### Table of Contents
 
